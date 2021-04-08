@@ -1,0 +1,31 @@
+{
+  "code": 200,
+  "status": "Success",
+  "data": {
+    "count": 114,
+    "platforms": {
+      "1": {
+        "id": 1,
+        "name": "PC",
+        "alias": "pc",
+        "icon": "pc-1336524756.png",
+        "console": "1.png",
+        "controller": null,
+        "developer": "IBM",
+        "manufacturer": null,
+        "media": null,
+        "cpu": "x86 Based",
+        "memory": null,
+        "graphics": null,
+        "sound": null,
+        "maxcontrollers": null,
+        "display": null,
+        "overview": "lorem ipsum",
+        "youtube": null
+      }
+    }
+  },
+  "remaining_monthly_allowance": 2917,
+  "extra_allowance": 0,
+  "allowance_refresh_timer": 1780697
+}

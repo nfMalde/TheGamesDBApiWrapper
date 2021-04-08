@@ -1,0 +1,16 @@
+{
+  "code": 200,
+  "status": "Success",
+  "data": {
+    "count": 29,
+    "genres": {
+      "1": {
+        "id": 1,
+        "name": "Lorem"
+      }
+    }
+  },
+  "remaining_monthly_allowance": 2916,
+  "extra_allowance": 0,
+  "allowance_refresh_timer": 1780370
+}

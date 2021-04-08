@@ -1,0 +1,31 @@
+{
+  "code": 200,
+  "status": "Success",
+  "data": {
+    "count": 100,
+    "updates": [
+      {
+        "edit_id": 1,
+        "game_id": 38113,
+        "timestamp": "2018-06-28 16:20:54",
+        "type": "boxart",
+        "value": "[REMOVED]"
+      },
+      {
+        "edit_id": 2,
+        "game_id": 38113,
+        "timestamp": "2018-06-28 16:20:54",
+        "type": "boxart",
+        "value": "boxart/front/38113-1.jpg"
+      }
+    ]
+  },
+  "pages": {
+    "previous": null,
+    "current": "",
+    "next": ""
+  },
+  "remaining_monthly_allowance": 2918,
+  "extra_allowance": 0,
+  "allowance_refresh_timer": 1781108
+}

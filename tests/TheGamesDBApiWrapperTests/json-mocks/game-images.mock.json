@@ -1,0 +1,118 @@
+{
+  "code": 200,
+  "status": "Success",
+  "data": {
+    "count": 1,
+    "base_url": {
+      "original": "https://uri.u/images/original/",
+      "small": "https://uri.u/images/small/",
+      "thumb": "https://uri.u/images/thumb/",
+      "cropped_center_thumb": "https://uri.u/images/cropped_center_thumb/",
+      "medium": "https://uri.u/images/medium/",
+      "large": "https://uri.u/images/large/"
+    },
+    "images": {
+      "1": [
+        {
+          "id": 242,
+          "type": "fanart",
+          "side": null,
+          "filename": "fanart/1-2.jpg",
+          "resolution": "1920x1080"
+        },
+        {
+          "id": 248,
+          "type": "fanart",
+          "side": null,
+          "filename": "fanart/1-3.jpg",
+          "resolution": "1920x1080"
+        },
+        {
+          "id": 249,
+          "type": "fanart",
+          "side": null,
+          "filename": "fanart/1-4.jpg",
+          "resolution": "1920x1080"
+        },
+        {
+          "id": 433,
+          "type": "fanart",
+          "side": null,
+          "filename": "fanart/1-5.jpg",
+          "resolution": "1920x1080"
+        },
+        {
+          "id": 476,
+          "type": "banner",
+          "side": null,
+          "filename": "graphical/1-g.jpg",
+          "resolution": null
+        },
+        {
+          "id": 4277,
+          "type": "fanart",
+          "side": null,
+          "filename": "fanart/1-6.jpg",
+          "resolution": "1920x1080"
+        },
+        {
+          "id": 17158,
+          "type": "fanart",
+          "side": null,
+          "filename": "fanart/1-7.jpg",
+          "resolution": "1920x1080"
+        },
+        {
+          "id": 23413,
+          "type": "boxart",
+          "side": "front",
+          "filename": "boxart/front/1-1.jpg",
+          "resolution": "1529x2156"
+        },
+        {
+          "id": 23414,
+          "type": "boxart",
+          "side": "back",
+          "filename": "boxart/back/1-1.jpg",
+          "resolution": "1527x2156"
+        },
+        {
+          "id": 60337,
+          "type": "screenshot",
+          "side": null,
+          "filename": "screenshots/1-1.jpg",
+          "resolution": null
+        },
+        {
+          "id": 60338,
+          "type": "screenshot",
+          "side": null,
+          "filename": "screenshots/1-2.jpg",
+          "resolution": null
+        },
+        {
+          "id": 60339,
+          "type": "screenshot",
+          "side": null,
+          "filename": "screenshots/1-3.jpg",
+          "resolution": null
+        },
+        {
+          "id": 96687,
+          "type": "clearlogo",
+          "side": null,
+          "filename": "clearlogo/1.png",
+          "resolution": "400x200"
+        }
+      ]
+    }
+  },
+  "pages": {
+    "previous": null,
+    "current": "https://api.thegamesdb.net/v1/Games/Images?apikey=foobar&games_id=1&page=1",
+    "next": null
+  },
+  "remaining_monthly_allowance": 2919,
+  "extra_allowance": 0,
+  "allowance_refresh_timer": 1781972
+}

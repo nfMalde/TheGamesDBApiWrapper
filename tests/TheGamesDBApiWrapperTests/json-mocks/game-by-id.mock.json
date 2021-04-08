@@ -1,0 +1,169 @@
+{
+    "code": 200,
+    "status": "Success",
+    "data": {
+      "count": 4,
+      "games": [
+        {
+          "id": 1,
+          "game_title": "One",
+          "release_date": "2003-09-30",
+          "platform": 1,
+          "players": 66,
+          "overview": "One OV",
+          "last_updated": "2021-02-20 14:01:31",
+          "rating": "M - Mature 17+",
+          "coop": "Yes",
+          "youtube": "dR3Hm8scbEw",
+          "os": "98SE/ME/2000/XP",
+          "processor": "733mhz",
+          "ram": "128 MB",
+          "hdd": "1.2GB",
+          "video": "32 MB / 3D T&L capable",
+          "sound": null,
+          "developers": [
+            1389,
+            3423
+          ],
+          "genres": [
+            1,
+            7,
+            15,
+            20,
+            22
+          ],
+          "alternates": null
+        },
+        {
+            "id": 1,
+            "game_title": "One",
+            "release_date": "2003-09-30",
+            "platform": 1,
+            "players": 66,
+            "overview": "One OV",
+            "last_updated": "2021-02-20 14:01:31",
+            "rating": "M - Mature 17+",
+            "coop": "Yes",
+            "youtube": "dR3Hm8scbEw",
+            "os": "98SE/ME/2000/XP",
+            "processor": "733mhz",
+            "ram": "128 MB",
+            "hdd": "1.2GB",
+            "video": "32 MB / 3D T&L capable",
+            "sound": null,
+            "developers": [
+              1389,
+              3423
+            ],
+            "genres": [
+              1,
+              7,
+              15,
+              20,
+              22
+            ],
+            "alternates": null
+        }
+      ]
+    },
+    "include": {
+      "boxart": {
+        "base_url": {
+          "original": "https://cdn.uri/images/original/",
+          "small": "https://cdn.uri/images/small/",
+          "thumb": "https://cdn.uri/images/thumb/",
+          "cropped_center_thumb": "https://cdn.uri/images/cropped_center_thumb/",
+          "medium": "https://cdn.uri/images/medium/",
+          "large": "https://cdn.uri/images/large/"
+        },
+        "data": {
+          "1": [
+            {
+              "id": 23413,
+              "type": "boxart",
+              "side": "front",
+              "filename": "boxart/front/1-1.jpg",
+              "resolution": "1529x2156"
+            },
+            {
+              "id": 23414,
+              "type": "boxart",
+              "side": "back",
+              "filename": "boxart/back/1-1.jpg",
+              "resolution": "1527x2156"
+            }
+          ],
+          "2": [
+            {
+              "id": 1549,
+              "type": "boxart",
+              "side": "front",
+              "filename": "boxart/front/2-1.jpg",
+              "resolution": "1525x2160"
+            },
+            {
+              "id": 15336,
+              "type": "boxart",
+              "side": "back",
+              "filename": "boxart/back/2-1.jpg",
+              "resolution": "1525x2162"
+            }
+          ],
+          "4": [
+            {
+              "id": 846,
+              "type": "boxart",
+              "side": "front",
+              "filename": "boxart/front/4-1.jpg",
+              "resolution": "1000x705"
+            },
+            {
+              "id": 847,
+              "type": "boxart",
+              "side": "back",
+              "filename": "boxart/back/4-1.jpg",
+              "resolution": "1000x705"
+            }
+          ],
+          "5": [
+            {
+              "id": 5757,
+              "type": "boxart",
+              "side": "front",
+              "filename": "boxart/front/5-2.jpg",
+              "resolution": "1534x2100"
+            },
+            {
+              "id": 5758,
+              "type": "boxart",
+              "side": "back",
+              "filename": "boxart/back/5-2.jpg",
+              "resolution": "1532x2100"
+            }
+          ]
+        }
+      },
+      "platform": {
+        "data": {
+          "1": {
+            "id": 1,
+            "name": "PC",
+            "alias": "pc"
+          },
+          "3": {
+            "id": 3,
+            "name": "Footendor632332",
+            "alias": "Footendor632332"
+          }
+        }
+      }
+    },
+    "pages": {
+      "previous": null,
+      "current": null,
+      "next": null
+    },
+    "remaining_monthly_allowance": 2920,
+    "extra_allowance": 0,
+    "allowance_refresh_timer": 1782396
+  }
