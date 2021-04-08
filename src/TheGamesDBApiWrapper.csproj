@@ -2,6 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp3.1</TargetFramework>
+    <PackageLicenseFile>LICENSE</PackageLicenseFile>
+    <Copyright>2021 Malte Peters</Copyright>
+    <Description>Wrapper Class in Fluent Style for TheGamesDBAPI</Description>
+    <PackageProjectUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</RepositoryUrl>
+    <RepositoryType>GIT</RepositoryType>
+    <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
+    <PackageReleaseNotes>Added License and Package Info</PackageReleaseNotes>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 
   <ItemGroup>
@@ -11,6 +20,13 @@
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
     <PackageReference Include="RestSharp" Version="106.11.7" />
     <PackageReference Include="RestSharp.Serializers.NewtonsoftJson" Version="106.11.7" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="..\LICENSE">
+      <Pack>True</Pack>
+      <PackagePath></PackagePath>
+    </None>
   </ItemGroup>
 
 </Project>
