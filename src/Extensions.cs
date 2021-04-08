@@ -58,7 +58,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="version">The version.</param>
         /// <param name="baseUrl">The base URL.</param>
         /// <returns></returns>
-        public static IServiceCollection AddTheGamesDBApiWrapper(this IServiceCollection services, string apiKey, int? version = null, string baseUrl = null)
+        public static IServiceCollection AddTheGamesDBApiWrapper(this IServiceCollection services, string apiKey, double? version = null, string baseUrl = null)
         {
             services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
