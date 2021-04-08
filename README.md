@@ -6,6 +6,11 @@ For API-Docs look here: https://api.thegamesdb.net/#/
 
 **NOTE** Not a official release - so no warranty for usage.
 
+**External Libraries**
+This Library uses the following lib(s) fro archive its functionality:
+* [RestSharp](https://github.com/restsharp/RestSharp)
+* [NewtonSoft.Json/JSON.NET](https://github.com/JamesNK/Newtonsoft.Json)
+
 ## Requirements
 * .NET Core 3.1 or higher
 * The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
