@@ -5,8 +5,8 @@ For API-Docs look here: https://api.thegamesdb.net/#/
 **NOTE** Not a official release - so no warranty for usage.
 
 ## Requirements
-.NET Core 3.1 or higher
-The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
+* .NET Core 3.1 or higher
+* The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
 
 ## Usage
 ### Add
