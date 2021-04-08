@@ -80,6 +80,29 @@ var platforms = await this.api.Platform.All();
 
 All parameters of all methods in the specific api class is documented in the ["TheGamesDB" Api Docs](https://api.thegamesdb.net/#/)
 
+### Helpers
+#### Paginating
+All paginated responses have two helper methods caleld (NextPage and PreviousPage). So you can swap between pages by calling this async methods.
+For Example:
+```C#
+var gamesresponse = await this.api.Games.ByGameName("Counter");
+
+// Info about current, next, prev page is stored in the sub oject "Pages"
+
+// Check if we have a next page and switch to it
+
+if (gamesresponse.Pages?.Next != null) {
+    var nextResponse = await gamesresponse.NextPage();
+    // Do something...
+}
+
+// Same for prev. page:
+if (gamesresponse.Pages?.Previous != null) {
+    var prevResponse = await gamesresponse.PreviousPage();
+    // Do something...
+}
+```
+
 ## Contribute
 If you find any bug or want to add an feature. Simply create an Issue. And submit an pull request with your changes and link it the issue.
 
