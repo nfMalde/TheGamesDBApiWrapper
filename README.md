@@ -82,7 +82,7 @@ All parameters of all methods in the specific api class is documented in the ["T
 
 ### Helpers
 #### Paginating
-All paginated responses have two helper methods caleld (NextPage and PreviousPage). So you can swap between pages by calling this async methods.
+All paginated responses have two helper methods called NextPage and PreviousPage. So you can swap between pages by calling this async methods.
 For Example:
 ```C#
 var gamesresponse = await this.api.Games.ByGameName("Counter");
