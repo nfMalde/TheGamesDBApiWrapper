@@ -14,6 +14,6 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
     public abstract class IncludeDataModel<TImageModel> where TImageModel:class
     {
         [JsonProperty("data")]
-        public Dictionary<string, TImageModel[]> Data { get; set; }
+        public Dictionary<int, TImageModel[]> Data { get; set; }
     }
 }
