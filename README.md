@@ -2,11 +2,23 @@
 Wrapper Lib for handling requests to the [TheGamesDB API](https://thegamesdb.net/).
 For API-Docs look here: https://api.thegamesdb.net/#/
 
+[![Nuget](https://img.shields.io/nuget/v/TheGamesDBApiWrapper?style=for-the-badge)](https://www.nuget.org/packages/TheGamesDBApiWrapper/) [![Downloads](https://img.shields.io/nuget/dt/TheGamesDBApiWrapper?style=for-the-badge)](https://www.nuget.org/packages/TheGamesDBApiWrapper/)
+
 **NOTE** Not a official release - so no warranty for usage.
 
 ## Requirements
 * .NET Core 3.1 or higher
 * The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
+## Install
+Nuget:
+```
+Install-Package TheGamesDBApiWrapper 
+```
+
+Dotnet Cli
+```
+dotnet add package TheGamesDBApiWrapper
+```
 
 ## Usage
 ### Add
