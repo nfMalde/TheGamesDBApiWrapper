@@ -23,6 +23,7 @@ namespace TheGamesDBApiWrapper.Data
             var settings = new JsonSerializerSettings();
             //Now Add Converter for all Models that require DI
             settings.ContractResolver = new DIContractResolver(this.provider);
+            settings.NullValueHandling = NullValueHandling.Ignore;
 
             IRestClient restClient = string.IsNullOrEmpty(baseUri) ? new RestClient() : new RestClient(baseUri);
             restClient.FailOnDeserializationError = true;

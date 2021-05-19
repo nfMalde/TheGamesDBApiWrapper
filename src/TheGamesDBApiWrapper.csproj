@@ -9,7 +9,12 @@
     <RepositoryUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
-    <PackageReleaseNotes>Added License and Package Info</PackageReleaseNotes>
+    <PackageReleaseNotes>* Fixed ID  Data Types in Responses
+* Fixed Response Classes for Paginated responses 
+* Fixed Game Images Call Image Types
+* Fixed Platform Images Call Image Types
+* Changed RestSharp Config to Ignore Null values by default
+* Fixes for some json properties</PackageReleaseNotes>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
 

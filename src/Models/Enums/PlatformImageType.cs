@@ -32,6 +32,11 @@ namespace TheGamesDBApiWrapper.Models.Enums
         /// The boxart
         /// </summary>
         [EnumMember(Value = "boxart")]
-        Boxart
+        Boxart,
+        /// <summary>
+        /// The boxart
+        /// </summary>
+        [EnumMember(Value = "icon")]
+        Icon
     }
 }

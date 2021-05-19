@@ -19,6 +19,6 @@ namespace TheGamesDBApiWrapper.Models.Responses.Genres
         /// The genres.
         /// </value>
         [JsonProperty("genres")]
-        public Dictionary<string, GenreModel> Genres { get; set; }
+        public Dictionary<int, GenreModel> Genres { get; set; }
     }
 }

@@ -24,6 +24,7 @@ Dotnet Cli
 ```
 dotnet add package TheGamesDBApiWrapper
 ```
+ 
 
 ## Usage
 ### Add

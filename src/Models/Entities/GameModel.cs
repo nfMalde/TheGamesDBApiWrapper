@@ -36,7 +36,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The release date.
         /// </value>
         [JsonProperty("release_date")]
-        public DateTime ReleaseDate { get; set; }
+        public DateTime? ReleaseDate { get; set; }
         /// <summary>
         /// Gets or sets the platform.
         /// </summary>
@@ -44,7 +44,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The platform.
         /// </value>
         [JsonProperty("platform")]
-        public int Platform { get; set; }
+        public int? Platform { get; set; }
         /// <summary>
         /// Gets or sets the players.
         /// </summary>
@@ -52,7 +52,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The players.
         /// </value>
         [JsonProperty("players")]
-        public int Players { get; set; }
+        public int? Players { get; set; }
         /// <summary>
         /// Gets or sets the overview.
         /// </summary>
@@ -68,7 +68,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The last updated.
         /// </value>
         [JsonProperty("last_updated")]
-        public DateTime LastUpdated { get; set; }
+        public DateTime? LastUpdated { get; set; }
         /// <summary>
         /// Gets or sets the rating.
         /// </summary>
@@ -164,7 +164,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The publishers.
         /// </value>
         [JsonProperty("publishers")]
-        public int[] Publishers { get; set; }
+        public int?[] Publishers { get; set; }
         /// <summary>
         /// Gets or sets the alternates.
         /// </summary>

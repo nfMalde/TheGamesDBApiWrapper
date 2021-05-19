@@ -42,6 +42,11 @@ namespace TheGamesDBApiWrapper.Models.Enums
         /// The title screen
         /// </summary>
         [EnumMember(Value = "titlescreen")]
-        TitleScreen
+        TitleScreen,
+        /// <summary>
+        /// The icon
+        /// </summary>
+        [EnumMember(Value = "icon")]
+        Icon
     }
 }
