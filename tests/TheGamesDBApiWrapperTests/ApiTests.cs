@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using TheGamesDBApiWrapper.Converter;
 using TheGamesDBApiWrapper.Data;
 using TheGamesDBApiWrapper.Domain;
 using TheGamesDBApiWrapper.Models.Enums;
@@ -62,7 +63,7 @@ namespace TheGamesDBApiWrapperTests
             var settings = new JsonSerializerSettings();
             //Now Add Converter for all Models that require DI
             settings.ContractResolver = new DIContractResolver(this.ServiceProvider);
-
+            settings.Converters.Add(new DictConverter());
 
             return settings;
         }
@@ -98,10 +99,10 @@ namespace TheGamesDBApiWrapperTests
             Assert.NotNull(response.Data.Developers.First().Value.Name); 
         }
 
-        [Test]
-        public async Task GameByIdResponseShouldBeParsed()
+        [TestCaseSource(nameof(GameByIdMocks))]
+        public async Task GameByIdResponseShouldBeParsed(string mockfile)
         {
-            this.mockServices<GamesByGameIDResponse>("game-by-id");
+            this.mockServices<GamesByGameIDResponse>(mockfile);
 
             ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
             var response = await api.Games.ByGameID(new int[] { 1,2,3,4,5});
@@ -111,6 +112,11 @@ namespace TheGamesDBApiWrapperTests
             Assert.NotNull(response.Data.Games);
             Assert.NotNull(response.Data.Games.First().GameTitle);
         }
+
+        public static object[] GameByIdMocks =  {
+            new object[] { "game-by-id" },
+            new object[] { "game-by-id-2" }
+        };
 
         [Test]
         public async Task GameImagesResponseShouldBeParsed()

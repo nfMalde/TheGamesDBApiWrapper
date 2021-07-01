@@ -162,7 +162,11 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         protected async Task<T> CallGet<T>(string endpoint = null, object payload = null, string version = null) where T:class
         {
             RestRequest r = endpoint != null ? new RestRequest(endpoint, Method.GET): new RestRequest(Method.GET);
-            
+
+            // Support for long requests
+            r.Timeout = 3600;
+            r.ReadWriteTimeout = 3600;
+
             if (version != null)
             {
                 r.AddUrlSegment("version", version);

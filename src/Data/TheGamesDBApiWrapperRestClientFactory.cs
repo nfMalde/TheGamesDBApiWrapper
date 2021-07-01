@@ -4,6 +4,7 @@ using RestSharp.Serializers.NewtonsoftJson;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using TheGamesDBApiWrapper.Converter;
 using TheGamesDBApiWrapper.Domain;
 using TheGamesDBApiWrapper.Resolver;
 
@@ -24,11 +25,11 @@ namespace TheGamesDBApiWrapper.Data
             //Now Add Converter for all Models that require DI
             settings.ContractResolver = new DIContractResolver(this.provider);
             settings.NullValueHandling = NullValueHandling.Ignore;
+            settings.Converters.Add(new DictConverter());
 
             IRestClient restClient = string.IsNullOrEmpty(baseUri) ? new RestClient() : new RestClient(baseUri);
             restClient.FailOnDeserializationError = true;
-            restClient.ThrowOnAnyError = true;
-
+            restClient.ThrowOnAnyError = true; 
             restClient.UseNewtonsoftJson(settings);
 
             return restClient;

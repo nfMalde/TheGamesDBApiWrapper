@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using TheGamesDBApiWrapper.Converter;
+using TheGamesDBApiWrapper.Models.Responses.Games;
 
 namespace TheGamesDBApiWrapper.Models.Entities
 {
@@ -49,12 +51,23 @@ namespace TheGamesDBApiWrapper.Models.Entities
         public string Type { get; set; }
 
         /// <summary>
-        /// Gets or sets the value.
+        /// Gets or sets the value if value is string.
         /// </summary>
         /// <value>
         /// The value.
         /// </value>
         [JsonProperty("value")]
-        public string Value { get; set; }
+        [JsonConverter(typeof(GameUpdateValueConverter))]
+        public GameUpdateValueModel Values { get; set; }
+
+        /// <summary>
+        /// For Backwards Compatibl. this returns the string value only
+        /// </summary>
+        /// <value>
+        /// The value.
+        /// </value>
+        [JsonIgnore]
+        public string Value { get { return this.Values?.Value; } }
+         
     }
 }
