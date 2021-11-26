@@ -1,4 +1,8 @@
 # Change Log
+## 1.0.5
+### Changed
+* Updated Dependencies and added automated readme.
+
 ## 1.0.4
 ### Changed
 * Fixed Game Update Call to allow all value types (objects, non object, string, int). The Game Update Response Model will have now an additional Property called "Values" of Type "GameUpdateValueModel" which has  3 Properties: Value, Values and Objects. One is set, the rest will be NULL. See: [GameUpdateValueModel](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Models/Responses/Games/GameUpdateValueModel.cs)
