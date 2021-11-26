@@ -1,6 +1,7 @@
 [![Nuget](https://img.shields.io/nuget/v/TheGamesDBApiWrapper?style=flat-square)](https://www.nuget.org/packages/TheGamesDBApiWrapper/) 
  [![Downloads](https://img.shields.io/nuget/dt/TheGamesDBApiWrapper?style=flat-square)](https://www.nuget.org/packages/TheGamesDBApiWrapper/)
- [![Paypal Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
+ [![Paypal Donate](https://img.shields.io/badge/DONATE%E2%99%A5-PAYPAL-blue?style=flat-square&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
+ [![Github](https://img.shields.io/badge/nfMalde-TheGamesDBApiWrapper-lightgrey?style=flat-square&logo=github)](https://github.com/nfMalde/TheGamesDBApiWrapper)
 
 # TheGamesDBApiWrapper
 Wrapper Lib for handling requests to the [TheGamesDB API](https://thegamesdb.net/).
@@ -128,5 +129,5 @@ If you got any Ideas to improve my projects feel free to send an pull request.
 
 If you like my work and want to support me (or want to buy me a coffee/beer) paypal donation are more than appreciated.
 
- [![Paypal Donate](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
+ [![Paypal Donate](https://img.shields.io/badge/DONATE%E2%99%A5-PAYPAL-blue?style=for-the-badge&logo=paypal)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
 
