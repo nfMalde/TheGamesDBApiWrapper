@@ -710,7 +710,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
             payload.Page = page <= 0 ? 1 : page;
             payload.FilterPlatform = platformIds != null ? string.Join(',', platformIds.Select(x => x.ToString())) : null;
             payload.Include = includes != null ? string.Join(',', includes.Select(x => this.GetEnumValue(x))) : null;
-            payload.Fields = fields != null ? string.Join(',', includes.Select(x => this.GetEnumValue(x))) : null;
+            payload.Fields = fields != null ? string.Join(',', fields.Select(x => this.GetEnumValue(x))) : null;
 
 
             return await this.CallGet<GamesByNameResponse>("ByGameName", payload, version);
