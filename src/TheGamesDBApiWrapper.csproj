@@ -9,7 +9,7 @@
     <RepositoryUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
-    <PackageReleaseNotes>Added Allowance Tracke to keep track of your monthly allowance.</PackageReleaseNotes>
+    <PackageReleaseNotes>Added Allowance Tracker to keep track of your monthly allowance.</PackageReleaseNotes>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
