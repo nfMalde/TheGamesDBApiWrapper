@@ -11,9 +11,12 @@ namespace TheGamesDBApiWrapper.Models.Track
         {
             this.Remaining = remaining + extra;
             this.ResetAt = DateTime.Now + TimeSpan.FromSeconds(resetTimer);
+            this.ResetAtSeconds = resetTimer;
         }
 
         public DateTime ResetAt { get; private set; }
         public int Remaining { get; private set; }
+
+        public int ResetAtSeconds { get; private set; }
     }
 }

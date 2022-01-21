@@ -1,4 +1,6 @@
 # Change Log
+## 1.1.0
+* You can now track the allowance of TheGamesDBAPI by injecting the [IAllowanceTracker](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Domain/Track/IAllowanceTracker.cs) or using the `AllowanceTrack` Property of [ITheGamesDBAPI](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Domain/ITheGamesDBAPI.cs) See Readme or Docs for more info
 ## 1.0.5
 ### Changed
 * Updated Dependencies and added automated readme.
