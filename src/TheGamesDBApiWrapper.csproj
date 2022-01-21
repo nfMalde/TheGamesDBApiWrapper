@@ -9,7 +9,9 @@
     <RepositoryUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
-    <PackageReleaseNotes>Added Allowance Tracker to keep track of your monthly allowance.</PackageReleaseNotes>
+    <PackageReleaseNotes>Fixes from PR#1:
+* fix for passing fields in ByGameName API calls
+* fix for supporting Image "side" property</PackageReleaseNotes>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
