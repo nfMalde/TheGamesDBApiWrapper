@@ -10,7 +10,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using TheGamesDBApiWrapper.Converter;
 using TheGamesDBApiWrapper.Data;
+using TheGamesDBApiWrapper.Data.Track;
 using TheGamesDBApiWrapper.Domain;
+using TheGamesDBApiWrapper.Domain.Track;
 using TheGamesDBApiWrapper.Models.Enums;
 using TheGamesDBApiWrapper.Models.Responses.Developers;
 using TheGamesDBApiWrapper.Models.Responses.Games;
@@ -71,10 +73,12 @@ namespace TheGamesDBApiWrapperTests
 
         private void mockServices<TResponse>(string jsonfile) where TResponse:class
         {
+           
             Mock<ITheGamesDBApiWrapperRestClientFactory> mock = new Mock<ITheGamesDBApiWrapperRestClientFactory>();
             mock.Setup(x => x.Create(It.IsAny<string>())).Returns(() => this.mockRestClient<TResponse>(jsonfile).Object);
 
             ServiceCollection services = new ServiceCollection();
+            services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
             services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f => mock.Object);
             services.AddScoped(f => new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel());
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>();
@@ -203,6 +207,21 @@ namespace TheGamesDBApiWrapperTests
             Assert.NotNull(response.Data);
             Assert.NotNull(response.Data.Publishers);
             Assert.NotNull(response.Data.Publishers.First().Value.Name);
+        }
+
+        [Test]
+        public async Task AllowanceShouldBeTracked()
+        {
+            this.mockServices<PublishersResponse>("publishers");
+            ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
+
+            var response = await api.Publishers.All();
+
+            IAllowanceTracker tracker = this.ServiceProvider.GetService<IAllowanceTracker>();
+
+            Assert.NotNull(tracker.Current);
+            Assert.AreEqual(2916, tracker.Current.Remaining);
+            Assert.AreSame(api.AllowanceTrack, tracker.Current);
         }
 
         #endregion
