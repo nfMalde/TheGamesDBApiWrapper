@@ -7,11 +7,7 @@ using Newtonsoft.Json;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Base
 {
-    /// <summary>
-    /// Api Response Model Base Class
-    /// </summary>
-    /// <typeparam name="T"></typeparam>
-    public abstract class BaseApiResponseModel<T> where T:class
+    public class BaseApiResponseModel
     {
         /// <summary>
         /// Gets or sets the code.
@@ -49,6 +45,16 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
         [JsonProperty("extra_allowance")]
         public int ExtraAllowance { get; set; }
 
+        [JsonProperty("allowance_refresh_timer")]
+        public int AllowanceRefreshTimer { get; set; }
+    }
+
+    /// <summary>
+    /// Api Response Model Base Class
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
+    public abstract class BaseApiResponseModel<T>: BaseApiResponseModel where T:class
+    {
         /// <summary>
         /// Gets or sets the data.
         /// </summary>

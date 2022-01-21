@@ -1,4 +1,5 @@
 ﻿using TheGamesDBApiWrapper.Domain.ApiClasses;
+using TheGamesDBApiWrapper.Models.Track;
 
 namespace TheGamesDBApiWrapper.Domain
 {
@@ -42,5 +43,21 @@ namespace TheGamesDBApiWrapper.Domain
         /// The publishers api client.
         /// </value>
         IPublishers Publishers { get; }
+
+        /// <summary>
+        /// Gets the allowance track.
+        /// </summary>
+        /// <value>
+        /// The allowance track model.
+        /// </value>
+        AllowanceTrackModel AllowanceTrack { get; }
+
+        /// <summary>
+        /// Sets the allowance.
+        /// </summary>
+        /// <param name="remaining">The remaining.</param>
+        /// <param name="extra">The extra.</param>
+        /// <param name="secondsToReset">The seconds to reset.</param>
+        void SetAllowance(int remaining, int extra, int secondsToReset);
     }
 }

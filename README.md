@@ -100,6 +100,117 @@ var platforms = await this.api.Platform.All();
 
 All parameters of all methods in the specific api class is documented in the ["TheGamesDB" Api Docs](https://api.thegamesdb.net/#/)
 
+
+
+
+### Keeping Track of your monthly allowance
+TheGamesDB API has set an monthly request limit called "monthly allowance".
+To keep track of it you have (Starting with version 1.1.x) 2 ways to do so:
+#### Method 1 The IAllowanceTracker Singelton
+The singelton can be injected at every place of your code.
+Once you call one of the API endpoints such as `/Platforms`
+The values of the singelton will be set and you cann access it (Be sure that its in the same context)
+
+Example: Monthly Allowance limit reached
+
+```C#
+
+public class MyService:IMyService {
+  private ITheGamesDBAPI api;
+  private IAllowanceTracker tracker;
+
+  public MyService(IAllowanceTracker tracker, ITheGamesDBAPI api) {
+    this.tracker = tracker;
+    this.api = api;
+  }
+
+  public async Task ImportPlatforms() {
+
+      var platforms = await this.api.Platforms.All();
+      //... do something with the response
+
+      var currentAllowance = this.tracker.Current;
+
+      if (currentAllowance != null) {
+          int remainingRequests = currentAllowance.Remaining;
+          DateTime resetDate = currentAllowance.ResetAt;
+
+          // Do something with this info
+          // For example store it in db to use it as offset next time (See "Allowance Offset" in this readme)
+
+
+      }
+
+  }
+
+}
+```
+#### Method 2 The AllowanceTrack Property
+The `AllowanceTrack` Property of `ITheGamesDBAPI` is a shortcut handle to access the Singelton´s  `Current` Property.
+Its the same as above only you dont  need to inject the singelton in your service.
+```C#
+
+public class MyService:IMyService {
+  private ITheGamesDBAPI api;
+
+  public MyService(ITheGamesDBAPI api) {
+    this.api = api;
+  }
+
+  public async Task ImportPlatforms() {
+
+      var platforms = await this.api.Platforms.All();
+      //... do something with the response
+
+      var currentAllowance = this.api.AllowanceTrack; // Shortcut to IAllowanceTracker->Current
+
+      if (currentAllowance != null) {
+          int remainingRequests = currentAllowance.Remaining;
+          DateTime resetDate = currentAllowance.ResetAt;
+
+          // Do something with this info
+          // For example store it in db to use it as offset next time (See "Allowance Offset" in this readme)
+
+      }
+
+  }
+
+}
+```
+#### Allowance Offset
+When you store the allowance in DB or Cache you can load it before you call any api and set the IAllowanceTracker by yourself.
+This is helpfull, for keeping track of your allowance before sending the next api call.
+
+```C#
+// Assuming our Entity have the following properties:
+// int Remaining, int ResetInSeconds
+var mydbentity = this.loadFromDB(); // Load the data from db
+
+if (mydbentity != null) {
+  // Tracker is our IAllowanceTracker
+   tracker.SetAllowance(mydbentity.Remaining, 0, mydbentity.ResetInSeconds);
+}
+
+if (tracker.Current != null && tracker.Current.Remaining == 0) {
+    throw new Exception($"We reached TheGamesDBApi Limit and can use the api again at {tracker.Current.ResetAt}");
+}
+
+ var platforms = await this.api.Platforms.All();
+
+ // do something with the response
+
+mydbentity.Remaining = tracker.Current.Remaining; 
+mydbentity.ResetInSeconds = tracker.Current.ResetAtSeconds;
+
+this.saveDbEntity(mydbentity);
+
+```
+
+In the example above we save the allowance contents to db to check on every run if we allready reached it.
+This way if you know the amount of api calls for your operation you can see if you have enough monthly allowance left to finish your operation or you want to wait for reaching the reset timer.
+ 
+
+
 ### Helpers
 #### Paginating
 All paginated responses have two helper methods called NextPage and PreviousPage. So you can swap between pages by calling this async methods.

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 using TheGamesDBApiWrapper.Domain.ApiClasses;
+using TheGamesDBApiWrapper.Domain.Track;
 using TheGamesDBApiWrapper.Models.Responses.Publishers;
 
 namespace TheGamesDBApiWrapper.Data.ApiClasses
@@ -19,7 +20,8 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </summary>
         /// <param name="config">The configuration.</param>
         /// <param name="factory">The factory.</param>
-        public Publishers(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory) : base(config, factory, "Publishers")
+        /// <param name="allowanceTracker">The allowance tracker.</param>
+        public Publishers(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, IAllowanceTracker allowanceTracker) : base(config, factory, "Publishers", allowanceTracker)
         {
         }
 

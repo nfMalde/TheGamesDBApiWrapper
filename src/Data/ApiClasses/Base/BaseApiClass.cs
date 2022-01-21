@@ -10,6 +10,9 @@ using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
 using TheGamesDBApiWrapper.Annotations;
 using TheGamesDBApiWrapper.Domain;
+using TheGamesDBApiWrapper.Domain.Track;
+using TheGamesDBApiWrapper.Models.Responses.Base;
+using TheGamesDBApiWrapper.Models.Track;
 
 namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
 {
@@ -42,16 +45,22 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// The factory
         /// </summary>
         private readonly ITheGamesDBApiWrapperRestClientFactory factory;
+        /// <summary>
+        /// The allowance tracker
+        /// </summary>
+        private readonly IAllowanceTracker allowanceTracker;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="BaseApiClass"/> class.
+        /// Initializes a new instance of the <see cref="BaseApiClass" /> class.
         /// </summary>
         /// <param name="config">The configuration.</param>
         /// <param name="factory">The factory.</param>
         /// <param name="endpoint">The endpoint.</param>
-        public BaseApiClass(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, string endpoint)
+        /// <param name="allowanceTracker">The allowance tracker.</param>
+        public BaseApiClass(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, string endpoint , IAllowanceTracker allowanceTracker)
         {
             this.factory = factory;
+            this.allowanceTracker = allowanceTracker;
             this.parseConfig(config, endpoint);
             this.createClient();
         }
@@ -81,8 +90,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         ///   <c>true</c> if [force version]; otherwise, <c>false</c>.
         /// </value>
         public bool ForceVersion { get; set; }
-
-
+         
 
         /// <summary>
         /// Creates the rest client.
@@ -196,15 +204,24 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
             try
             {
                 var restResponse = await this.client.ExecuteGetAsync<T>(r);
+                var restResponseBase = restResponse.Data as BaseApiResponseModel;
 
                 if (restResponse.StatusCode == System.Net.HttpStatusCode.OK)
                 {
+                    this.allowanceTracker.SetAllowance(restResponseBase.RemainingMonthlyAllowance, restResponseBase.ExtraAllowance, restResponseBase.AllowanceRefreshTimer);
                     return restResponse.Data;
-                } else
-                {
-                    throw new Exception($"Error in rest call: {restResponse.ErrorMessage} with response raw data \"{restResponse.Content}\"");
                 } 
-            } 
+                else if (restResponse.StatusCode == System.Net.HttpStatusCode.Forbidden && restResponseBase != null)
+                {
+                    this.allowanceTracker.SetAllowance(restResponseBase.RemainingMonthlyAllowance, restResponseBase.ExtraAllowance, restResponseBase.AllowanceRefreshTimer);
+                     
+                    throw new Exception($"Error: ApiKey Invalid or reached monthly limit: {this.allowanceTracker.Current.Remaining} remaining, reset at: {this.allowanceTracker.Current.ResetAt}");
+
+                }
+
+                throw new Exception($"Error in rest call: {restResponse.ErrorMessage} with response raw data \"{restResponse.Content}\"");
+
+            }
             catch (Exception e)
             {
                 string requestUri = this.client.BaseUrl + "/" + endpoint;

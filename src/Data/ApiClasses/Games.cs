@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using TheGamesDBApiWrapper.Annotations;
 using TheGamesDBApiWrapper.Domain.ApiClasses;
+using TheGamesDBApiWrapper.Domain.Track;
 using TheGamesDBApiWrapper.Models.Payloads.Games;
 using TheGamesDBApiWrapper.Models.Responses.Games;
 
@@ -23,7 +24,8 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </summary>
         /// <param name="config">The configuration.</param>
         /// <param name="factory">The factory.</param>
-        public Games(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory) : base(config, factory, "Games")
+        /// <param name="allowanceTracker">The allowance tracker.</param>
+        public Games(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, IAllowanceTracker allowanceTracker) : base(config, factory, "Games", allowanceTracker)
         {
         }
 

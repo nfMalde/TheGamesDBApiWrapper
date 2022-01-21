@@ -6,6 +6,8 @@ using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
 using TheGamesDBApiWrapper.Domain.ApiClasses;
+using TheGamesDBApiWrapper.Domain.Track;
+
 namespace TheGamesDBApiWrapper.Data.ApiClasses
 {
     /// <summary>
@@ -22,7 +24,8 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </summary>
         /// <param name="config">The configuration.</param>
         /// <param name="factory">The factory.</param>
-        public Platform(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory) : base(config, factory, "Platforms")
+        /// <param name="allowanceTracker">The allowance tracker.</param>
+        public Platform(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, IAllowanceTracker allowanceTracker) : base(config, factory, "Platforms", allowanceTracker)
         {
         }
 
