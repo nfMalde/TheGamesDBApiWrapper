@@ -3,6 +3,8 @@ using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
 using RestSharp;
+using RestSharp.Serializers.NewtonsoftJson;
+using RichardSzalay.MockHttp;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -39,22 +41,21 @@ namespace TheGamesDBApiWrapperTests
             throw new Exception($"Json Mock {filename}.mock.json not found. Path: {p}");
         }
 
-        private Mock<IRestClient> mockRestClient<TResponse>(string jsonfile) where TResponse:class
+        private RestClient mockRestClient<TResponse>(string jsonfile) where TResponse:class
         {
+            string content = this.loadJson(jsonfile);
+            var mockHttp = new MockHttpMessageHandler();
+            mockHttp.When("*")
+            .Respond("application/json", content);
+
             string fakeResponse = this.loadJson(jsonfile);
+            return new RestClient(new RestClientOptions()
+            {
+                ConfigureMessageHandler = _ => mockHttp,
+                BaseUrl = new Uri("https://localhost/testapi/"),
 
-            Mock<IRestClient> restMock = new Mock<IRestClient>();
-            restMock.Setup(x => x.DefaultParameters).Returns(() => new List<RestSharp.Parameter>());
-            restMock.Setup(x => x.ExecuteGetAsync<TResponse>(It.IsAny<RestRequest>(), default))
-                            .Returns(() =>
-                            {
-                                IRestResponse<TResponse> response = new RestResponse<TResponse>();
-                                response.StatusCode = System.Net.HttpStatusCode.OK;
-                                response.Data = JsonConvert.DeserializeObject<TResponse>(fakeResponse, this.getJsonSettings());
-
-                                return Task.FromResult(response);
-                            });
-            return restMock;
+            })
+                .UseSerializer(() => new JsonNetSerializer(this.getJsonSettings()));
 
         }
 
@@ -75,7 +76,7 @@ namespace TheGamesDBApiWrapperTests
         {
            
             Mock<ITheGamesDBApiWrapperRestClientFactory> mock = new Mock<ITheGamesDBApiWrapperRestClientFactory>();
-            mock.Setup(x => x.Create(It.IsAny<string>())).Returns(() => this.mockRestClient<TResponse>(jsonfile).Object);
+            mock.Setup(x => x.Create(It.IsAny<string>())).Returns(() => this.mockRestClient<TResponse>(jsonfile));
 
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();

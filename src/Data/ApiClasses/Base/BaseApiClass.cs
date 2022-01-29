@@ -24,7 +24,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// <summary>
         /// The client
         /// </summary>
-        private IRestClient client;
+        private RestClient client;
         /// <summary>
         /// The apikey
         /// </summary>
@@ -169,11 +169,11 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// <exception cref="Exceptions.TheGamesDBApiException"></exception>
         protected async Task<T> CallGet<T>(string endpoint = null, object payload = null, string version = null) where T:class
         {
-            RestRequest r = endpoint != null ? new RestRequest(endpoint, Method.GET): new RestRequest(Method.GET);
+            RestRequest r = new RestRequest(endpoint, Method.Get);
 
             // Support for long requests
             r.Timeout = 3600;
-            r.ReadWriteTimeout = 3600;
+            
 
             if (version != null)
             {
@@ -224,7 +224,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
             }
             catch (Exception e)
             {
-                string requestUri = this.client.BaseUrl + "/" + endpoint;
+                string requestUri =  "/" + endpoint;
                 var p = r.Parameters.Select(x => $"{x.Name} = <{x.Value}>");
 
                 string message = $"TheGamesDB Api Error. Unable to send Data {string.Join(';', p)} to endpoint {requestUri}. ";

@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Base
 {
-    public class BaseApiResponseModel
+    public abstract class BaseApiResponseModel
     {
         /// <summary>
         /// Gets or sets the code.
