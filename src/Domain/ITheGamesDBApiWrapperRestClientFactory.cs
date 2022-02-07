@@ -4,6 +4,6 @@ namespace TheGamesDBApiWrapper.Domain
 {
     public interface ITheGamesDBApiWrapperRestClientFactory
     {
-        IRestClient Create(string baseUri);
+        RestClient Create(string baseUri);
     }
 }

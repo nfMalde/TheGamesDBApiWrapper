@@ -44,9 +44,9 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
 
             ITheGamesDBApiWrapperRestClientFactory restClientFactory = this.Provider.GetService<ITheGamesDBApiWrapperRestClientFactory>();
 
-            IRestClient rest = restClientFactory.Create(null);
+            RestClient rest = restClientFactory.Create(null);
 
-            IRestResponse<TResponseModel> prevPageResponse = await rest.ExecuteGetAsync<TResponseModel>(new RestRequest(this.Pages.Previous));
+            RestResponse<TResponseModel> prevPageResponse = await rest.ExecuteGetAsync<TResponseModel>(new RestRequest(this.Pages.Previous));
 
             if (prevPageResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {
@@ -70,9 +70,9 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
             }
             ITheGamesDBApiWrapperRestClientFactory restClientFactory = this.Provider.GetService<ITheGamesDBApiWrapperRestClientFactory>();
 
-            IRestClient rest = restClientFactory.Create(null);
+            RestClient rest = restClientFactory.Create(null);
 
-            IRestResponse<TResponseModel> nextPageResponse = await rest.ExecuteGetAsync<TResponseModel>(new RestRequest(this.Pages.Next));
+            RestResponse<TResponseModel> nextPageResponse = await rest.ExecuteGetAsync<TResponseModel>(new RestRequest(this.Pages.Next));
 
             if (nextPageResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {

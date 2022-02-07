@@ -15,7 +15,8 @@ This Library uses the following lib(s) fro archive its functionality:
 * [NewtonSoft.Json/JSON.NET](https://github.com/JamesNK/Newtonsoft.Json)
 
 ## Requirements
-* .NET Core 3.1 or higher
+* .NET 5 or higher
+* .NET Core 3.1 please use Version **1.1.x** 
 * The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
 ## Install
 Nuget:

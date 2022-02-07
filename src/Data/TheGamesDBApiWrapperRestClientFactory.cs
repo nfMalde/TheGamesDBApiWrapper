@@ -19,7 +19,7 @@ namespace TheGamesDBApiWrapper.Data
             this.provider = provider;
         }
  
-        public IRestClient Create(string baseUri)
+        public RestClient Create(string baseUri)
         {
             var settings = new JsonSerializerSettings();
             //Now Add Converter for all Models that require DI
@@ -27,12 +27,11 @@ namespace TheGamesDBApiWrapper.Data
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.Converters.Add(new DictConverter());
 
-            IRestClient restClient = string.IsNullOrEmpty(baseUri) ? new RestClient() : new RestClient(baseUri);
-            restClient.FailOnDeserializationError = true;
-            restClient.ThrowOnAnyError = true; 
-            restClient.UseNewtonsoftJson(settings);
+            RestClient restClient = string.IsNullOrEmpty(baseUri) ? new RestClient() : new RestClient(baseUri);
+             
 
-            return restClient;
+            return restClient
+                .UseSerializer(() => new JsonNetSerializer(settings));
         }
     }
 }
