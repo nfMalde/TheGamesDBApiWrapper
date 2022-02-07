@@ -9,9 +9,12 @@
     <RepositoryUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
-    <PackageReleaseNotes>Fixes from PR#1:
-* fix for passing fields in ByGameName API calls
-* fix for supporting Image "side" property</PackageReleaseNotes>
+    <PackageReleaseNotes>
+<![CDATA[
+* Migrated to latest RestSharp (107.1.2)
+* Migrated to .NET 5
+]]>
+	</PackageReleaseNotes>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
   </PropertyGroup>
