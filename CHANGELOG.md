@@ -1,4 +1,8 @@
 # Change Log
+## 1.3.0
+* Migrated to .NET 6
+* Migrated to latest RestSharp (107.1.2)
+
 ## 1.2.0
 * Migrated to latest RestSharp (107.1.2)
 * Migrated to .NET 5

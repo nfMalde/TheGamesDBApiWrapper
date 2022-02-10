@@ -12,7 +12,8 @@
     <PackageReleaseNotes>
 <![CDATA[
 * Migrated to latest RestSharp (107.1.2)
-* Migrated to .NET 5
+* Migrated to .NET 6
+* .NET 5 Users please use Version **1.2.x**
 * .NET Core 3.1 please use Version **1.1.x** 
 ]]>
 	</PackageReleaseNotes>
