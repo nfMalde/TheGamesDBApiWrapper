@@ -54,8 +54,9 @@ namespace TheGamesDBApiWrapperTests
                 ConfigureMessageHandler = _ => mockHttp,
                 BaseUrl = new Uri("https://localhost/testapi/"),
 
-            })
-                .UseSerializer(() => new JsonNetSerializer(this.getJsonSettings()));
+
+            },
+            configureSerialization: s => s.UseNewtonsoftJson(this.getJsonSettings()));
 
         }
 
