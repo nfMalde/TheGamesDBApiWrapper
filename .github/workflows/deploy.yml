@@ -23,28 +23,16 @@ jobs:
     needs: test
     runs-on: windows-latest
     outputs: 
-      version: ${{ steps._version.outputs.version }}
+      version: ${{ steps.semver.outputs.patch }}
     steps:
-    - name: Latest Tag
-      shell: pwsh
-      id: _version
-      run: |
-        $currentVersion = git describe --long
-        Write-Host "Current Version found: $($currentVersion)"
-        $versionParts = $currentVersion.Split('-')
-        $v = $versionParts[0]
-        $increment = 1
-        $commit = $versionParts[2]
-        if ($v -notmatch '^v([0-9]{1,4})(\.([0-9]{1,4}))(\.([0-9]{1,4}))$') {
-            Write-Error "Version $($v) doesnt match pattern ^v([0-9]{1,4})(\.([0-9]{1,4}))(\.([0-9]{1,4}))$"
-            throw 
-        }
-        
-        $vparts = $v.Split('.')
-        $vparts[2] = "$([int]$vparts[2] + 1)"
-        $v = $vparts -join '.'
-        $v = "$($v)"
-        Write-Output "::set-output name=version::$($v.Trim().Replace("`t", '') | ConvertTo-Json)"
+    - name: Get Latest Tag
+      id: previoustag
+      uses: WyriHaximus/github-action-get-previous-tag@v1
+    - name: Get next minor version
+      id: semver
+      uses: 'WyriHaximus/github-action-next-semvers@v1'
+      with:
+        version: ${{ steps.previoustag.outputs.tag }}
   prepublish:
     needs: [test, version]
     runs-on: windows-latest
