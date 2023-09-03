@@ -7,15 +7,37 @@ jobs:
   version:
     runs-on: windows-latest
     outputs: 
-      version: ${{ env.MAGIC_VERSION }}
+      version: ${{ steps.newversion.outputs.version }}"
     steps:
     - name: Checkout Sources
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Magic Version
-      uses: sinkcup/magic-version@v1.2.0
+    - name: CurrentVersion 
+      id: current
+      shell: pwsh
+      run: | 
+        $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*"
+        Write-Output "::set-output name=currentVersion::$($currentVersion.Trim().Replace("`t", '') | ConvertTo-Json)"
+    - name: Set New Version
+      id: newversion
       env:
-        TAG_PREFIX: v # optional
- 
+        currentV: ${{ steps.current.outputs.currentVersion }}"
+      shell: pwsh
+      run: |
+            $currentVersion = git describe --match "$($env:currentV)" --long
+            $versionParts = $currentVersion.Split('-')
+            $v = $versionParts[0]
+            $increment = [int]$versionParts[1]
+            
+            if ($increment -gt 0) {
+                $increment = 1
+            }
+
+            $vparts = $v.Split('.')
+            $vparts[2] = "$([int]$vparts[2] + [int]$increment)"
+            $v = $vparts -join '.'
+            $v = "$($v)"
+            Write-Output "::set-output name=version::$($v.Trim().Replace("`t", '') | ConvertTo-Json)"
+
       
