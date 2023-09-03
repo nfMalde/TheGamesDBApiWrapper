@@ -13,20 +13,12 @@ jobs:
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: CurrentVersion 
-      id: current
-      shell: pwsh
-      run: | 
-        $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*"
-        Write-Host $currenVersion
-        $env:GITHUB_OUTPUT = "currentVersion=$($currentVersion)"
     - name: Set New Version
       id: newversion
-      env:
-        currentV: ${{ steps.current.outputs.currentVersion }}"
       shell: pwsh
       run: |
-            $currentVersion = git describe --match "$($env:currentV)" --long
+            $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*"
+            $currentVersion = git describe --match "$($currentVersion)" --long
             $versionParts = $currentVersion.Split('-')
             $v = $versionParts[0]
             $increment = [int]$versionParts[1]
@@ -39,6 +31,8 @@ jobs:
             $vparts[2] = "$([int]$vparts[2] + [int]$increment)"
             $v = $vparts -join '.'
             $v = "$($v)"
+            Write-Output $v
             Write-Output "::set-output name=version::$($v.Trim().Replace("`t", '') | ConvertTo-Json)"
+            
 
       
