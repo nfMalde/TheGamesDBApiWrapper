@@ -15,8 +15,9 @@ This Library uses the following lib(s) fro archive its functionality:
 * [NewtonSoft.Json/JSON.NET](https://github.com/JamesNK/Newtonsoft.Json)
 
 ## Requirements
-* .NET 5 or higher
-* .NET Core 3.1 please use Version **1.1.x** 
+* .NET 6 or higher
+* Older Versions for NET5 and below are still available - however **starting with v2.0.0** these versions are no longer supported and marked as depricated. Please update your package to latest version when possible.
+* This package requires RestSharp  1.110.x and above.
 * The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
 ## Install
 Nuget:

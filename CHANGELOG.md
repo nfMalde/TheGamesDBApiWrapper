@@ -1,4 +1,13 @@
 # Change Log
+## 2.0.0
+Fixes:
+* Fixed a bug where certain null values at GameModel result in breaking the code.
+* Fixed TheGamesDBApiWrapperRestClientFactory creation due to breaking code changes in RestSharp 110.20
+Updates:
+* Migrated to latest RestSharp (110.20)
+* Migrated to .NET 6
+
+Starting with this release older versions of th is package are no longer supported or mantained and will be marked as depricated in nuget.
 ## 1.2.0
 * Migrated to latest RestSharp (107.1.2)
 * Migrated to .NET 5
