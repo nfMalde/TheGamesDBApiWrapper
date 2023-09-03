@@ -25,6 +25,10 @@ jobs:
     outputs: 
       version: ${{ steps.semver.outputs.patch }}
     steps:
+    - name: Checkout Sources
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
     - name: Get Latest Tag
       id: previoustag
       uses: WyriHaximus/github-action-get-previous-tag@v1
