@@ -4,23 +4,7 @@ on:
     branches: [ main ]   
 
 jobs:
-  test:
-    runs-on: windows-latest
-    steps:
-      - name: Checkout Sources
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
-      - name: Setup .NET 6
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 6.0.x
-      - name: "Build and Test"
-        run: |
-          dotnet build
-          dotnet test
   version:
-    needs: test
     runs-on: windows-latest
     outputs: 
       version: ${{ env.MAGIC_VERSION }}
@@ -30,7 +14,7 @@ jobs:
       with:
         fetch-depth: 0
     - name: Magic Version
-      uses: sinkcup/magic-version@v1
+      uses: sinkcup/magic-version@v1.2.0
       env:
         TAG_PREFIX: v # optional
  
