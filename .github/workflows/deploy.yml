@@ -23,14 +23,15 @@ jobs:
     needs: test
     runs-on: windows-latest
     outputs: 
-      version: ${{ steps.version.outputs.version }}
+      version: ${{ env.MAGIC_VERSION }}
     steps:
     - name: Checkout Sources
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: Git Version
-      id: version
-      uses: codacy/git-version@2.7.1
+    - name: Magic Version
+      uses: sinkcup/magic-version@v1
+      env:
+        TAG_PREFIX: v # optional
  
       
