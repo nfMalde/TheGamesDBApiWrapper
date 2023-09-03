@@ -1,4 +1,4 @@
-name: Release 1.2.x
+name: Deploy
 on:
   push:
     branches: [ main ]   
