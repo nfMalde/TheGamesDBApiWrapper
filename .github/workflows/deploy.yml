@@ -18,7 +18,8 @@ jobs:
       shell: pwsh
       run: | 
         $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*"
-        Write-Output "::set-output name=currentVersion::$($currentVersion.Trim().Replace("`t", '') | ConvertTo-Json)"
+        Write-Host $currenVersion
+        $env:GITHUB_OUTPUT = "currentVersion=$($currentVersion)"
     - name: Set New Version
       id: newversion
       env:
