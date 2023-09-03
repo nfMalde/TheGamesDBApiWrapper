@@ -23,7 +23,7 @@ jobs:
     needs: test
     runs-on: windows-latest
     outputs: 
-      version: ${{ steps.newversion.outputs.version }}"
+      version: ${{ steps.newversion.outputs.version }}"      
     steps:
     - name: Checkout Sources
       uses: actions/checkout@v2
@@ -46,7 +46,7 @@ jobs:
             $vparts = $v.Split('.')
             $vparts[2] = "$([int]$vparts[2] + [int]$increment)"
             $v = $vparts -join '.'
-            $v = "$($v)"
+            $v = "$($v)".TrimStart("v")
             Write-Output "New Version: $($v)"
             Write-Output "version=$($v)" >> $Env:GITHUB_OUTPUT
   prepublish:
@@ -95,7 +95,7 @@ jobs:
           tag_name: v${{ needs.version.outputs.version  }}
           release_name: Release v${{ needs.version.outputs.version  }}
           body: |
-           # Release Info ${{ needs.version.outputs.version  }}
+           # Release Info Version ${{ needs.version.outputs.version  }}
            ## Info
            ${{fromJSON(needs.prepublish.outputs.description)}}
            ## Changes in v${{ needs.version.outputs.version  }}
