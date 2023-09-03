@@ -27,7 +27,7 @@ namespace TheGamesDBApiWrapper.Data
             settings.NullValueHandling = NullValueHandling.Ignore;
             settings.Converters.Add(new DictConverter());
 
-            RestClient restClient = string.IsNullOrEmpty(baseUri) ? new RestClient(configureSerialization: s => s.UseNewtonsoftJson(settings)) : new RestClient(baseUri);
+            RestClient restClient = string.IsNullOrEmpty(baseUri) ? new RestClient(configureSerialization: s => s.UseNewtonsoftJson(settings)) : new RestClient(baseUri, configureSerialization: s => s.UseNewtonsoftJson(settings));
              
 
             return restClient;
