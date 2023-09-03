@@ -46,7 +46,7 @@ jobs:
         $v = "$($v)"
         Write-Output "::set-output name=version::$($v.Trim().Replace("`t", '') | ConvertTo-Json)"
   prepublish:
-    needs: test
+    needs: [test, version]
     runs-on: windows-latest
     outputs:
       description: ${{ steps.meta.outputs.description }}
