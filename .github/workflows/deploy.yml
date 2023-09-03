@@ -23,7 +23,7 @@ jobs:
     needs: test
     runs-on: windows-latest
     outputs: 
-      version: ${{ steps.newversion.outputs.version }}"      
+      version: ${{ steps.newversion.outputs.version }}      
     steps:
     - name: Checkout Sources
       uses: actions/checkout@v2
