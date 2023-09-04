@@ -4,28 +4,37 @@ on:
     branches: [ main ]   
 
 jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Sources
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: "Build and Test"
+        run: |
+          dotnet build
+          dotnet test
   version:
+    needs: test
     runs-on: windows-latest
     outputs: 
-      version: ${{ steps.newversion.outputs.version }}"
+      version: ${{ steps.newversion.outputs.version }}      
     steps:
     - name: Checkout Sources
       uses: actions/checkout@v2
       with:
         fetch-depth: 0
-    - name: CurrentVersion 
-      id: current
-      shell: pwsh
-      run: | 
-        $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*"
-        Write-Output "::set-output name=currentVersion::$($currentVersion.Trim().Replace("`t", '') | ConvertTo-Json)"
     - name: Set New Version
       id: newversion
-      env:
-        currentV: ${{ steps.current.outputs.currentVersion }}"
       shell: pwsh
       run: |
-            $currentVersion = git describe --match "$($env:currentV)" --long
+            $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*"
+            $currentVersion = git describe --match "$($currentVersion)" --long
             $versionParts = $currentVersion.Split('-')
             $v = $versionParts[0]
             $increment = [int]$versionParts[1]
@@ -37,7 +46,84 @@ jobs:
             $vparts = $v.Split('.')
             $vparts[2] = "$([int]$vparts[2] + [int]$increment)"
             $v = $vparts -join '.'
-            $v = "$($v)"
-            Write-Output "::set-output name=version::$($v.Trim().Replace("`t", '') | ConvertTo-Json)"
+            $v = "$($v)".TrimStart("v")
+            Write-Output "New Version: $($v)"
+            Write-Output "version=$($v)" >> $Env:GITHUB_OUTPUT
+  prepublish:
+      needs: [test, version]
+      runs-on: windows-latest
+      outputs:
+        description: ${{ steps.meta.outputs.description }}
+        changeinfo: ${{ steps.meta.outputs.changeinfo }}
+      steps:
+      - name: Checkout Sources
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name : Get Meta Data
+        shell: pwsh
+        id: meta
+        run: |
+          [xml]$xml = get-content "src/TheGamesDBApiWrapper.csproj"    
+          $description = $xml.SelectSingleNode("//Description").InnerText;
+          $changes = $xml.SelectSingleNode("//PackageReleaseNotes").InnerText;
+          Write-Output "description=$($description.Trim().Replace("`t", '') | ConvertTo-Json)" >> $Env:GITHUB_OUTPUT
+          Write-Output "changeinfo=$($changes.Trim().Replace("`t", '') | ConvertTo-Json)" >> $Env:GITHUB_OUTPUT
+
+  publish:
+      needs: [test, version, prepublish]
+      runs-on: windows-latest
+      steps:
+      - name: Setup .NET 6
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: 6.0.x
+      - name: Checkout Sources
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Create Package
+        run: |
+          dotnet build src/TheGamesDBApiWrapper.csproj -c Release -p:AssemblyVersion=${{ needs.version.outputs.version }} -p:PackageVersion=${{ needs.version.outputs.version }}
+          dotnet pack src/TheGamesDBApiWrapper.csproj -c Release -p:AssemblyVersion=${{ needs.version.outputs.version }} -p:PackageVersion=${{ needs.version.outputs.version }} --output nget_pkg
+      - name: Create Release and Tag
+        id: create_release
+        uses: actions/create-release@latest
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
+        with:
+          tag_name: v${{ needs.version.outputs.version  }}
+          release_name: Release v${{ needs.version.outputs.version  }}
+          body: |
+           # Release Info Version ${{ needs.version.outputs.version  }}
+           ## Info
+           ${{fromJSON(needs.prepublish.outputs.description)}}
+           ## Changes in v${{ needs.version.outputs.version  }}
+           ${{fromJSON(needs.prepublish.outputs.changeinfo)}}
+          draft: false
+          prerelease: false
+          
+      - name: Upload Release Asset Pkg
+        id: upload-release-asset 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: ./nget_pkg/TheGamesDBApiWrapper.${{ needs.version.outputs.version }}.nupkg
+          asset_name: TheGamesDBApiWrapper.${{ needs.prepublish.version.version }}.nupkg
+          asset_content_type: application/zip
+      - name: Upload Release Asset DLL
+        id: upload-release-asset2 
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
+          asset_path: src/bin/Release/net6.0/TheGamesDBApiWrapper.dll
+          asset_name: TheGamesDBApiWrapper.dll
+          asset_content_type: application/octet-stream
+
+
 
       
