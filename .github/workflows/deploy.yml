@@ -123,7 +123,9 @@ jobs:
           asset_path: src/bin/Release/net6.0/TheGamesDBApiWrapper.dll
           asset_name: TheGamesDBApiWrapper.dll
           asset_content_type: application/octet-stream
-
+      - name: Publish package to nuget
+        id: nugetpush
+        run: dotnet nuget push  "nget_pkg/TheGamesDBApiWrapper.${{ needs.version.outputs.version }}.nupkg" -k ${{secrets.NUGET_KEY}} -s https://api.nuget.org/v3/index.json  
 
 
       
