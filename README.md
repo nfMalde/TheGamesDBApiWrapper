@@ -12,6 +12,7 @@ For API-Docs look here: https://api.thegamesdb.net/#/
 This Library uses the following lib(s) fro archive its functionality:
 * [RestSharp](https://github.com/restsharp/RestSharp)
 * [NewtonSoft.Json/JSON.NET](https://github.com/JamesNK/Newtonsoft.Json)
+* [Shouldly](https://github.com/shouldly)
 
 ## Requirements
 * .NET 6 or higher

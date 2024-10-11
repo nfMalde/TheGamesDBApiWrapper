@@ -172,7 +172,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
             RestRequest r = new RestRequest(endpoint, Method.Get);
 
             // Support for long requests
-            r.Timeout = 3600;
+            r.Timeout = TimeSpan.FromSeconds(3600);
             
 
             if (version != null)

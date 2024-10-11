@@ -5,6 +5,7 @@ using NUnit.Framework;
 using RestSharp;
 using RestSharp.Serializers.NewtonsoftJson;
 using RichardSzalay.MockHttp;
+using Shouldly;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -41,7 +42,7 @@ namespace TheGamesDBApiWrapperTests
             throw new Exception($"Json Mock {filename}.mock.json not found. Path: {p}");
         }
 
-        private RestClient mockRestClient<TResponse>(string jsonfile) where TResponse:class
+        private RestClient mockRestClient<TResponse>(string jsonfile) where TResponse : class
         {
             string content = this.loadJson(jsonfile);
             var mockHttp = new MockHttpMessageHandler();
@@ -53,11 +54,8 @@ namespace TheGamesDBApiWrapperTests
             {
                 ConfigureMessageHandler = _ => mockHttp,
                 BaseUrl = new Uri("https://localhost/testapi/"),
-
-
             },
             configureSerialization: s => s.UseNewtonsoftJson(this.getJsonSettings()));
-
         }
 
         private IServiceProvider ServiceProvider;
@@ -72,10 +70,8 @@ namespace TheGamesDBApiWrapperTests
             return settings;
         }
 
-
-        private void mockServices<TResponse>(string jsonfile) where TResponse:class
+        private void mockServices<TResponse>(string jsonfile) where TResponse : class
         {
-           
             Mock<ITheGamesDBApiWrapperRestClientFactory> mock = new Mock<ITheGamesDBApiWrapperRestClientFactory>();
             mock.Setup(x => x.Create(It.IsAny<string>())).Returns(() => this.mockRestClient<TResponse>(jsonfile));
 
@@ -99,10 +95,10 @@ namespace TheGamesDBApiWrapperTests
             ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
             var response = await api.Developers.All();
 
-            Assert.NotNull(response.Code);
-            Assert.NotNull(response.Data);
-            Assert.NotNull(response.Data.Developers);
-            Assert.NotNull(response.Data.Developers.First().Value.Name); 
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Developers.ShouldNotBeNull();
+            response.Data.Developers.First().Value.Name.ShouldNotBeNull();
         }
 
         [TestCaseSource(nameof(GameByIdMocks))]
@@ -111,18 +107,18 @@ namespace TheGamesDBApiWrapperTests
             this.mockServices<GamesByGameIDResponse>(mockfile);
 
             ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
-            var response = await api.Games.ByGameID(new int[] { 1,2,3,4,5});
+            var response = await api.Games.ByGameID(new int[] { 1, 2, 3, 4, 5 });
 
-            Assert.NotNull(response.Code);
-            Assert.NotNull(response.Data);
-            Assert.NotNull(response.Data.Games);
-            Assert.NotNull(response.Data.Games.First().GameTitle);
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Games.ShouldNotBeNull();
+            response.Data.Games.First().GameTitle.ShouldNotBeNull();
         }
 
         public static object[] GameByIdMocks =  {
-            new object[] { "game-by-id" },
-            new object[] { "game-by-id-2" }
-        };
+                        new object[] { "game-by-id" },
+                        new object[] { "game-by-id-2" }
+                    };
 
         [Test]
         public async Task GameImagesResponseShouldBeParsed()
@@ -130,16 +126,15 @@ namespace TheGamesDBApiWrapperTests
             this.mockServices<GamesImagesResponse>("game-images");
 
             ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
-            var response = await api.Games.Images(new int[] { 1});
+            var response = await api.Games.Images(new int[] { 1 });
 
-            Assert.NotNull(response.Code);
-            Assert.NotNull(response.Data);
-            Assert.NotNull(response.Data.BaseUrl);
-            Assert.NotNull(response.Pages);
-            Assert.NotNull(response.Data.Images);
-            Assert.NotNull(response.Data.Images.First().Value.First().Type);
-            Assert.AreEqual(response.Data.Images.First().Value.First().Type, GameImageType.Fanart);
-
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.BaseUrl.ShouldNotBeNull();
+            response.Pages.ShouldNotBeNull();
+            response.Data.Images.ShouldNotBeNull();
+            response.Data.Images.First().Value.First().Type.ShouldNotBeNull();
+            response.Data.Images.First().Value.First().Type.ShouldBe(GameImageType.Fanart);
         }
 
         [Test]
@@ -151,16 +146,14 @@ namespace TheGamesDBApiWrapperTests
 
             var response = await api.Games.Updates(0);
 
-            Assert.NotNull(response.Code);
-            Assert.NotNull(response.Data);
-            Assert.NotNull(response.Data.Updates);
-            Assert.NotNull(response.Data.Updates.First().EditID);
-            Assert.NotNull(response.Data.Updates.First().GameID);
-            Assert.NotNull(response.Data.Updates.First().Timestamp);
-            Assert.NotNull(response.Data.Updates.First().Type);
-            Assert.NotNull(response.Data.Updates.First().Value);
-
-
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Updates.ShouldNotBeNull();
+            response.Data.Updates.First().EditID.ShouldNotBeNull();
+            response.Data.Updates.First().GameID.ShouldNotBeNull();
+            response.Data.Updates.First().Timestamp.ShouldNotBeNull();
+            response.Data.Updates.First().Type.ShouldNotBeNull();
+            response.Data.Updates.First().Value.ShouldNotBeNull();
         }
 
         [Test]
@@ -172,11 +165,10 @@ namespace TheGamesDBApiWrapperTests
 
             var response = await api.Platform.All();
 
-            Assert.NotNull(response.Code);
-            Assert.NotNull(response.Data);
-            Assert.NotNull(response.Data.Platforms);
-            Assert.NotNull(response.Data.Platforms.First().Value.Name);
-
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Platforms.ShouldNotBeNull();
+            response.Data.Platforms.First().Value.Name.ShouldNotBeNull();
         }
 
         [Test]
@@ -188,11 +180,10 @@ namespace TheGamesDBApiWrapperTests
 
             var response = await api.Genres.All();
 
-
-            Assert.NotNull(response.Code);
-            Assert.NotNull(response.Data);
-            Assert.NotNull(response.Data.Genres);
-            Assert.NotNull(response.Data.Genres.First().Value.Name);
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Genres.ShouldNotBeNull();
+            response.Data.Genres.First().Value.Name.ShouldNotBeNull();
         }
 
         [Test]
@@ -204,11 +195,10 @@ namespace TheGamesDBApiWrapperTests
 
             var response = await api.Publishers.All();
 
-
-            Assert.NotNull(response.Code);
-            Assert.NotNull(response.Data);
-            Assert.NotNull(response.Data.Publishers);
-            Assert.NotNull(response.Data.Publishers.First().Value.Name);
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Publishers.ShouldNotBeNull();
+            response.Data.Publishers.First().Value.Name.ShouldNotBeNull();
         }
 
         [Test]
@@ -221,12 +211,11 @@ namespace TheGamesDBApiWrapperTests
 
             IAllowanceTracker tracker = this.ServiceProvider.GetService<IAllowanceTracker>();
 
-            Assert.NotNull(tracker.Current);
-            Assert.AreEqual(2916, tracker.Current.Remaining);
-            Assert.AreSame(api.AllowanceTrack, tracker.Current);
+            tracker.Current.ShouldNotBeNull();
+            tracker.Current.Remaining.ShouldBe(2916);
+            api.AllowanceTrack.ShouldBeSameAs(tracker.Current);
         }
 
         #endregion
-
     }
 }
