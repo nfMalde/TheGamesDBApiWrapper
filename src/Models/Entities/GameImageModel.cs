@@ -28,7 +28,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The type.
         /// </value>
         [JsonProperty("type")]
-        public GameImageType Type { get; set; }
+        public GameImageType? Type { get; set; }
         /// <summary>
         /// Gets or sets the side (i.e. front or back) for boxart images.
         /// </summary>

@@ -21,7 +21,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The edit identifier.
         /// </value>
         [JsonProperty("edit_id")]
-        public int EditID { get; set; }
+        public int? EditID { get; set; }
 
         /// <summary>
         /// Gets or sets the game identifier.
@@ -30,7 +30,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The game identifier.
         /// </value>
         [JsonProperty("game_id")]
-        public int GameID { get; set; }
+        public int? GameID { get; set; }
 
         /// <summary>
         /// Gets or sets the timestamp.
@@ -39,7 +39,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The timestamp.
         /// </value>
         [JsonProperty("timestamp")]
-        public DateTime Timestamp { get; set; }
+        public DateTime? Timestamp { get; set; }
 
         /// <summary>
         /// Gets or sets the type.
@@ -48,7 +48,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The type.
         /// </value>
         [JsonProperty("type")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         /// <summary>
         /// Gets or sets the value if value is string.
@@ -67,7 +67,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// The value.
         /// </value>
         [JsonIgnore]
-        public string Value { get { return this.Values?.Value; } }
+        public string? Value { get { return this.Values?.Value; } }
          
     }
 }

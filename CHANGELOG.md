@@ -1,4 +1,6 @@
 # Change Log
+## 2.1.0
+Upgraded to latest Restsharp and .net 8.
 ## 2.0.0
 Fixes:
 * Fixed a bug where certain null values at GameModel result in breaking the code.
