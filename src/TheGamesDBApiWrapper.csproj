@@ -11,14 +11,7 @@
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
     <PackageReleaseNotes>
 <![CDATA[
-Fixes:
-* Fixed a bug where certain null values at GameModel result in breaking the code.
-* Fixed TheGamesDBApiWrapperRestClientFactory creation due to breaking code changes in RestSharp 110.20
-Updates:
-* Migrated to latest RestSharp (110.20)
-* Migrated to .NET 6
-
-Starting with this release older versions of th is package are no longer supported or mantained and will be marked as depricated in nuget.
+Migrated to latest .net 8 version and updated dependencies to latest versions.
 
 ]]>
 	</PackageReleaseNotes>
