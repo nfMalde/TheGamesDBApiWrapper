@@ -197,7 +197,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                     }
                      
 
-                    r.AddQueryParameter(name.Trim(), prop.GetValue(payload)?.ToString() ?? null);
+                    r.AddQueryParameter(name.Trim(), prop.GetValue(payload)?.ToString() ?? null, false);
                 }
             }
 
