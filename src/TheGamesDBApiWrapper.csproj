@@ -11,8 +11,9 @@
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
     <PackageReleaseNotes>
 <![CDATA[
-Migrated to latest .net 8 version and updated dependencies to latest versions.
-
+ * Fixed bug where encoding csv like parameter broke the request
+ * Added support for multiple values in csv like parameter
+ * Added enhanced error handling (e.g. when the API is down)
 ]]>
 	</PackageReleaseNotes>
 	  <PackageReadmeFile>README.md</PackageReadmeFile>

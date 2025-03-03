@@ -53,7 +53,9 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
                 return prevPageResponse.Data;
             }
 
-            throw new Exceptions.TheGamesDBApiException($"Error fetching next Page by calling {this.Pages.Previous}.", prevPageResponse.ErrorException);
+            string result = prevPageResponse?.Content;
+
+            throw new Exceptions.TheGamesDBApiException($"Error recieved response {prevPageResponse?.StatusCode} - {result ?? "<no content>"} fetching next Page by calling {this.Pages.Previous}", prevPageResponse.ErrorException);
 
         }
 
@@ -68,6 +70,9 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
             {
                 return null;
             }
+
+           
+
             ITheGamesDBApiWrapperRestClientFactory restClientFactory = this.Provider.GetService<ITheGamesDBApiWrapperRestClientFactory>();
 
             RestClient rest = restClientFactory.Create(null);
@@ -79,7 +84,9 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
                 return nextPageResponse.Data;
             }
 
-            throw new Exceptions.TheGamesDBApiException($"Error fetching next Page by calling {this.Pages.Next}.", nextPageResponse.ErrorException);
+            string result = nextPageResponse?.Content;
+
+            throw new Exceptions.TheGamesDBApiException($"Error recieved response {nextPageResponse?.StatusCode} - {result ?? "<no content>"} fetching next Page by calling {this.Pages.Next}", nextPageResponse.ErrorException);
 
         }
 

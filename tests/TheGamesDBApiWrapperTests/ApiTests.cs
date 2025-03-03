@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
 using Moq;
 using Newtonsoft.Json;
 using NUnit.Framework;
@@ -63,8 +64,10 @@ namespace TheGamesDBApiWrapperTests
         private JsonSerializerSettings getJsonSettings()
         {
             var settings = new JsonSerializerSettings();
+  
             //Now Add Converter for all Models that require DI
             settings.ContractResolver = new DIContractResolver(this.ServiceProvider);
+            settings.NullValueHandling = NullValueHandling.Ignore;
             settings.Converters.Add(new DictConverter());
 
             return settings;
@@ -87,6 +90,7 @@ namespace TheGamesDBApiWrapperTests
         #endregion
 
         #region Tests
+
         [Test]
         public async Task DeveloperResponseShouldBeParsed()
         {
