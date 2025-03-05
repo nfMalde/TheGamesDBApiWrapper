@@ -44,17 +44,13 @@ jobs:
             } else {
     
                 $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*"
-                $currentVersion = git describe --match "$($currentVersion)" --long
                 $versionParts = $currentVersion.Split('-')
                 $v = $versionParts[0]
-                $increment = [int]$versionParts[1]
-                
-                if ($increment -gt 0) {
-                    $increment = 1
-                }
+                $increment = 1
+
 
                 $vparts = $v.Split('.')
-                $vparts[2] = "$([int]$vparts[2] + [int]$increment)"
+                $vparts[2] = "$([int]$vparts[2] + 1)"
                 $v = $vparts -join '.'
                 $v = "$($v)".TrimStart("v")
                 Write-Output "New Version: $($v)"
