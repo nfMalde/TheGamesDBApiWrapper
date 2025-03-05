@@ -1,4 +1,8 @@
 # Change Log
+## 2.1.1
+* Fixed bug where encoding csv like parameter broke the request
+* Added support for multiple values in csv like parameter
+* Added enhanced error handling (e.g. when the API is down)
 ## 2.1.0
 Upgraded to latest Restsharp and .net 8.
 ## 2.0.0

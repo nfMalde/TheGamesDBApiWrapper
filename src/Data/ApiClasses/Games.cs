@@ -4,6 +4,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Threading.Tasks;
+using System.Web;
 using TheGamesDBApiWrapper.Annotations;
 using TheGamesDBApiWrapper.Domain.ApiClasses;
 using TheGamesDBApiWrapper.Domain.Track;
@@ -124,14 +125,14 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         public async Task<GamesByGameIDResponse> ByGameID(int[] gameIds, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
             ByGameIdPayload payload = new ByGameIdPayload();
-            payload.Id = string.Join(',', gameIds.Select(x => x.ToString()));
+            payload.Id = string.Join(',', gameIds.Select(x => HttpUtility.UrlEncode(x.ToString())));
 
             if (includes != null)
             {
-                payload.Include = string.Join(',', includes.Select(x => this.GetEnumValue(x)));
+                payload.Include = string.Join(',', includes.Select(x =>  HttpUtility.UrlEncode(this.GetEnumValue(x))));
             }
 
-            payload.Fields = string.Join(',', fields.Select(x => this.GetEnumValue(x)));
+            payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
             payload.Page = page;
 
             return await this.CallGet<GamesByGameIDResponse>("ByGameID", payload);
@@ -685,9 +686,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         private async Task<GameByPlatformIDResponse> __ByPlatformID(int[] platformIDs, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
             ByGamePlatformIDPayload payload = new ByGamePlatformIDPayload();
-            payload.ID = string.Join(',', platformIDs.Select(x => x.ToString()));
-            payload.Fields = fields != null ? string.Join(',', fields.Select(x => this.GetEnumValue(x))) : null;
-            payload.Include = includes != null ? string.Join(',', includes.Select(x => this.GetEnumValue(x))) : null;
+            payload.ID = string.Join(',', platformIDs.Select(x => HttpUtility.UrlEncode(x.ToString())));
+            payload.Fields = fields != null ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
+            payload.Include = includes != null ? string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
             payload.Page = page <= 0 ? 1 : page;
 
             return await this.CallGet<GameByPlatformIDResponse>("ByPlatformID", payload);
@@ -708,9 +709,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
             ByGameNamePayload payload = new ByGameNamePayload();
             payload.Name = name;
             payload.Page = page <= 0 ? 1 : page;
-            payload.FilterPlatform = platformIds != null ? string.Join(',', platformIds.Select(x => x.ToString())) : null;
-            payload.Include = includes != null ? string.Join(',', includes.Select(x => this.GetEnumValue(x))) : null;
-            payload.Fields = fields != null ? string.Join(',', fields.Select(x => this.GetEnumValue(x))) : null;
+            payload.FilterPlatform = platformIds != null ? string.Join(',', platformIds.Select(x => HttpUtility.UrlEncode(x.ToString()))) : null;
+            payload.Include = includes != null ? string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
+            payload.Fields = fields != null ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
 
 
             return await this.CallGet<GamesByNameResponse>("ByGameName", payload, version);
