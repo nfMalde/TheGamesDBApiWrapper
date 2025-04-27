@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Games
 {
@@ -11,7 +7,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Games
     /// GamesImagesDataModel
     /// </summary>
     /// <seealso cref="TheGamesDBApiWrapper.Models.Responses.Base.DataModel" />
-    public class GamesImagesDataModel: Base.DataModel
+    public class GamesImagesDataModel : Base.DataModel
     {
         /// <summary>
         /// Gets or sets the base URL.
@@ -19,8 +15,8 @@ namespace TheGamesDBApiWrapper.Models.Responses.Games
         /// <value>
         /// The base URL.
         /// </value>
-        [JsonProperty("base_url")]
-        public Models.Entities.ImageBaseUrlMetaModel  BaseUrl { get; set; }
+        [JsonPropertyName("base_url")]
+        public Models.Entities.ImageBaseUrlMetaModel? BaseUrl { get; set; }
 
         /// <summary>
         /// Gets or sets the images.
@@ -28,7 +24,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Games
         /// <value>
         /// The images.
         /// </value>
-        [JsonProperty("images")]
-        public Dictionary<int, Models.Entities.GameImageModel[]> Images { get; set; }
+        [JsonPropertyName("images")]
+        public Dictionary<int, Models.Entities.GameImageModel[]>? Images { get; set; }
     }
 }

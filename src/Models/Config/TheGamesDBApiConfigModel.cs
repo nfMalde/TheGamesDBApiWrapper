@@ -33,7 +33,7 @@ namespace TheGamesDBApiWrapper.Models.Config
         /// <value>
         /// The API key.
         /// </value>
-        public string ApiKey { get; set; } = null;
+        public string ApiKey { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets a value indicating whether [force version].

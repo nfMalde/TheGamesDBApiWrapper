@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Responses
 {
@@ -18,8 +13,8 @@ namespace TheGamesDBApiWrapper.Models.Responses
         /// <value>
         /// The previous.
         /// </value>
-        [JsonProperty("previous")]
-        public string Previous { get; set; }
+        [JsonPropertyName("previous")]
+        public string? Previous { get; set; }
 
         /// <summary>
         /// Gets or sets the current url.
@@ -27,8 +22,8 @@ namespace TheGamesDBApiWrapper.Models.Responses
         /// <value>
         /// The current.
         /// </value>
-        [JsonProperty("current")]
-        public string Current { get; set; }
+        [JsonPropertyName("current")]
+        public string? Current { get; set; }
 
         /// <summary>
         /// Gets or sets the next url.
@@ -36,8 +31,8 @@ namespace TheGamesDBApiWrapper.Models.Responses
         /// <value>
         /// The next.
         /// </value>
-        [JsonProperty("next")]
-        public string Next { get; set; }
-
+        [JsonPropertyName("next")]
+        public string? Next { get; set; }
     }
 }
+

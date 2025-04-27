@@ -1,6 +1,7 @@
 [![Nuget](https://img.shields.io/nuget/v/TheGamesDBApiWrapper?style=flat-square)](https://www.nuget.org/packages/TheGamesDBApiWrapper/) 
- [![Downloads](https://img.shields.io/nuget/dt/TheGamesDBApiWrapper?style=flat-square)](https://www.nuget.org/packages/TheGamesDBApiWrapper/)
- [![Paypal Donate](https://www.paypalobjects.com/en_US/i/btn/btn_donate_SM.gif)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
+[![Downloads](https://img.shields.io/nuget/dt/TheGamesDBApiWrapper)](https://www.nuget.org/packages/TheGamesDBApiWrapper/)
+[![Paypal Donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
+[![Pull Request Check](https://img.shields.io/github/actions/workflow/status/nfMalde/TheGamesDBApiWrapper/pr.yml)](https://github.com/nfMalde/TheGamesDBApiWrapper/actions/workflows/pr.yml)
 
 # TheGamesDBApiWrapper
 Wrapper Lib for handling requests to the [TheGamesDB API](https://thegamesdb.net/).
@@ -10,14 +11,10 @@ For API-Docs look here: https://api.thegamesdb.net/#/
 
 **External Libraries**
 This Library uses the following lib(s) fro archive its functionality:
-* [RestSharp](https://github.com/restsharp/RestSharp)
-* [NewtonSoft.Json/JSON.NET](https://github.com/JamesNK/Newtonsoft.Json)
 * [Shouldly](https://github.com/shouldly)
 
 ## Requirements
-* .NET 6 or higher
-* Older Versions for NET5 and below are still available - however **starting with v2.0.0** these versions are no longer supported and marked as depricated. Please update your package to latest version when possible.
-* This package requires RestSharp  1.110.x and above.
+* .NET 9 or higher
 * The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
 
 ## Install
@@ -243,5 +240,5 @@ If you got any Ideas to improve my projects feel free to send an pull request.
 
 If you like my work and want to support me (or want to buy me a coffee/beer) paypal donation are more than appreciated.
 
- [![Paypal Donate](https://www.paypalobjects.com/en_US/DK/i/btn/btn_donateCC_LG.gif)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
+[![Paypal Donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
 

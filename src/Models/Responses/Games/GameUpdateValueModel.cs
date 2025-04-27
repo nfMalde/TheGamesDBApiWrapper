@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Games
 {
@@ -21,11 +22,13 @@ namespace TheGamesDBApiWrapper.Models.Responses.Games
             this.Objects = keyValuePairs;
         }
 
-        public string Value { get; set; }
+         
+        public string? Value { get; set; }
 
-        public object[] Values { get; set; }
+        
+        public object[]? Values { get; set; }
 
-        public Dictionary<string, object>[] Objects { get; private set; }
+        public Dictionary<string, object>[]? Objects { get; private set; }
     }
      
 }

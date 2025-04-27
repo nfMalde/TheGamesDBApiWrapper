@@ -1,7 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 using TheGamesDBApiWrapper.Models.Entities;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Publishers
@@ -10,7 +8,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Publishers
     /// PublishersDataModel
     /// </summary>
     /// <seealso cref="TheGamesDBApiWrapper.Models.Responses.Base.DataModel" />
-    public class PublishersDataModel: Base.DataModel
+    public class PublishersDataModel : Base.DataModel
     {
         /// <summary>
         /// Gets or sets the publishers.
@@ -18,7 +16,8 @@ namespace TheGamesDBApiWrapper.Models.Responses.Publishers
         /// <value>
         /// The publishers.
         /// </value>
-        [JsonProperty("publishers")]
-        public Dictionary<int, PublisherModel> Publishers { get; set; }
+        [JsonPropertyName("publishers")]
+        public Dictionary<int, PublisherModel>? Publishers { get; set; }
     }
 }
+

@@ -1,90 +1,57 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using TheGamesDBApiWrapper.Models.Entities;
 
 namespace TheGamesDBApiWrapper.Converter
 {
-    /// <summary>
-    /// Since TheGamesDB sends empty objects as empty arrays, we need to convert them.
-    /// Based on https://stackoverflow.com/a/26726667
-    /// </summary>
-    /// <seealso cref="Newtonsoft.Json.JsonConverter" />
-    public class DictConverter : JsonConverter
+
+    public class GameImageIncludeDictConverter : DictConverter<int, GameImageModel[]>
     {
-        /// <summary>
-        /// Determines whether this instance can convert the specified object type.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <returns>
-        /// <c>true</c> if this instance can convert the specified object type; otherwise, <c>false</c>.
-        /// </returns>
-        public override bool CanConvert(Type objectType)
-        {
-            bool isDict = objectType.IsGenericType && objectType.GetGenericTypeDefinition() == typeof(Dictionary<,>);
-            return isDict;
-        }
 
-        /// <summary>
-        /// Gets a value indicating whether this <see cref="T:Newtonsoft.Json.JsonConverter" /> can write JSON.
-        /// </summary>
-        /// <value>
-        ///   <c>true</c> if this <see cref="T:Newtonsoft.Json.JsonConverter" /> can write JSON; otherwise, <c>false</c>.
-        /// </value>
-        public override bool CanWrite { get { return false; } }
+    }
 
-        /// <summary>
-        /// Reads the JSON representation of the object.
-        /// </summary>
-        /// <param name="reader">The <see cref="T:Newtonsoft.Json.JsonReader" /> to read from.</param>
-        /// <param name="objectType">Type of the object.</param>
-        /// <param name="existingValue">The existing value of object being read.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        /// <returns>
-        /// The object value.
-        /// </returns>
-        /// <exception cref="JsonSerializationException">
-        /// Non-empty JSON array does not make a valid Dictionary!
-        /// or
-        /// Unexpected token!
-        /// </exception>
-        public override object ReadJson(JsonReader reader, Type objectType, object existingValue, JsonSerializer serializer)
+    /// <summary>
+    /// Custom converter to handle cases where TheGamesDB sends empty objects as empty arrays.
+    /// </summary>
+    public class DictConverter<TKey, TValue> : JsonConverter<Dictionary<TKey, TValue>>
+        where TKey : notnull
+    {
+        public override Dictionary<TKey, TValue>? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            if (reader.TokenType == JsonToken.StartArray)
+            if (reader.TokenType == JsonTokenType.StartArray)
             {
+                // Handle empty array as an empty dictionary
                 reader.Read();
-
-                if (reader.TokenType == JsonToken.EndArray)
-                    return Activator.CreateInstance(objectType);
+                if (reader.TokenType == JsonTokenType.EndArray)
+                {
+                    return new Dictionary<TKey, TValue>();
+                }
                 else
-                    throw new JsonSerializationException("Non-empty JSON array does not make a valid Dictionary!");
+                {
+                    throw new JsonException("Non-empty JSON array does not make a valid Dictionary!");
+                }
             }
-            else if (reader.TokenType == JsonToken.Null)
+            else if (reader.TokenType == JsonTokenType.Null)
             {
                 return null;
             }
-            else if (reader.TokenType == JsonToken.StartObject)
+            else if (reader.TokenType == JsonTokenType.StartObject)
             {
-                JToken token = JToken.Load(reader);
-                return token.ToObject(objectType); 
+                // Deserialize the object as a dictionary
+                return JsonSerializer.Deserialize<Dictionary<TKey, TValue>>(ref reader, options);
             }
             else
             {
-                throw new JsonSerializationException("Unexpected token!");
+                throw new JsonException("Unexpected token!");
             }
         }
 
-        /// <summary>
-        /// Writes the JSON representation of the object.
-        /// </summary>
-        /// <param name="writer">The <see cref="T:Newtonsoft.Json.JsonWriter" /> to write to.</param>
-        /// <param name="value">The value.</param>
-        /// <param name="serializer">The calling serializer.</param>
-        /// <exception cref="NotImplementedException"></exception>
-        public override void WriteJson(JsonWriter writer, object value, JsonSerializer serializer)
+        public override void Write(Utf8JsonWriter writer, Dictionary<TKey, TValue> value, JsonSerializerOptions options)
         {
-            throw new NotImplementedException();
+            // Serialize the dictionary as a JSON object
+            JsonSerializer.Serialize(writer, value, options);
         }
     }
 }

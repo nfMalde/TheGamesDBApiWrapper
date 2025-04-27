@@ -92,7 +92,7 @@ namespace TheGamesDBApiWrapper.Data
         /// <value>
         /// The allowance track model.
         /// </value>
-        public AllowanceTrackModel AllowanceTrack => this.allowanceTracker.Current;
+        public AllowanceTrackModel? AllowanceTrack => this.allowanceTracker?.Current;
 
         /// <summary>
         /// Sets the allowance.

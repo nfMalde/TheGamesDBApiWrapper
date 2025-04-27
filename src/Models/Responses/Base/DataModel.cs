@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Base
 {
@@ -18,7 +13,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
         /// <value>
         /// The count.
         /// </value>
-        [JsonProperty("count")]
+        [JsonPropertyName("count")]
         public int Count { get; set; }
     }
 }

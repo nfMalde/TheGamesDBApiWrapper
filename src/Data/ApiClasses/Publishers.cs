@@ -29,7 +29,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// Loads all publishers
         /// </summary>
         /// <returns></returns>
-        public async Task<PublishersResponse> All()
+        public async Task<PublishersResponse?> All()
         {
             return await this.CallGet<PublishersResponse>();
         }

@@ -1,9 +1,11 @@
-﻿using RestSharp;
+﻿using System.Net.Http;
+using System.Text.Json;
 
 namespace TheGamesDBApiWrapper.Domain
 {
     public interface ITheGamesDBApiWrapperRestClientFactory
     {
-        RestClient Create(string baseUri);
+        HttpClient Create(string baseUri);
+        JsonSerializerOptions GetJsonSerializerOptions();
     }
 }

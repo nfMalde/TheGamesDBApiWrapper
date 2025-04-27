@@ -40,10 +40,10 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformsResponseModel"/>
         /// </returns>
-        public async Task<Models.Responses.Platforms.PlatformsResponseModel> All(params Models.Enums.PlatformFields[] fields)
+        public async Task<Models.Responses.Platforms.PlatformsResponseModel?> All(params Models.Enums.PlatformFields[] fields)
         {
             Models.Payloads.Platforms.PlatformsPayload payload = new Models.Payloads.Platforms.PlatformsPayload();
-            payload.Fields = fields != null && fields.Any() ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
+            payload.Fields = fields != null && fields.Length > 0 ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
              
             return await this.CallGet<Models.Responses.Platforms.PlatformsResponseModel>(payload: payload);
         }
@@ -57,7 +57,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </param>
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformsResponseModel"/>
-        public async Task<Models.Responses.Platforms.PlatformsResponseModel> ByPlatformID(int platformId, params Models.Enums.PlatformFields[] fields)
+        public async Task<Models.Responses.Platforms.PlatformsResponseModel?> ByPlatformID(int platformId, params Models.Enums.PlatformFields[] fields)
         {
             return await this.ByPlatformID(new int[] { platformId }, fields);
         }
@@ -72,14 +72,17 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </param>
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformsResponseModel"/>
-        public async Task<Models.Responses.Platforms.PlatformsResponseModel> ByPlatformID(int[] platformIds, params Models.Enums.PlatformFields[] fields)
+        public async Task<Models.Responses.Platforms.PlatformsResponseModel?> ByPlatformID(int[] platformIds, params Models.Enums.PlatformFields[] fields)
         {
-            Models.Payloads.Platforms.ByPlatformIDPayload payload = new Models.Payloads.Platforms.ByPlatformIDPayload();
-
             string ids = string.Join(',', platformIds.Select(x => x.ToString()));
 
+            Models.Payloads.Platforms.ByPlatformIDPayload payload = new Models.Payloads.Platforms.ByPlatformIDPayload() 
+            { 
+                Id = ids            
+            };
+
+            
             payload.Fields = fields.Length > 0 ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
-            payload.Id = ids;
 
             return await this.CallGet<Models.Responses.Platforms.PlatformsResponseModel>("ByPlatformID", payload);
         }
@@ -94,12 +97,15 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </param>
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformsResponseModel"/>
-        public async Task<Models.Responses.Platforms.PlatformsResponseModel> ByPlatformName(string name, params Models.Enums.PlatformFields[] fields)
+        public async Task<Models.Responses.Platforms.PlatformsResponseModel?> ByPlatformName(string name, params Models.Enums.PlatformFields[] fields)
         {
-            Models.Payloads.Platforms.ByPlatformNamePayload payload = new Models.Payloads.Platforms.ByPlatformNamePayload();
+            Models.Payloads.Platforms.ByPlatformNamePayload payload = new Models.Payloads.Platforms.ByPlatformNamePayload()
+            {
+                Name = name
+            };
 
             payload.Fields = fields.Length > 0 ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
-            payload.Name = name;
+            
 
             return await this.CallGet<Models.Responses.Platforms.PlatformsResponseModel>("ByPlatformName", payload);
         }
@@ -113,14 +119,17 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="platformImageTypes">The platform image types as params.</param>
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformImagesResponse"/>
-        public async Task<Models.Responses.Platforms.PlatformImagesResponse> Images(int[] platformIds, int page = 1, params Models.Enums.PlatformImageType[] platformImageTypes)
+        public async Task<Models.Responses.Platforms.PlatformImagesResponse?> Images(int[] platformIds, int page = 1, params Models.Enums.PlatformImageType[] platformImageTypes)
         {
 
 
-            string[] filterTypes = platformImageTypes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))).ToArray();
+            string[] filterTypes = platformImageTypes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))).Where(x => x != null).ToArray()!;
 
-            Models.Payloads.Platforms.PlatformImagePayload payload = new Models.Payloads.Platforms.PlatformImagePayload();
-            payload.PlatformId = string.Join(',', platformIds.Select(x => HttpUtility.UrlEncode(x.ToString())));
+            Models.Payloads.Platforms.PlatformImagePayload payload = new Models.Payloads.Platforms.PlatformImagePayload()
+            {
+                PlatformId = string.Join(',', platformIds.Select(x => HttpUtility.UrlEncode(x.ToString())))
+            };
+
             payload.Page = page;
             payload.Type = filterTypes.Any() ? string.Join(',', filterTypes) : null;
 

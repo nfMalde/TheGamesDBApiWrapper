@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using System.Text.Json.Serialization;
 using TheGamesDBApiWrapper.Converter;
 using TheGamesDBApiWrapper.Models.Responses.Games;
 
@@ -20,7 +16,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The edit identifier.
         /// </value>
-        [JsonProperty("edit_id")]
+        [JsonPropertyName("edit_id")]
         public int? EditID { get; set; }
 
         /// <summary>
@@ -29,7 +25,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The game identifier.
         /// </value>
-        [JsonProperty("game_id")]
+        [JsonPropertyName("game_id")]
         public int? GameID { get; set; }
 
         /// <summary>
@@ -38,7 +34,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The timestamp.
         /// </value>
-        [JsonProperty("timestamp")]
+        [JsonPropertyName("timestamp"), JsonConverter(typeof(TimestampToDateTimeConverter))]
         public DateTime? Timestamp { get; set; }
 
         /// <summary>
@@ -47,7 +43,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The type.
         /// </value>
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public string? Type { get; set; }
 
         /// <summary>
@@ -56,9 +52,9 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The value.
         /// </value>
-        [JsonProperty("value")]
+        [JsonPropertyName("value")]
         [JsonConverter(typeof(GameUpdateValueConverter))]
-        public GameUpdateValueModel Values { get; set; }
+        public GameUpdateValueModel? Values { get; set; }
 
         /// <summary>
         /// For Backwards Compatibl. this returns the string value only
@@ -68,6 +64,5 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// </value>
         [JsonIgnore]
         public string? Value { get { return this.Values?.Value; } }
-         
     }
 }

@@ -19,7 +19,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Games
         /// The games identifier.
         /// </value>
         [DataMember(Name = "games_id")]
-        public string GamesID { get; set; }
+        public required string GamesID { get; set; }
 
         /// <summary>
         /// Gets or sets the type of the filter.
@@ -28,7 +28,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Games
         /// The type of the filter.
         /// </value>
         [DataMember(Name = "filter[type]")]
-        public string FilterType { get; set; }
+        public string? FilterType { get; set; }
 
         /// <summary>
         /// Gets or sets the page.

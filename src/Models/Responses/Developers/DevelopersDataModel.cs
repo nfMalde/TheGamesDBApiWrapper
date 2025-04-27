@@ -1,7 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Developers
 {
@@ -9,7 +8,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Developers
     /// DevelopersDataModel
     /// </summary>
     /// <seealso cref="TheGamesDBApiWrapper.Models.Responses.Base.DataModel" />
-    public class DevelopersDataModel: Base.DataModel
+    public class DevelopersDataModel : Base.DataModel
     {
         /// <summary>
         /// Gets or sets the developers.
@@ -17,7 +16,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Developers
         /// <value>
         /// The developers.
         /// </value>
-        [JsonProperty("developers")]
-        public Dictionary<int, Entities.DeveloperModel> Developers { get; set; }
+        [JsonPropertyName("developers")]
+        public Dictionary<int, Entities.DeveloperModel>? Developers { get; set; }
     }
 }

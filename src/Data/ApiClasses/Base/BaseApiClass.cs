@@ -2,12 +2,14 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using RestSharp;
-using RestSharp.Serializers.NewtonsoftJson;
+using System.Web;
 using TheGamesDBApiWrapper.Annotations;
 using TheGamesDBApiWrapper.Domain;
 using TheGamesDBApiWrapper.Domain.Track;
@@ -20,27 +22,23 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
     /// Abstracrt Base Class for all API-Subclasses
     /// </summary>
     public abstract class BaseApiClass
-    {
-        /// <summary>
-        /// The client
-        /// </summary>
-        private RestClient client;
+    { 
         /// <summary>
         /// The apikey
         /// </summary>
-        private string apikey;
+        private string? apikey;
         /// <summary>
         /// The base URL
         /// </summary>
-        private string baseUrl;
+        private string? baseUrl;
         /// <summary>
         /// The endpoint
         /// </summary>
-        private string endpoint;
+        private string? endpoint;
         /// <summary>
         /// The version
         /// </summary>
-        private string version;
+        private string? version;
         /// <summary>
         /// The factory
         /// </summary>
@@ -61,8 +59,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         {
             this.factory = factory;
             this.allowanceTracker = allowanceTracker;
-            this.parseConfig(config, endpoint);
-            this.createClient();
+            this.parseConfig(config, endpoint); 
         }
 
         /// <summary>
@@ -71,7 +68,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// <value>
         /// The version.
         /// </value>
-        public string Version {
+        public string? Version {
             get
             {
                 return this.version;
@@ -79,7 +76,6 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
             set
             {
                 this.version = value;
-                this.createClient();
             }
         }
 
@@ -91,17 +87,6 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// </value>
         public bool ForceVersion { get; set; }
          
-
-        /// <summary>
-        /// Creates the rest client.
-        /// </summary>
-        private void createClient()
-        {
-            this.client = this.factory.Create($"{this.baseUrl}/{"{version}"}/{this.endpoint}");
-             
-            this.client.AddDefaultUrlSegment("version", this.version);
-            this.client.AddDefaultQueryParameter("apikey", apikey);
-        }
 
         private void parseConfig(Models.Config.TheGamesDBApiConfigModel config, string endpoint)
         {
@@ -123,9 +108,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// <typeparam name="T">Type of Enum</typeparam>
         /// <param name="value">The value.</param>
         /// <returns></returns>
-        protected string GetEnumValue<T>(T value) where T : Enum
+        protected string? GetEnumValue<T>(T value) where T : Enum
         {
-            return value.GetType().GetTypeInfo()
+            return value?.GetType().GetTypeInfo()
                                    .DeclaredMembers
                                    .SingleOrDefault(x => x.Name == value.ToString())
                                    ?.GetCustomAttribute<EnumMemberAttribute>(false)
@@ -145,16 +130,16 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// <returns></returns>
         protected string FindCorrectApiVersion(MethodBase method)
         {
-            GamesDBApiVersionAttribute[] v = method.GetCustomAttributes<GamesDBApiVersionAttribute>()?.OrderByDescending(x => x.Version).ToArray();
-
+            GamesDBApiVersionAttribute[]? v = method.GetCustomAttributes<GamesDBApiVersionAttribute>()?.OrderByDescending(x => x.Version).ToArray();
+             
             if (!this.ForceVersion && v != null && v.Any())
             {
-                string newVersion = v.Select(x => $"v{x}").FirstOrDefault(x => x.StartsWith(this.Version)) ?? this.version;
+                string newVersion = v.Select(x => $"v{x}").FirstOrDefault(x => x.StartsWith(this.version ?? "v1")) ?? this.version ?? "v1";
 
                 return newVersion;
             }
 
-            return version;
+            return version ?? "v1";
         }
 
         /// <summary>
@@ -167,18 +152,19 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// <returns></returns>
         /// <exception cref="Exception">Error in rest call: {restResponse.ErrorMessage} with response raw data \"{restResponse.Content}\"</exception>
         /// <exception cref="Exceptions.TheGamesDBApiException"></exception>
-        protected async Task<T> CallGet<T>(string endpoint = null, object payload = null, string version = null) where T:class
+        protected async Task<T?> CallGet<T>(string? endpoint = null, object? payload = null, string? version = null) where T:class
         {
-            RestRequest r = new RestRequest(endpoint, Method.Get);
 
-            // Support for long requests
-            r.Timeout = TimeSpan.FromSeconds(3600);
-            
+            using var client = this.factory.Create($"{this.baseUrl}/{version}/{endpoint}");
+
+            var query = HttpUtility.ParseQueryString(string.Empty);
 
             if (version != null)
             {
-                r.AddUrlSegment("version", version);
+                query.Add("version", version);
             }
+
+            query.Add("apikey", this.apikey);
 
             if (payload != null)
             {
@@ -189,45 +175,53 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                 foreach(PropertyInfo prop in properties)
                 {
                     string name = prop.Name;
-                    DataMemberAttribute dataMember = prop.GetCustomAttribute<DataMemberAttribute>();
+                    DataMemberAttribute? dataMember = prop.GetCustomAttribute<DataMemberAttribute>();
 
                     if (dataMember != null)
                     {
                         name = dataMember.Name ?? name;
                     }
-                     
 
-                    r.AddQueryParameter(name.Trim(), prop.GetValue(payload)?.ToString() ?? null, false);
+
+                    query[name.Trim()] = prop.GetValue(payload)?.ToString() ?? null;
                 }
             }
 
             try
             {
-                var restResponse = await this.client.ExecuteGetAsync<T>(r);
-                var restResponseBase = restResponse.Data as BaseApiResponseModel;
+
+                // Add querystring parameters
+                // Convert querystring pairs to querystring for httpclient
+                var settings = this.factory.GetJsonSerializerOptions();
+
+                
+                var restResponse = await client.GetAsync($"{endpoint}?{query}");
+                var content = await restResponse.Content.ReadAsStringAsync();
+                var response = JsonSerializer.Deserialize<T>(content, settings);
+                var restResponseBase = response as BaseApiResponseModel;
 
                 if (restResponse.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    this.allowanceTracker.SetAllowance(restResponseBase.RemainingMonthlyAllowance, restResponseBase.ExtraAllowance, restResponseBase.AllowanceRefreshTimer);
-                    return restResponse.Data;
+                    this.allowanceTracker.SetAllowance(restResponseBase!.RemainingMonthlyAllowance, restResponseBase!.ExtraAllowance, restResponseBase!.AllowanceRefreshTimer);
+                    return response;
                 } 
                 else if (restResponse.StatusCode == System.Net.HttpStatusCode.Forbidden && restResponseBase != null)
                 {
                     this.allowanceTracker.SetAllowance(restResponseBase.RemainingMonthlyAllowance, restResponseBase.ExtraAllowance, restResponseBase.AllowanceRefreshTimer);
                      
-                    throw new Exception($"Error: ApiKey Invalid or reached monthly limit: {this.allowanceTracker.Current.Remaining} remaining, reset at: {this.allowanceTracker.Current.ResetAt}");
+                    throw new Exception($"Error: ApiKey Invalid or reached monthly limit: {this.allowanceTracker.Current?.Remaining} remaining, reset at: {this.allowanceTracker.Current?.ResetAt}");
 
                 }
 
-                throw new Exception($"Error in rest call: {restResponse.ErrorMessage} with response raw data \"{restResponse.Content}\"");
+                throw new Exception($"Error in rest call: {restResponse.ReasonPhrase} with response raw data \"{content}\"");
 
             }
             catch (Exception e)
             {
                 string requestUri =  "/" + endpoint;
-                var p = r.Parameters.Select(x => $"{x.Name} = <{x.Value}>");
+                query.Set("apikey", "********");
 
-                string message = $"TheGamesDB Api Error. Unable to send Data {string.Join(';', p)} to endpoint {requestUri}. ";
+                string message = $"TheGamesDB Api Error. Unable to send Data {query} to endpoint {requestUri}. ";
                 message += "See Inner-Exception for details.";
 
                 throw new Exceptions.TheGamesDBApiException(message, e); 

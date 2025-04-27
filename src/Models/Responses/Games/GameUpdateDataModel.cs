@@ -1,9 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Games
 {
@@ -11,7 +6,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Games
     /// GameUpdateDataModel
     /// </summary>
     /// <seealso cref="TheGamesDBApiWrapper.Models.Responses.Base.DataModel" />
-    public class GameUpdateDataModel: Base.DataModel
+    public class GameUpdateDataModel : Base.DataModel
     {
         /// <summary>
         /// Gets or sets the updates.
@@ -19,7 +14,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Games
         /// <value>
         /// The updates.
         /// </value>
-        [JsonProperty("updates")]
-        public Models.Entities.UpdateModel[] Updates { get; set; }
+        [JsonPropertyName("updates")]
+        public Models.Entities.UpdateModel[] Updates { get; set; } = [];
     }
 }

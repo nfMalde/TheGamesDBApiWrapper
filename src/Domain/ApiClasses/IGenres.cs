@@ -12,6 +12,6 @@ namespace TheGamesDBApiWrapper.Domain.ApiClasses
         /// Loads all Genres
         /// </summary>
         /// <returns></returns>
-        Task<GenresResponse> All();
+        Task<GenresResponse?> All();
     }
 }

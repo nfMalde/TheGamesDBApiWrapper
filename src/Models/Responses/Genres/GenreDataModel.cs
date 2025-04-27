@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 using TheGamesDBApiWrapper.Models.Entities;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Genres
@@ -18,7 +18,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Genres
         /// <value>
         /// The genres.
         /// </value>
-        [JsonProperty("genres")]
-        public Dictionary<int, GenreModel> Genres { get; set; }
+        [JsonPropertyName("genres")]
+        public Dictionary<int, GenreModel> Genres { get; set; } = new Dictionary<int, GenreModel>();
     }
 }

@@ -1,9 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json.Serialization;
+using TheGamesDBApiWrapper.Converter;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Base
 {
@@ -11,9 +9,9 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
     /// IncludeDataModel Base Class
     /// </summary>
     /// <typeparam name="TImageModel">The type of the image model.</typeparam>
-    public abstract class IncludeDataModel<TImageModel> where TImageModel:class
+    public abstract class IncludeDataModel<TImageModel> where TImageModel : class
     {
-        [JsonProperty("data")]
-        public Dictionary<int, TImageModel[]> Data { get; set; }
+        [JsonPropertyName("data")]
+        public Dictionary<int, TImageModel[]>? Data { get; set; }
     }
 }

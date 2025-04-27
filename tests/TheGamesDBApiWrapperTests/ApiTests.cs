@@ -1,18 +1,11 @@
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities.Serialization;
-using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
-using RestSharp;
-using RestSharp.Serializers.NewtonsoftJson;
 using RichardSzalay.MockHttp;
 using Shouldly;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using TheGamesDBApiWrapper.Converter;
 using TheGamesDBApiWrapper.Data;
 using TheGamesDBApiWrapper.Data.Track;
 using TheGamesDBApiWrapper.Domain;
@@ -23,7 +16,6 @@ using TheGamesDBApiWrapper.Models.Responses.Games;
 using TheGamesDBApiWrapper.Models.Responses.Genres;
 using TheGamesDBApiWrapper.Models.Responses.Platforms;
 using TheGamesDBApiWrapper.Models.Responses.Publishers;
-using TheGamesDBApiWrapper.Resolver;
 
 namespace TheGamesDBApiWrapperTests
 {
@@ -43,45 +35,31 @@ namespace TheGamesDBApiWrapperTests
             throw new Exception($"Json Mock {filename}.mock.json not found. Path: {p}");
         }
 
-        private RestClient mockRestClient<TResponse>(string jsonfile) where TResponse : class
-        {
+        private MockHttpMessageHandler mockMessageHandler<TResponse>(string jsonfile) where TResponse : class
+        { 
+
             string content = this.loadJson(jsonfile);
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When("*")
             .Respond("application/json", content);
-
-            string fakeResponse = this.loadJson(jsonfile);
-            return new RestClient(new RestClientOptions()
-            {
-                ConfigureMessageHandler = _ => mockHttp,
-                BaseUrl = new Uri("https://localhost/testapi/"),
-            },
-            configureSerialization: s => s.UseNewtonsoftJson(this.getJsonSettings()));
+             
+            return mockHttp;
         }
 
-        private IServiceProvider ServiceProvider;
-
-        private JsonSerializerSettings getJsonSettings()
-        {
-            var settings = new JsonSerializerSettings();
-  
-            //Now Add Converter for all Models that require DI
-            settings.ContractResolver = new DIContractResolver(this.ServiceProvider);
-            settings.NullValueHandling = NullValueHandling.Ignore;
-            settings.Converters.Add(new DictConverter());
-
-            return settings;
-        }
+        private IServiceProvider ServiceProvider = null!;
+         
 
         private void mockServices<TResponse>(string jsonfile) where TResponse : class
         {
-            Mock<ITheGamesDBApiWrapperRestClientFactory> mock = new Mock<ITheGamesDBApiWrapperRestClientFactory>();
-            mock.Setup(x => x.Create(It.IsAny<string>())).Returns(() => this.mockRestClient<TResponse>(jsonfile));
-
+           
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
-            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f => mock.Object);
-            services.AddScoped(f => new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel());
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f => new TheGamesDBApiWrapperRestClientFactory(f.GetRequiredService<IServiceProvider>()).WithMessageHandler(mockMessageHandler<TResponse>(jsonfile)));
+            services.AddScoped(f => new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel()
+            {
+                ApiKey = "testkey",
+                BaseUrl = "https://localhost/test/api/"
+            });
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>();
 
             this.ServiceProvider = services.BuildServiceProvider();
@@ -96,9 +74,10 @@ namespace TheGamesDBApiWrapperTests
         {
             this.mockServices<DevelopersResponse>("developer");
 
-            ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
             var response = await api.Developers.All();
 
+            response.ShouldNotBeNull();
             response.Code.ShouldBeGreaterThan(0);
             response.Data.ShouldNotBeNull();
             response.Data.Developers.ShouldNotBeNull();
@@ -110,9 +89,10 @@ namespace TheGamesDBApiWrapperTests
         {
             this.mockServices<GamesByGameIDResponse>(mockfile);
 
-            ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
             var response = await api.Games.ByGameID(new int[] { 1, 2, 3, 4, 5 });
 
+            response.ShouldNotBeNull();
             response.Code.ShouldBeGreaterThan(0);
             response.Data.ShouldNotBeNull();
             response.Data.Games.ShouldNotBeNull();
@@ -129,9 +109,10 @@ namespace TheGamesDBApiWrapperTests
         {
             this.mockServices<GamesImagesResponse>("game-images");
 
-            ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
             var response = await api.Games.Images(new int[] { 1 });
 
+            response.ShouldNotBeNull();
             response.Code.ShouldBeGreaterThan(0);
             response.Data.ShouldNotBeNull();
             response.Data.BaseUrl.ShouldNotBeNull();
@@ -146,10 +127,10 @@ namespace TheGamesDBApiWrapperTests
         {
             this.mockServices<GameUpdateResponse>("game-updates");
 
-            ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 
             var response = await api.Games.Updates(0);
-
+            response.ShouldNotBeNull();
             response.Code.ShouldBeGreaterThan(0);
             response.Data.ShouldNotBeNull();
             response.Data.Updates.ShouldNotBeNull();
@@ -165,10 +146,11 @@ namespace TheGamesDBApiWrapperTests
         {
             this.mockServices<PlatformsResponseModel>("platforms");
 
-            ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 
             var response = await api.Platform.All();
 
+            response.ShouldNotBeNull();
             response.Code.ShouldBeGreaterThan(0);
             response.Data.ShouldNotBeNull();
             response.Data.Platforms.ShouldNotBeNull();
@@ -180,10 +162,11 @@ namespace TheGamesDBApiWrapperTests
         {
             this.mockServices<GenresResponse>("genres");
 
-            ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 
             var response = await api.Genres.All();
 
+            response.ShouldNotBeNull();
             response.Code.ShouldBeGreaterThan(0);
             response.Data.ShouldNotBeNull();
             response.Data.Genres.ShouldNotBeNull();
@@ -195,10 +178,11 @@ namespace TheGamesDBApiWrapperTests
         {
             this.mockServices<PublishersResponse>("publishers");
 
-            ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 
             var response = await api.Publishers.All();
 
+            response.ShouldNotBeNull();
             response.Code.ShouldBeGreaterThan(0);
             response.Data.ShouldNotBeNull();
             response.Data.Publishers.ShouldNotBeNull();
@@ -209,11 +193,11 @@ namespace TheGamesDBApiWrapperTests
         public async Task AllowanceShouldBeTracked()
         {
             this.mockServices<PublishersResponse>("publishers");
-            ITheGamesDBAPI api = this.ServiceProvider.GetService<ITheGamesDBAPI>();
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 
             var response = await api.Publishers.All();
 
-            IAllowanceTracker tracker = this.ServiceProvider.GetService<IAllowanceTracker>();
+            IAllowanceTracker tracker = this.ServiceProvider.GetRequiredService<IAllowanceTracker>();
 
             tracker.Current.ShouldNotBeNull();
             tracker.Current.Remaining.ShouldBe(2916);

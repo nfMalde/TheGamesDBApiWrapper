@@ -19,7 +19,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Platforms
         /// The platform identifier.
         /// </value>
         [DataMember(Name = "platforms_id")]
-        public string PlatformId { get; set; }
+        public required string PlatformId { get; set; }
 
         /// <summary>
         /// Gets or sets the type.
@@ -28,7 +28,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Platforms
         /// The type.
         /// </value>
         [DataMember(Name = "filter[type]")]
-        public string Type { get; set; }
+        public string? Type { get; set; }
 
         /// <summary>
         /// Gets or sets the page.

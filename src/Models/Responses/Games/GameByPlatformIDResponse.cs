@@ -1,8 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
+using System.Text.Json.Serialization;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Games
@@ -19,8 +17,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Games
         /// <value>
         /// The include.
         /// </value>
-        [JsonProperty("include")]
-        public Models.Entities.GameIncludeModel Include { get; set; }
-    
+        [JsonPropertyName("include")]
+        public Models.Entities.GameIncludeModel? Include { get; set; }
     }
 }
