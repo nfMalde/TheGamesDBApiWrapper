@@ -209,7 +209,11 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
 
                 if (restResponse.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    this.allowanceTracker.SetAllowance(restResponseBase!.RemainingMonthlyAllowance, restResponseBase!.ExtraAllowance, restResponseBase!.AllowanceRefreshTimer);
+                    if (restResponseBase == null)
+                    {
+                        throw new Exception("Error: Response deserialization failed. BaseApiResponseModel is null.");
+                    }
+                    this.allowanceTracker.SetAllowance(restResponseBase.RemainingMonthlyAllowance, restResponseBase.ExtraAllowance, restResponseBase.AllowanceRefreshTimer);
                     return response;
                 } 
                 else if (restResponse.StatusCode == System.Net.HttpStatusCode.Forbidden && restResponseBase != null)
