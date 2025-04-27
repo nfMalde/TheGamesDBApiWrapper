@@ -3,6 +3,7 @@ using NUnit.Framework;
 using RichardSzalay.MockHttp;
 using Shouldly;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -16,6 +17,7 @@ using TheGamesDBApiWrapper.Models.Responses.Games;
 using TheGamesDBApiWrapper.Models.Responses.Genres;
 using TheGamesDBApiWrapper.Models.Responses.Platforms;
 using TheGamesDBApiWrapper.Models.Responses.Publishers;
+using Xunit;
 
 namespace TheGamesDBApiWrapperTests
 {
@@ -36,25 +38,22 @@ namespace TheGamesDBApiWrapperTests
         }
 
         private MockHttpMessageHandler mockMessageHandler<TResponse>(string jsonfile, string url) where TResponse : class
-        { 
-
+        {
             string content = this.loadJson(jsonfile);
             var mockHttp = new MockHttpMessageHandler();
             mockHttp.When(url)
             .Respond("application/json", content);
-             
+
             return mockHttp;
         }
 
         private IServiceProvider ServiceProvider = null!;
-         
 
         private void mockServices<TResponse>(string jsonfile, string url = "") where TResponse : class
         {
-           
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
-            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f => 
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f =>
             new TheGamesDBApiWrapperRestClientFactory(f.GetRequiredService<IServiceProvider>()).WithMessageHandler(mockMessageHandler<TResponse>(jsonfile, url)));
             services.AddScoped(f => new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel()
             {
@@ -70,7 +69,7 @@ namespace TheGamesDBApiWrapperTests
 
         #region Tests
 
-        [Test]
+        [Fact]
         public async Task DeveloperResponseShouldBeParsed()
         {
             this.mockServices<DevelopersResponse>("developer", "*/v1/Developers");
@@ -85,7 +84,8 @@ namespace TheGamesDBApiWrapperTests
             response.Data.Developers.First().Value.Name.ShouldNotBeNull();
         }
 
-        [TestCaseSource(nameof(GameByIdMocks))]
+        [Theory]
+        [MemberData(nameof(GameByIdMocks))]
         public async Task GameByIdResponseShouldBeParsed(string mockfile)
         {
             this.mockServices<GamesByGameIDResponse>(mockfile, "*/v1/Games/ByGameID");
@@ -100,12 +100,13 @@ namespace TheGamesDBApiWrapperTests
             response.Data.Games.First().GameTitle.ShouldNotBeNull();
         }
 
-        public static object[] GameByIdMocks =  {
-                        new object[] { "game-by-id" },
-                        new object[] { "game-by-id-2" }
-                    };
+        public static IEnumerable<object[]> GameByIdMocks => new List<object[]>
+        {
+            new object[] { "game-by-id" },
+            new object[] { "game-by-id-2" }
+        };
 
-        [Test]
+        [Fact]
         public async Task GameImagesResponseShouldBeParsed()
         {
             this.mockServices<GamesImagesResponse>("game-images", "*/v1/Games/Images");
@@ -123,7 +124,7 @@ namespace TheGamesDBApiWrapperTests
             response.Data.Images.First().Value.First().Type.ShouldBe(GameImageType.Fanart);
         }
 
-        [Test]
+        [Fact]
         public async Task GameUpdateResponseShouldBeParsed()
         {
             this.mockServices<GameUpdateResponse>("game-updates", "*/v1/Games/Updates");
@@ -142,7 +143,7 @@ namespace TheGamesDBApiWrapperTests
             response.Data.Updates.First().Value.ShouldNotBeNull();
         }
 
-        [Test]
+        [Fact]
         public async Task PlatformsResponseShouldBeParsed()
         {
             this.mockServices<PlatformsResponseModel>("platforms", "*/v1/Platforms");
@@ -158,7 +159,7 @@ namespace TheGamesDBApiWrapperTests
             response.Data.Platforms.First().Value.Name.ShouldNotBeNull();
         }
 
-        [Test]
+        [Fact]
         public async Task GenresResponseShouldBeParsed()
         {
             this.mockServices<GenresResponse>("genres", "*/v1/Genres");
@@ -174,7 +175,7 @@ namespace TheGamesDBApiWrapperTests
             response.Data.Genres.First().Value.Name.ShouldNotBeNull();
         }
 
-        [Test]
+        [Fact]
         public async Task PublishersResponseShouldBeParsed()
         {
             this.mockServices<PublishersResponse>("publishers", "*/v1/Publishers");
@@ -190,7 +191,7 @@ namespace TheGamesDBApiWrapperTests
             response.Data.Publishers.First().Value.Name.ShouldNotBeNull();
         }
 
-        [Test]
+        [Fact]
         public async Task AllowanceShouldBeTracked()
         {
             this.mockServices<PublishersResponse>("publishers");

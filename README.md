@@ -14,6 +14,9 @@ This Library uses the following lib(s) fro archive its functionality:
 * [.NET 9](https://github.com/microsoft/dotnet)
 * [Shouldly](https://github.com/shouldly)
 * [RichardSzalay.MockHttp](https://github.com/richardszalay/mockhttp)
+* [Moq](https://github.com/devlooped/moq)
+* [xunit](https://github.com/xunit/xunit)
+* [xunit.runner.visualstudio](https://github.com/xunit/visualstudio.xunit)
 ## Requirements
 * .NET 9 or higher
 * The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
