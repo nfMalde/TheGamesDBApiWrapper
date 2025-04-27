@@ -11,8 +11,9 @@ For API-Docs look here: https://api.thegamesdb.net/#/
 
 **External Libraries**
 This Library uses the following lib(s) fro archive its functionality:
+* [.NET 9](https://github.com/microsoft/dotnet)
 * [Shouldly](https://github.com/shouldly)
-
+* [RichardSzalay.MockHttp](https://github.com/richardszalay/mockhttp)
 ## Requirements
 * .NET 9 or higher
 * The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
