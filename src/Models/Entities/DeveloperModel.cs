@@ -1,7 +1,7 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Entities
 {
@@ -16,7 +16,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The identifier.
         /// </value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
         /// <summary>
         /// Gets or sets the name.
@@ -24,7 +24,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The name.
         /// </value>
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = null!;
     }
 }

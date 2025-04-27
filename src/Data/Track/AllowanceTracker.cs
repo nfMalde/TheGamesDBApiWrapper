@@ -22,6 +22,6 @@ namespace TheGamesDBApiWrapper.Data.Track
             this.Current = new Models.Track.AllowanceTrackModel(remaining, extra, secondsToReset);
         }
 
-        public Models.Track.AllowanceTrackModel Current { get; private set; }
+        public Models.Track.AllowanceTrackModel? Current { get; private set; }
     }
 }

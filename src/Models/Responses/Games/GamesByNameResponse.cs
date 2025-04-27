@@ -1,16 +1,12 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System;
+using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Games
 {
     /// <summary>
     /// GamesByNameResponse
     /// </summary>
-    /// <seealso cref="TheGamesDBApiWrapper.Models.Responses.Games.GamesByGameIDResponse" />
+    /// <seealso cref="TheGamesDBApiWrapper.Models.Responses.Base.PaginatedApiResponseModel{TheGamesDBApiWrapper.Models.Responses.Games.GamesDataModel, TheGamesDBApiWrapper.Models.Responses.Games.GamesByNameResponse}" />
     public class GamesByNameResponse : Base.PaginatedApiResponseModel<GamesDataModel, GamesByNameResponse>
     {
         /// <summary>
@@ -19,8 +15,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Games
         /// <value>
         /// The include.
         /// </value>
-        [JsonProperty("include")]
-        public Models.Entities.GameIncludeModel Include { get; set; }
-
+        [JsonPropertyName("include")]
+        public Models.Entities.GameIncludeModel? Include { get; set; }
     }
 }

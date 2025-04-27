@@ -30,7 +30,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// Loads all Developers
         /// </summary>
         /// <returns></returns>
-        public async Task<DevelopersResponse> All()
+        public async Task<DevelopersResponse?> All()
         {
             return await this.CallGet<DevelopersResponse>();
         }

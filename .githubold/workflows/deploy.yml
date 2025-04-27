@@ -8,13 +8,13 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout Sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - name: Setup .NET 9
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 8.0.x
       - name: "Build and Test"
         run: |
           dotnet build
@@ -27,7 +27,7 @@ jobs:
       tag: ${{ steps.newversion.outputs.tag }}      
     steps:
     - name: Checkout Sources
-      uses: actions/checkout@v4
+      uses: actions/checkout@v2
       with:
         fetch-depth: 0
     - name: Set New Version
@@ -36,20 +36,21 @@ jobs:
       run: |
             $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*-Release"
 
-            if ($currentVersion -ne $null) {
+            if ($currentVersion) {
               $v = $currentVersion.Split('-')[0].TrimStart('v')
               Write-Output "RELEASE: New Version: $($v)"
               Write-Output "version=$($v)" >> $Env:GITHUB_OUTPUT
               Write-Output "tag=$($currentVersion)" >> $Env:GITHUB_OUTPUT
             } else {
     
-                $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*" 
+                $currentVersion = git describe --abbrev=0 --tags --match "v[0-9]*.[0-9]*.[0-9]*"
                 $versionParts = $currentVersion.Split('-')
                 $v = $versionParts[0]
                 $increment = 1
 
+
                 $vparts = $v.Split('.')
-                $vparts[2] = "$([int]$vparts[2] + [int]$increment)"
+                $vparts[2] = "$([int]$vparts[2] + 1)"
                 $v = $vparts -join '.'
                 $v = "$($v)".TrimStart("v")
                 Write-Output "New Version: $($v)"
@@ -64,7 +65,7 @@ jobs:
         changeinfo: ${{ steps.meta.outputs.changeinfo }}
       steps:
       - name: Checkout Sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name : Get Meta Data
@@ -81,12 +82,12 @@ jobs:
       needs: [test, version, prepublish]
       runs-on: windows-latest
       steps:
-      - name: Setup .NET 9
+      - name: Setup .NET 8
         uses: actions/setup-dotnet@v4
         with:
-          dotnet-version: 9.0.x
+          dotnet-version: 8.0.x
       - name: Checkout Sources
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
         with:
           fetch-depth: 0
       - name: Create Package
@@ -124,7 +125,7 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps 
           asset_path: ./nget_pkg/TheGamesDBApiWrapper.${{ needs.version.outputs.version }}.nupkg
-          asset_name: TheGamesDBApiWrapper.${{ needs.version.outputs.version }}.nupkg
+          asset_name: TheGamesDBApiWrapper.${{ needs.prepublish.version.version }}.nupkg
           asset_content_type: application/zip
       - name: Upload Release Asset DLL
         id: upload-release-asset2 

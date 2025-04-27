@@ -19,6 +19,6 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Platforms
         /// The fields.
         /// </value>
         [DataMember(Name = "fields")]
-        public string Fields { get; set; }
+        public string? Fields { get; set; }
     }
 }

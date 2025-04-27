@@ -1,9 +1,10 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using TheGamesDBApiWrapper.Converter;
 using TheGamesDBApiWrapper.Models.Responses.Base;
 
 namespace TheGamesDBApiWrapper.Models.Entities
@@ -12,7 +13,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
     /// BoxArtIncludeModel
     /// </summary>
     /// <seealso cref="TheGamesDBApiWrapper.Models.Responses.Base.IncludeDataModel{TheGamesDBApiWrapper.Models.Entities.GameImageModel}" />
-    public class BoxArtIncludeModel: IncludeDataModel<GameImageModel>
+    public class BoxArtIncludeModel
     {
         /// <summary>
         /// Gets or sets the base URL data.
@@ -20,8 +21,11 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The base URL.
         /// </value>
-        [JsonProperty("base_url")]
-        public ImageBaseUrlMetaModel BaseUrl { get; set; }
+        [JsonPropertyName("base_url")]
+        public ImageBaseUrlMetaModel? BaseUrl { get; set; }
+
+        [JsonPropertyName("data"), JsonConverter(typeof(GameImageIncludeDictConverter))]
+        public Dictionary<int, GameImageModel[]>? Data { get; set; }
 
     }
 }

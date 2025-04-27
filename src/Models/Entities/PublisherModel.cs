@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Entities
 {
@@ -15,6 +16,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The identifier.
         /// </value>
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
         /// <summary>
@@ -23,6 +25,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The name.
         /// </value>
-        public string Name { get; set; }
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;    
     }
 }

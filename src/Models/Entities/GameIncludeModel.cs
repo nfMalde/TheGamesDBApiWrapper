@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TheGamesDBApiWrapper.Models.Entities
@@ -18,8 +18,8 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The box art.
         /// </value>
-        [JsonProperty("boxart")]
-        public BoxArtIncludeModel BoxArt { get; set; }
+        [JsonPropertyName("boxart")]
+        public BoxArtIncludeModel? BoxArt { get; set; }
 
         /// <summary>
         /// Gets or sets the platform.
@@ -27,7 +27,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The platform.
         /// </value>
-        [JsonProperty("platform")]
-        public PlatformIncludeModel Platform { get; set; }
+        [JsonPropertyName("platform")]
+        public PlatformIncludeModel? Platform { get; set; }
     }
 }

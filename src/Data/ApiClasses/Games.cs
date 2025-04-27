@@ -37,7 +37,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="gameId">The game identifier.</param>
         /// <param name="fields">The fields to show in response.</param>
         /// <returns></returns>
-        public async Task<GamesByGameIDResponse> ByGameID(int gameId, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByGameIDResponse?> ByGameID(int gameId, params Models.Enums.GameFields[] fields)
         {
             return await this.ByGameID(new int[] { gameId }, 0, null, fields);
         }
@@ -49,7 +49,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The include extra fields.</param>
         /// <param name="fields">The fields to show in response.</param>
         /// <returns></returns>
-        public async Task<GamesByGameIDResponse> ByGameID(int gameId, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByGameIDResponse?> ByGameID(int gameId, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
             return await this.ByGameID(new int[] { gameId }, 0, includes, fields);
         }
@@ -61,7 +61,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="page">The page.</param>
         /// <param name="fields">The fields to show in response.</param>
         /// <returns></returns>
-        public async Task<GamesByGameIDResponse> ByGameID(int gameId, int page, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByGameIDResponse?> ByGameID(int gameId, int page, params Models.Enums.GameFields[] fields)
         {
             return await this.ByGameID(new int[] { gameId }, page, null, fields);
         }
@@ -74,7 +74,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The include extra fields.</param>
         /// <param name="fields">The fields to show in response.</param>
         /// <returns></returns>
-        public async Task<GamesByGameIDResponse> ByGameID(int gameId, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByGameIDResponse?> ByGameID(int gameId, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
             return await this.ByGameID(new int[] { gameId }, page, includes, fields);
         }
@@ -85,7 +85,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="gameIds">The game ids.</param>
         /// <param name="fields">The fields to show in response.</param>
         /// <returns></returns>
-        public async Task<GamesByGameIDResponse> ByGameID(int[] gameIds, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByGameIDResponse?> ByGameID(int[] gameIds, params Models.Enums.GameFields[] fields)
         {
             return await this.ByGameID(gameIds, 0, null, fields);
         }
@@ -97,7 +97,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The include extra fields.</param>
         /// <param name="fields">The fields to show in response.</param>
         /// <returns></returns>
-        public async Task<GamesByGameIDResponse> ByGameID(int[] gameIds, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByGameIDResponse?> ByGameID(int[] gameIds, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
             return await this.ByGameID(gameIds, 0, includes, fields);
         }
@@ -109,7 +109,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="page">The page.</param>
         /// <param name="fields">The fields to show in response.</param>
         /// <returns></returns>
-        public async Task<GamesByGameIDResponse> ByGameID(int[] gameIds, int page, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByGameIDResponse?> ByGameID(int[] gameIds, int page, params Models.Enums.GameFields[] fields)
         {
             return await this.ByGameID(gameIds, page, null, fields);
         }
@@ -122,10 +122,13 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The include extra fields.</param>
         /// <param name="fields">The fields to show in response.</param>
         /// <returns></returns>
-        public async Task<GamesByGameIDResponse> ByGameID(int[] gameIds, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByGameIDResponse?> ByGameID(int[] gameIds, int page, Models.Enums.GameFieldIncludes[]? includes, params Models.Enums.GameFields[] fields)
         {
-            ByGameIdPayload payload = new ByGameIdPayload();
-            payload.Id = string.Join(',', gameIds.Select(x => HttpUtility.UrlEncode(x.ToString())));
+            ByGameIdPayload payload = new ByGameIdPayload()
+            {
+                Id = string.Join(',', gameIds.Select(x => HttpUtility.UrlEncode(x.ToString())))
+            };
+            
 
             if (includes != null)
             {
@@ -149,9 +152,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="page">The page.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, null, null, null);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, null, null, null);
         }
 
         /// <summary>
@@ -162,9 +165,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="platformId">The platform identifier.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, int platformId)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, int platformId)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, new int[] { platformId }, null, null);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, new int[] { platformId }, null, null);
         }
 
         /// <summary>
@@ -175,9 +178,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="platformIds">The platform ids.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, int[] platformIds)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, int[] platformIds)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, platformIds, null, null);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, platformIds, null, null);
 
         }
 
@@ -189,9 +192,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="fields">The fields to add in response.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, params Models.Enums.GameFields[] fields)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, null, null, fields);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, null, null, fields);
 
         }
 
@@ -204,9 +207,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="fields">The fields to add in response.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, int platformId, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, int platformId, params Models.Enums.GameFields[] fields)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, new int[] { platformId }, null, fields);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, new int[] { platformId }, null, fields);
 
         }
 
@@ -219,9 +222,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="fields">The fields to add in response.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, int[] platformIds, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, int[] platformIds, params Models.Enums.GameFields[] fields)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, platformIds, null, fields);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, platformIds, null, fields);
         }
 
         /// <summary>
@@ -232,9 +235,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The include fields.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, Models.Enums.GameFieldIncludes[] includes)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, Models.Enums.GameFieldIncludes[] includes)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, null, includes, null);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, null, includes, null);
         }
 
         /// <summary>
@@ -246,9 +249,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The include fields.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, int platformId, Models.Enums.GameFieldIncludes[] includes)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, int platformId, Models.Enums.GameFieldIncludes[] includes)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, new int[] { platformId }, includes, null);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, new int[] { platformId }, includes, null);
         }
 
         /// <summary>
@@ -260,9 +263,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The include fields.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, int[] paltformIds, Models.Enums.GameFieldIncludes[] includes)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, int[] paltformIds, Models.Enums.GameFieldIncludes[] includes)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, paltformIds, includes, null);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, paltformIds, includes, null);
         }
 
         /// <summary>
@@ -273,9 +276,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The include fields.</param>
         /// <param name="fields">The fields to add in response.</param>
         /// <returns></returns>
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, null, includes, fields);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, null, includes, fields);
         }
 
         /// <summary>
@@ -288,9 +291,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="fields">The fields to add in response.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, int platformId, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, int platformId, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, new int[] { platformId }, includes, fields);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, new int[] { platformId }, includes, fields);
         }
 
         /// <summary>
@@ -303,9 +306,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="fields">The fields to add in response.</param>
         /// <returns></returns>
         [GamesDBApiVersion(1.1)]
-        public async Task<GamesByNameResponse> ByGameName(string name, int page, int[] platformIds, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GamesByNameResponse?> ByGameName(string name, int page, int[] platformIds, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
-            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()), name, page, platformIds, includes, fields);
+            return await this.__ByGameName(this.FindCorrectApiVersion(MethodBase.GetCurrentMethod()!), name, page, platformIds, includes, fields);
 
         }
 
@@ -318,9 +321,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </summary>
         /// <param name="platformID">The platform identifier.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int platformID)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int platformID)
         {
-            return await this.__ByPlatformID(new int[] { platformID }, 1, null, null);
+            return await this.__ByPlatformID(new int[] { platformID }, 1, null);
 
         }
 
@@ -330,7 +333,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="platformID">The platform identifier.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int platformID, params Models.Enums.GameFields[] fields)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int platformID, params Models.Enums.GameFields[] fields)
         {
             return await this.__ByPlatformID(new int[] { platformID }, 1, null, fields);
         }
@@ -342,7 +345,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The includes.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int platformID, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int platformID, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
             return await this.__ByPlatformID(new int[] { platformID }, 1, includes, fields);
 
@@ -354,9 +357,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="platformID">The platform identifier.</param>
         /// <param name="page">The page.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int platformID, int page)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int platformID, int page)
         {
-            return await this.__ByPlatformID(new int[] { platformID }, page, null, null);
+            return await this.__ByPlatformID(new int[] { platformID }, page, null);
 
         }
 
@@ -367,7 +370,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="page">The page.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int platformID, int page, params Models.Enums.GameFields[] fields)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int platformID, int page, params Models.Enums.GameFields[] fields)
         {
             return await this.__ByPlatformID(new int[] { platformID }, page, null, fields);
         }
@@ -380,7 +383,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The includes.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int platformID, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int platformID, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
             return await this.__ByPlatformID(new int[] { platformID }, page, includes, fields);
 
@@ -392,9 +395,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </summary>
         /// <param name="platformIDs">The platform identifiers.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int[] platformIDs)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int[] platformIDs)
         {
-            return await this.__ByPlatformID(platformIDs, 1, null, null);
+            return await this.__ByPlatformID(platformIDs, 1, null);
 
         }
 
@@ -404,7 +407,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="platformIDs">The platform identifiers.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int[] platformIDs, params Models.Enums.GameFields[] fields)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int[] platformIDs, params Models.Enums.GameFields[] fields)
         {
             return await this.__ByPlatformID(platformIDs, 1, null, fields);
 
@@ -417,7 +420,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The includes.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int[] platformIDs, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int[] platformIDs, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
             return await this.__ByPlatformID(platformIDs, 1, includes, fields);
 
@@ -429,9 +432,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="platformIDs">The platform identifiers.</param>
         /// <param name="page">The page.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int[] platformIDs, int page)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int[] platformIDs, int page)
         {
-            return await this.__ByPlatformID(platformIDs, page, null, null);
+            return await this.__ByPlatformID(platformIDs, page, null);
 
         }
 
@@ -442,7 +445,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="page">The page.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int[] platformIDs, int page, params Models.Enums.GameFields[] fields)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int[] platformIDs, int page, params Models.Enums.GameFields[] fields)
         {
             return await this.__ByPlatformID(platformIDs, page, null, fields);
         }
@@ -455,7 +458,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The includes.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        public async Task<GameByPlatformIDResponse> ByPlatformID(int[] platformIDs, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        public async Task<GameByPlatformIDResponse?> ByPlatformID(int[] platformIDs, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
         {
             return await this.__ByPlatformID(platformIDs, page, includes, fields);
         }
@@ -470,7 +473,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </summary>
         /// <param name="gameId">The game identifier.</param>
         /// <returns></returns>
-        public async Task<GamesImagesResponse> Images(int gameId)
+        public async Task<GamesImagesResponse?> Images(int gameId)
         {
             return await this.__Images(new int[] { gameId }, 1);
 
@@ -482,7 +485,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="gameId">The game identifier.</param>
         /// <param name="page">The page.</param>
         /// <returns></returns>
-        public async Task<GamesImagesResponse> Images(int gameId, int page)
+        public async Task<GamesImagesResponse?> Images(int gameId, int page)
         {
             return await this.__Images(new int[] { gameId }, page);
 
@@ -494,7 +497,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="gameId">The game identifier.</param>
         /// <param name="types">The types.</param>
         /// <returns></returns>
-        public async Task<GamesImagesResponse> Images(int gameId, params Models.Enums.GameImageType[] types)
+        public async Task<GamesImagesResponse?> Images(int gameId, params Models.Enums.GameImageType[] types)
         {
             return await this.__Images(new int[] { gameId }, 1, types);
 
@@ -507,7 +510,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="page">The page.</param>
         /// <param name="types">The types.</param>
         /// <returns></returns>
-        public async Task<GamesImagesResponse> Images(int gameId, int page, params Models.Enums.GameImageType[] types)
+        public async Task<GamesImagesResponse?> Images(int gameId, int page, params Models.Enums.GameImageType[] types)
         {
 
             return await this.__Images(new int[] { gameId }, page, types);
@@ -519,7 +522,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </summary>
         /// <param name="gameIds">The game identifiers.</param>
         /// <returns></returns>
-        public async Task<GamesImagesResponse> Images(int[] gameIds)
+        public async Task<GamesImagesResponse?> Images(int[] gameIds)
         {
 
             return await this.__Images(gameIds, 1);
@@ -531,7 +534,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="gameIds">The game identifiers.</param>
         /// <param name="page">The page.</param>
         /// <returns></returns>
-        public async Task<GamesImagesResponse> Images(int[] gameIds, int page)
+        public async Task<GamesImagesResponse?> Images(int[] gameIds, int page)
         {
 
             return await this.__Images(gameIds, page);
@@ -543,7 +546,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="gameIds">The game identifiers.</param>
         /// <param name="types">The types.</param>
         /// <returns></returns>
-        public async Task<GamesImagesResponse> Images(int[] gameIds, params Models.Enums.GameImageType[] types)
+        public async Task<GamesImagesResponse?> Images(int[] gameIds, params Models.Enums.GameImageType[] types)
         {
 
             return await this.__Images(gameIds, 1, types);
@@ -556,7 +559,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="page">The page.</param>
         /// <param name="types">The types.</param>
         /// <returns></returns>
-        public async Task<GamesImagesResponse> Images(int[] gameIds, int page, params Models.Enums.GameImageType[] types)
+        public async Task<GamesImagesResponse?> Images(int[] gameIds, int page, params Models.Enums.GameImageType[] types)
         {
             return await this.__Images(gameIds, page, types);
         }
@@ -570,9 +573,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// </summary>
         /// <param name="lastEditId">The last edit identifier.</param>
         /// <returns></returns>
-        public async Task<GameUpdateResponse> Updates(int lastEditId)
+        public async Task<GameUpdateResponse?> Updates(int lastEditId)
         {
-            return await this.__Updates(lastEditId);
+            return await this.ExecGetUpdatesCall(lastEditId);
 
         }
 
@@ -582,9 +585,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="lastEditId">The last edit identifier.</param>
         /// <param name="page">The page.</param>
         /// <returns></returns>
-        public async Task<GameUpdateResponse> Updates(int lastEditId, int page = 1)
+        public async Task<GameUpdateResponse?> Updates(int lastEditId, int page = 1)
         {
-            return await this.__Updates(lastEditId, page, null);
+            return await this.ExecGetUpdatesCall(lastEditId, page, null);
         }
 
         /// <summary>
@@ -593,33 +596,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="lastEditId">The last edit identifier.</param>
         /// <param name="time">The time.</param>
         /// <returns></returns>
-        public async Task<GameUpdateResponse> Updates(int lastEditId, DateTime time)
+        public async Task<GameUpdateResponse?> Updates(int lastEditId, DateTime time)
         {
-            return await this.__Updates(lastEditId, 1, new DateTimeOffset(time).ToUnixTimeSeconds());
-        }
-
-        /// <summary>
-        /// Gets game  updates either by last edit ID (0 for loading all updates) or timestamp offset
-        /// </summary>
-        /// <param name="lastEditId">The last edit identifier.</param>
-        /// <param name="time">The time.</param>
-        /// <param name="page">The page.</param>
-        /// <returns></returns>
-        public async Task<GameUpdateResponse> Updates(int lastEditId, DateTime time, int page = 1)
-        {
-            return await this.__Updates(lastEditId, page, new DateTimeOffset(time).ToUnixTimeSeconds());
-
-        }
-
-        /// <summary>
-        /// Gets game  updates either by last edit ID (0 for loading all updates) or timestamp offset
-        /// </summary>
-        /// <param name="lastEditId">The last edit identifier.</param>
-        /// <param name="time">The time.</param>
-        /// <returns></returns>
-        public async Task<GameUpdateResponse> Updates(int lastEditId, long time)
-        {
-            return await this.__Updates(lastEditId, 1, time);
+            return await this.ExecGetUpdatesCall(lastEditId, 1, new DateTimeOffset(time).ToUnixTimeSeconds());
         }
 
         /// <summary>
@@ -629,9 +608,33 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="time">The time.</param>
         /// <param name="page">The page.</param>
         /// <returns></returns>
-        public async Task<GameUpdateResponse> Updates(int lastEditId, long time, int page = 1)
+        public async Task<GameUpdateResponse?> Updates(int lastEditId, DateTime time, int page = 1)
         {
-            return await this.__Updates(lastEditId, page, time);
+            return await this.ExecGetUpdatesCall(lastEditId, page, new DateTimeOffset(time).ToUnixTimeSeconds());
+
+        }
+
+        /// <summary>
+        /// Gets game  updates either by last edit ID (0 for loading all updates) or timestamp offset
+        /// </summary>
+        /// <param name="lastEditId">The last edit identifier.</param>
+        /// <param name="time">The time.</param>
+        /// <returns></returns>
+        public async Task<GameUpdateResponse?> Updates(int lastEditId, long time)
+        {
+            return await this.ExecGetUpdatesCall(lastEditId, 1, time);
+        }
+
+        /// <summary>
+        /// Gets game  updates either by last edit ID (0 for loading all updates) or timestamp offset
+        /// </summary>
+        /// <param name="lastEditId">The last edit identifier.</param>
+        /// <param name="time">The time.</param>
+        /// <param name="page">The page.</param>
+        /// <returns></returns>
+        public async Task<GameUpdateResponse?> Updates(int lastEditId, long time, int page = 1)
+        {
+            return await this.ExecGetUpdatesCall(lastEditId, page, time);
         }
 
         #endregion
@@ -645,7 +648,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="page">The page.</param>
         /// <param name="time">The time.</param>
         /// <returns></returns>
-        private async Task<GameUpdateResponse> __Updates(int lastEditId = 0, int page = 1, long? time = null)
+        private async Task<GameUpdateResponse?> ExecGetUpdatesCall(int lastEditId = 0, int page = 1, long? time = null)
         {
             GameUpdatePayload payload = new GameUpdatePayload();
             payload.LastEnditID = lastEditId;
@@ -663,12 +666,15 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="page">The page.</param>
         /// <param name="types">The types.</param>
         /// <returns></returns>
-        private async Task<GamesImagesResponse> __Images(int[] gameIds, int page, params Models.Enums.GameImageType[] types)
+        private async Task<GamesImagesResponse?> __Images(int[] gameIds, int page, params Models.Enums.GameImageType[] types)
         {
             // TODO: Payload
 
-            GameImagesPayload payload = new GameImagesPayload();
-            payload.GamesID = string.Join(',', gameIds.Select(x => x.ToString()));
+            GameImagesPayload payload = new GameImagesPayload()
+            {
+                GamesID = string.Join(',', gameIds.Select(x => x.ToString()))
+            };
+
             payload.FilterType = types != null ? string.Join(',', types.Select(x => this.GetEnumValue(x))) : null;
             payload.Page = page < 1 ? 1 : page;
 
@@ -683,10 +689,13 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The includes.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        private async Task<GameByPlatformIDResponse> __ByPlatformID(int[] platformIDs, int page, Models.Enums.GameFieldIncludes[] includes, params Models.Enums.GameFields[] fields)
+        private async Task<GameByPlatformIDResponse?> __ByPlatformID(int[] platformIDs, int page, Models.Enums.GameFieldIncludes[]? includes, params Models.Enums.GameFields[] fields)
         {
-            ByGamePlatformIDPayload payload = new ByGamePlatformIDPayload();
-            payload.ID = string.Join(',', platformIDs.Select(x => HttpUtility.UrlEncode(x.ToString())));
+            ByGamePlatformIDPayload payload = new ByGamePlatformIDPayload()
+            {
+                ID = string.Join(',', platformIDs.Select(x => HttpUtility.UrlEncode(x.ToString())))
+            };
+
             payload.Fields = fields != null ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
             payload.Include = includes != null ? string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
             payload.Page = page <= 0 ? 1 : page;
@@ -704,7 +713,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="includes">The includes.</param>
         /// <param name="fields">The fields.</param>
         /// <returns></returns>
-        private async Task<GamesByNameResponse> __ByGameName(string version, string name, int page, int[] platformIds, Models.Enums.GameFieldIncludes[] includes, Models.Enums.GameFields[] fields)
+        private async Task<GamesByNameResponse?> __ByGameName(string version, string name, int page, int[]? platformIds, Models.Enums.GameFieldIncludes[]? includes, Models.Enums.GameFields[]? fields)
         {
             ByGameNamePayload payload = new ByGameNamePayload();
             payload.Name = name;

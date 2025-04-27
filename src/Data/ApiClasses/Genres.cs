@@ -29,7 +29,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// Loads all Genres
         /// </summary>
         /// <returns></returns>
-        public async Task<GenresResponse> All()
+        public async Task<GenresResponse?> All()
         {
             return await this.CallGet<GenresResponse>();
         }

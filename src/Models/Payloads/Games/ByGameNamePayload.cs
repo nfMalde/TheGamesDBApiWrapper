@@ -19,7 +19,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Games
         /// The name.
         /// </value>
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public string Name { get; set; } = null!;
 
         /// <summary>
         /// Gets or sets the fields.
@@ -28,7 +28,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Games
         /// The fields.
         /// </value>
         [DataMember(Name = "fields")]
-        public string Fields { get; set; }
+        public string? Fields { get; set; }
 
         /// <summary>
         /// Gets or sets the filter platform.
@@ -37,7 +37,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Games
         /// The filter platform.
         /// </value>
         [DataMember(Name = "filter[platform]")]
-        public string FilterPlatform { get; set; }
+        public string? FilterPlatform { get; set; }
 
         /// <summary>
         /// Gets or sets the include.
@@ -46,7 +46,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Games
         /// The include.
         /// </value>
         [DataMember(Name = "include")]
-        public string Include { get; set; }
+        public string? Include { get; set; }
 
         /// <summary>
         /// Gets or sets the page.

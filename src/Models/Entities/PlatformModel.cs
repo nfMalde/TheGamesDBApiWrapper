@@ -1,8 +1,8 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TheGamesDBApiWrapper.Models.Entities
@@ -18,7 +18,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The identifier.
         /// </value>
-        [JsonProperty("id")]
+        [JsonPropertyName("id")]
         public int Id { get; set; }
 
         /// <summary>
@@ -27,8 +27,8 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The name.
         /// </value>
-        [JsonProperty("name")]
-        public string Name { get; set; }
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
 
         /// <summary>
         /// Gets or sets the alias.
@@ -36,8 +36,8 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The alias.
         /// </value>
-        [JsonProperty("alias")]
-        public string Alias { get; set; }
+        [JsonPropertyName("alias")]
+        public string? Alias { get; set; }
 
         /// <summary>
         /// Gets or sets the icon.
@@ -45,8 +45,8 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The icon.
         /// </value>
-        [JsonProperty("icon")]
-        public string  Icon { get; set; }
+        [JsonPropertyName("icon")]
+        public string? Icon { get; set; }
 
         /// <summary>
         /// Gets or sets the console.
@@ -54,8 +54,8 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The console.
         /// </value>
-        [JsonProperty("console")]
-        public string Console { get; set; }
+        [JsonPropertyName("console")]
+        public string? Console { get; set; }
 
         /// <summary>
         /// Gets or sets the controller.
@@ -63,8 +63,8 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The controller.
         /// </value>
-        [JsonProperty("controller")]
-        public string Controller { get; set; }
+        [JsonPropertyName("controller")]
+        public string? Controller { get; set; }
 
         /// <summary>
         /// Gets or sets the developer.
@@ -72,8 +72,8 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The developer.
         /// </value>
-        [JsonProperty("developer")]
-        public string Developer { get; set; }
+        [JsonPropertyName("developer")]
+        public string? Developer { get; set; }
 
         /// <summary>
         /// Gets or sets the overview.
@@ -81,7 +81,7 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// <value>
         /// The overview.
         /// </value>
-        [JsonProperty("overview")]
-        public string Overview { get; set; }
+        [JsonPropertyName("overview")]
+        public string? Overview { get; set; }
     }
 }

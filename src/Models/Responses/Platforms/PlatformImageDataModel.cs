@@ -1,9 +1,5 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Platforms
 {
@@ -11,7 +7,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Platforms
     /// PlatformImageDataModel
     /// </summary>
     /// <seealso cref="TheGamesDBApiWrapper.Models.Responses.Base.DataModel" />
-    public class PlatformImageDataModel: Base.DataModel
+    public class PlatformImageDataModel : Base.DataModel
     {
         /// <summary>
         /// Gets or sets the base URL.
@@ -19,16 +15,16 @@ namespace TheGamesDBApiWrapper.Models.Responses.Platforms
         /// <value>
         /// The base URL.
         /// </value>
-        /// 
-        [JsonProperty("base_url")]
-        public Entities.ImageBaseUrlMetaModel BaseUrl { get; set; }
+        [JsonPropertyName("base_url")]
+        public Entities.ImageBaseUrlMetaModel? BaseUrl { get; set; }
+
         /// <summary>
         /// Gets or sets the images.
         /// </summary>
         /// <value>
         /// The images.
         /// </value>
-        [JsonProperty("images")]
-        public Dictionary<int, Entities.PlatformImageModel[]> Images { get; set; }
+        [JsonPropertyName("images")]
+        public Dictionary<int, Entities.PlatformImageModel[]>? Images { get; set; }
     }
 }

@@ -20,7 +20,7 @@ namespace TheGamesDBApiWrapper.Domain.ApiClasses
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformsResponseModel"/>
         /// </returns>
-        Task<PlatformsResponseModel> All(params Models.Enums.PlatformFields[] fields);
+        Task<PlatformsResponseModel?> All(params Models.Enums.PlatformFields[] fields);
         /// <summary>
         /// Gets Platform by ID
         /// </summary>
@@ -30,7 +30,7 @@ namespace TheGamesDBApiWrapper.Domain.ApiClasses
         /// </param>
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformsResponseModel"/>
-        Task<PlatformsResponseModel> ByPlatformID(int platformId, params Models.Enums.PlatformFields[] fields);
+        Task<PlatformsResponseModel?> ByPlatformID(int platformId, params Models.Enums.PlatformFields[] fields);
         /// <summary>
         /// Gets Platforms by ID List
         /// </summary>
@@ -40,7 +40,7 @@ namespace TheGamesDBApiWrapper.Domain.ApiClasses
         /// </param>
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformsResponseModel"/>
-        Task<PlatformsResponseModel> ByPlatformID(int[] platformIds, params Models.Enums.PlatformFields[] fields);
+        Task<PlatformsResponseModel?> ByPlatformID(int[] platformIds, params Models.Enums.PlatformFields[] fields);
         /// <summary>
         /// Gets Platform Name
         /// </summary>
@@ -50,7 +50,7 @@ namespace TheGamesDBApiWrapper.Domain.ApiClasses
         /// </param>
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformsResponseModel"/>
-        Task<PlatformsResponseModel> ByPlatformName(string name, params Models.Enums.PlatformFields[] fields);
+        Task<PlatformsResponseModel?> ByPlatformName(string name, params Models.Enums.PlatformFields[] fields);
         /// <summary>
         /// Gets a list of images for given platform ids
         /// </summary>
@@ -59,6 +59,6 @@ namespace TheGamesDBApiWrapper.Domain.ApiClasses
         /// <param name="platformImageTypes">The platform image types as params.</param>
         /// <exception cref="TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException"></exception>
         /// <returns><see cref="TheGamesDBApiWrapper.Models.Responses.Platforms.PlatformImagesResponse"/>
-        Task<PlatformImagesResponse> Images(int[] platformIds, int page = 1, params PlatformImageType[] platformImageTypes);
+        Task<PlatformImagesResponse?> Images(int[] platformIds, int page = 1, params PlatformImageType[] platformImageTypes);
     }
 }

@@ -1,69 +1,69 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using Newtonsoft.Json.Serialization;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.Linq;
 using System.Reflection;
-using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace TheGamesDBApiWrapper.Resolver
 {
     /// <summary>
-    /// Resolver for using DI in Models Constructor or Properties via [DIRESOLVE]
+    /// Custom JSON converter for resolving dependencies via DI in models.
     /// </summary>
-    /// <seealso cref="Newtonsoft.Json.Serialization.DefaultContractResolver" />
-    public class DIContractResolver : DefaultContractResolver
+    public class DIJsonConverter<T> : JsonConverter<T> where T : class
     {
-        /// <summary>
-        /// The provider
-        /// </summary>
-        private readonly IServiceProvider provider;
+        private readonly IServiceProvider _provider;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="DIContractResolver"/> class.
+        /// Initializes a new instance of the <see cref="DIJsonConverter{T}"/> class.
         /// </summary>
-        /// <param name="provider">The provider.</param>
-        public DIContractResolver(IServiceProvider provider)
+        /// <param name="provider">The service provider.</param>
+        public DIJsonConverter(IServiceProvider provider)
         {
-            this.provider = provider;
+            _provider = provider;
         }
 
-        /// <summary>
-        /// Creates a <see cref="T:Newtonsoft.Json.Serialization.JsonObjectContract" /> for the given type.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <returns>
-        /// A <see cref="T:Newtonsoft.Json.Serialization.JsonObjectContract" /> for the given type.
-        /// </returns>
-        protected override JsonObjectContract CreateObjectContract(Type objectType)
+        public override T? Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            JsonObjectContract contract = base.CreateObjectContract(objectType);
-            contract.DefaultCreator = () => this.ResolveFromDI(objectType);
+            // Deserialize the object using the default behavior
+            var jsonDocument = JsonDocument.ParseValue(ref reader);
+            var instance = ActivatorUtilities.CreateInstance(_provider, typeToConvert) as T;
 
-            return contract; 
-        }
-
-
-        /// <summary>
-        /// Resolves servies from di.
-        /// </summary>
-        /// <param name="objectType">Type of the object.</param>
-        /// <returns></returns>
-        private object ResolveFromDI(Type objectType)
-        {
-            object o = ActivatorUtilities.CreateInstance(this.provider, objectType);
-
-            objectType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.FlattenHierarchy | BindingFlags.Instance)
-            .Where(x => x.GetCustomAttribute<Annotations.DIResolve>() != null)
-            .ToList()
-            .ForEach(prop =>
+            if (instance == null)
             {
-                prop.SetValue(o, this.provider.GetService(prop.PropertyType));
-            });
+                throw new InvalidOperationException($"Unable to create an instance of type {typeToConvert.FullName}.");
+            }
 
-            return o;
+            // Populate properties marked with [DIResolve]
+            var properties = typeToConvert.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                .Where(prop => prop.GetCustomAttribute<Annotations.DIResolve>() != null);
+
+            foreach (var property in properties)
+            {
+                var service = _provider.GetService(property.PropertyType);
+                if (service != null)
+                {
+                    property.SetValue(instance, service);
+                }
+            }
+
+            // Populate other properties from JSON
+            foreach (var property in typeToConvert.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+            {
+                if (property.CanWrite && jsonDocument.RootElement.TryGetProperty(property.Name, out var jsonProperty))
+                {
+                    var value = JsonSerializer.Deserialize(jsonProperty.GetRawText(), property.PropertyType, options);
+                    property.SetValue(instance, value);
+                }
+            }
+
+            return instance;
+        }
+
+        public override void Write(Utf8JsonWriter writer, T value, JsonSerializerOptions options)
+        {
+            // Use the default serialization behavior
+            JsonSerializer.Serialize(writer, value, options);
         }
     }
 }

@@ -12,6 +12,6 @@ namespace TheGamesDBApiWrapper.Domain.ApiClasses
         /// Loads all publishers
         /// </summary>
         /// <returns></returns>
-        Task<PublishersResponse> All();
+        Task<PublishersResponse?> All();
     }
 }

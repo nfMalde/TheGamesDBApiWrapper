@@ -1,4 +1,42 @@
 # Change Log
+## 3.0.0
+- **Breaking Changes**:
+  - Removed `RestClient` and `Newtonsoft.Json` dependencies.
+  - Updated all API methods to use `HttpClient` and `System.Text.Json`.
+  - Moved to .NET 9
+- **Migration to System.Text.Json**:
+  - Replaced `Newtonsoft.Json` with `System.Text.Json` across all models and converters.
+  - Added `TimestampToDateTimeConverter` for converting Unix timestamps to `DateTime`.
+  - Removed `Newtonsoft.Json` dependency from the project.
+
+- **Migration to HttpClient**:
+  - Replaced `RestClient` with `HttpClient` for making API calls.
+  - Updated all API methods to use `HttpClient` for requests and responses.
+  - Removed `RestSharp` dependency from the project.
+
+- **Nullable Return Types**:
+  - Updated all return types in the `IGames` interface to be nullable to support `null` responses.
+
+- **Enhancements to TheGamesDBApiWrapperRestClientFactory**:
+  - The `Create` method now returns an `HttpClient` instead of a `RestClient`.
+  - Added a new method `GetJsonSerializerOptions` to configure `System.Text.Json` serialization options.
+
+- **Refactoring and Consistency Improvements**:
+  - Updated documentation for the `IGames` interface to reflect nullable return types.
+  - Improved consistency in serialization and deserialization logic across models.
+
+- **Enum Improvements**:
+  - Updated `GameFieldIncludes` and other enums to use `System.Text.Json.Serialization.JsonStringEnumConverter`.
+
+- **Testing and Mock Data Updates**:
+  - Updated test cases to reflect changes in models and converters.
+  - Adjusted JSON mock data to align with the new `System.Text.Json` serialization.
+
+- **General Code Cleanup**:
+  - Improved code readability and structure across multiple files.
+
+- **Other Changes**:
+  - Enhanced error handling and validation in API classes.
 ## 2.1.1
 * Fixed bug where encoding csv like parameter broke the request
 * Added support for multiple values in csv like parameter

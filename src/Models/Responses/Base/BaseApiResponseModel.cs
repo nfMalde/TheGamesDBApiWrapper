@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Newtonsoft.Json;
+using System.Text.Json.Serialization;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Base
 {
@@ -15,7 +11,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
         /// <value>
         /// The code.
         /// </value>
-        [JsonProperty("code")]
+        [JsonPropertyName("code")]
         public int Code { get; set; }
 
         /// <summary>
@@ -24,8 +20,8 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
         /// <value>
         /// The status.
         /// </value>
-        [JsonProperty("status")]
-        public string Status { get; set; }
+        [JsonPropertyName("status")]
+        public string? Status { get; set; }
 
         /// <summary>
         /// Gets or sets the remaining monthly allowance.
@@ -33,7 +29,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
         /// <value>
         /// The remaining monthly allowance.
         /// </value>
-        [JsonProperty("remaining_monthly_allowance")]
+        [JsonPropertyName("remaining_monthly_allowance")]
         public int RemainingMonthlyAllowance { get; set; }
 
         /// <summary>
@@ -42,10 +38,10 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
         /// <value>
         /// The extra allowance.
         /// </value>
-        [JsonProperty("extra_allowance")]
+        [JsonPropertyName("extra_allowance")]
         public int ExtraAllowance { get; set; }
 
-        [JsonProperty("allowance_refresh_timer")]
+        [JsonPropertyName("allowance_refresh_timer")]
         public int AllowanceRefreshTimer { get; set; }
     }
 
@@ -53,7 +49,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
     /// Api Response Model Base Class
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public abstract class BaseApiResponseModel<T>: BaseApiResponseModel where T:class
+    public abstract class BaseApiResponseModel<T> : BaseApiResponseModel where T : class
     {
         /// <summary>
         /// Gets or sets the data.
@@ -61,7 +57,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
         /// <value>
         /// The data.
         /// </value>
-        [JsonProperty("data")]
-        public T Data { get; set; }
+        [JsonPropertyName("data")]
+        public T? Data { get; set; }
     }
 }

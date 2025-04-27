@@ -50,7 +50,7 @@ namespace TheGamesDBApiWrapper.Domain
         /// <value>
         /// The allowance track model.
         /// </value>
-        AllowanceTrackModel AllowanceTrack { get; }
+        AllowanceTrackModel? AllowanceTrack { get; }
 
         /// <summary>
         /// Sets the allowance.

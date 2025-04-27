@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.Serialization;
@@ -20,7 +19,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Platforms
         /// The name.
         /// </value>
         [DataMember(Name = "name")]
-        public string Name { get; set; }
+        public required string Name { get; set; }
 
         /// <summary>
         /// Gets or sets the fields.
@@ -29,6 +28,6 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Platforms
         /// The fields.
         /// </value>
         [DataMember(Name = "fields")]
-        public string Fields { get; set; }
+        public string? Fields { get; set; }
     }
 }

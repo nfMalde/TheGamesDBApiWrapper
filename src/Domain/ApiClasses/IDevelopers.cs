@@ -12,6 +12,6 @@ namespace TheGamesDBApiWrapper.Domain.ApiClasses
         /// Loads all Developers
         /// </summary>
         /// <returns></returns>
-        Task<DevelopersResponse> All();
+        Task<DevelopersResponse?> All();
     }
 }

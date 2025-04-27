@@ -19,7 +19,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Games
         /// The identifier.
         /// </value>
         [DataMember(Name = "id")]
-        public string Id { get; set; }
+        public required string Id { get; set; }
 
         /// <summary>
         /// Gets or sets the fields.
@@ -28,7 +28,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Games
         /// The fields.
         /// </value>
         [DataMember(Name = "fields")]
-        public string Fields { get; set; }
+        public string? Fields { get; set; }
 
         /// <summary>
         /// Gets or sets the include.
@@ -37,7 +37,7 @@ namespace TheGamesDBApiWrapper.Models.Payloads.Games
         /// The include.
         /// </value>
         [DataMember(Name = "include")]
-        public string Include { get; set; }
+        public string? Include { get; set; }
 
         /// <summary>
         /// Gets or sets the page.

@@ -4,7 +4,7 @@ namespace TheGamesDBApiWrapper.Domain.Track
 {
     public interface IAllowanceTracker
     {
-        AllowanceTrackModel Current { get; }
+        AllowanceTrackModel? Current { get; }
 
         void SetAllowance(int remaining, int extra, int secondsToReset);
     }

@@ -25,14 +25,14 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
             {
-                IConfiguration config = factory.GetService<IConfiguration>();
+                IConfiguration config = factory.GetRequiredService<IConfiguration>();
                 TheGamesDBApiConfigModel apiConfig = new TheGamesDBApiConfigModel();
                 config.GetSection("TheGamesDB").Bind(apiConfig);
 
                 return new TheGamesDBAPI(
                     apiConfig, 
-                    factory.GetService<ITheGamesDBApiWrapperRestClientFactory>(),
-                    factory.GetService<IAllowanceTracker>()
+                    factory.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>(),
+                    factory.GetRequiredService<IAllowanceTracker>()
                     
                     );
             });
@@ -54,8 +54,8 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
             { 
                 return new TheGamesDBAPI(config, 
-                    factory.GetService<ITheGamesDBApiWrapperRestClientFactory>(),
-                    factory.GetService<IAllowanceTracker>());
+                    factory.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>(),
+                    factory.GetRequiredService<IAllowanceTracker>());
             });
              
             return services;
@@ -69,7 +69,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <param name="version">The version.</param>
         /// <param name="baseUrl">The base URL.</param>
         /// <returns></returns>
-        public static IServiceCollection AddTheGamesDBApiWrapper(this IServiceCollection services, string apiKey, double? version = null, string baseUrl = null)
+        public static IServiceCollection AddTheGamesDBApiWrapper(this IServiceCollection services, string apiKey, double? version = null, string? baseUrl = null)
         {
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
             services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
@@ -89,8 +89,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 }
 
                 return new TheGamesDBAPI(c, 
-                    factory.GetService<ITheGamesDBApiWrapperRestClientFactory>(),
-                    factory.GetService<IAllowanceTracker>());
+                    factory.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>(),
+                    factory.GetRequiredService<IAllowanceTracker>());
             });
 
             return services;
