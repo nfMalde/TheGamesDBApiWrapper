@@ -35,12 +35,12 @@ namespace TheGamesDBApiWrapperTests
             throw new Exception($"Json Mock {filename}.mock.json not found. Path: {p}");
         }
 
-        private MockHttpMessageHandler mockMessageHandler<TResponse>(string jsonfile) where TResponse : class
+        private MockHttpMessageHandler mockMessageHandler<TResponse>(string jsonfile, string url) where TResponse : class
         { 
 
             string content = this.loadJson(jsonfile);
             var mockHttp = new MockHttpMessageHandler();
-            mockHttp.When("*")
+            mockHttp.When(url)
             .Respond("application/json", content);
              
             return mockHttp;
@@ -49,12 +49,13 @@ namespace TheGamesDBApiWrapperTests
         private IServiceProvider ServiceProvider = null!;
          
 
-        private void mockServices<TResponse>(string jsonfile) where TResponse : class
+        private void mockServices<TResponse>(string jsonfile, string url = "") where TResponse : class
         {
            
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
-            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f => new TheGamesDBApiWrapperRestClientFactory(f.GetRequiredService<IServiceProvider>()).WithMessageHandler(mockMessageHandler<TResponse>(jsonfile)));
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f => 
+            new TheGamesDBApiWrapperRestClientFactory(f.GetRequiredService<IServiceProvider>()).WithMessageHandler(mockMessageHandler<TResponse>(jsonfile, url)));
             services.AddScoped(f => new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel()
             {
                 ApiKey = "testkey",
@@ -72,7 +73,7 @@ namespace TheGamesDBApiWrapperTests
         [Test]
         public async Task DeveloperResponseShouldBeParsed()
         {
-            this.mockServices<DevelopersResponse>("developer");
+            this.mockServices<DevelopersResponse>("developer", "*/v1/Developers");
 
             ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
             var response = await api.Developers.All();
@@ -87,7 +88,7 @@ namespace TheGamesDBApiWrapperTests
         [TestCaseSource(nameof(GameByIdMocks))]
         public async Task GameByIdResponseShouldBeParsed(string mockfile)
         {
-            this.mockServices<GamesByGameIDResponse>(mockfile);
+            this.mockServices<GamesByGameIDResponse>(mockfile, "*/v1/Games/ByGameID");
 
             ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
             var response = await api.Games.ByGameID(new int[] { 1, 2, 3, 4, 5 });
@@ -107,7 +108,7 @@ namespace TheGamesDBApiWrapperTests
         [Test]
         public async Task GameImagesResponseShouldBeParsed()
         {
-            this.mockServices<GamesImagesResponse>("game-images");
+            this.mockServices<GamesImagesResponse>("game-images", "*/v1/Games/Images");
 
             ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
             var response = await api.Games.Images(new int[] { 1 });
@@ -125,7 +126,7 @@ namespace TheGamesDBApiWrapperTests
         [Test]
         public async Task GameUpdateResponseShouldBeParsed()
         {
-            this.mockServices<GameUpdateResponse>("game-updates");
+            this.mockServices<GameUpdateResponse>("game-updates", "*/v1/Games/Updates");
 
             ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 
@@ -144,7 +145,7 @@ namespace TheGamesDBApiWrapperTests
         [Test]
         public async Task PlatformsResponseShouldBeParsed()
         {
-            this.mockServices<PlatformsResponseModel>("platforms");
+            this.mockServices<PlatformsResponseModel>("platforms", "*/v1/Platforms");
 
             ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 
@@ -160,7 +161,7 @@ namespace TheGamesDBApiWrapperTests
         [Test]
         public async Task GenresResponseShouldBeParsed()
         {
-            this.mockServices<GenresResponse>("genres");
+            this.mockServices<GenresResponse>("genres", "*/v1/Genres");
 
             ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 
@@ -176,7 +177,7 @@ namespace TheGamesDBApiWrapperTests
         [Test]
         public async Task PublishersResponseShouldBeParsed()
         {
-            this.mockServices<PublishersResponse>("publishers");
+            this.mockServices<PublishersResponse>("publishers", "*/v1/Publishers");
 
             ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 

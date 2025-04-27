@@ -146,23 +146,29 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// Executes the actual get requests
         /// </summary>
         /// <typeparam name="T">ResponseType</typeparam>
-        /// <param name="endpoint">The endpoint.</param>
+        /// <param name="endpointPath">The endpoint.</param>
         /// <param name="payload">The payload.</param>
         /// <param name="version">The version.</param>
         /// <returns></returns>
         /// <exception cref="Exception">Error in rest call: {restResponse.ErrorMessage} with response raw data \"{restResponse.Content}\"</exception>
         /// <exception cref="Exceptions.TheGamesDBApiException"></exception>
-        protected async Task<T?> CallGet<T>(string? endpoint = null, object? payload = null, string? version = null) where T:class
+        protected async Task<T?> CallGet<T>(string endpointPath = "", object? payload = null, string? version = null) where T:class
         {
+            if (version == null)
+            {
+                version = "v1";
+            }
 
-            using var client = this.factory.Create($"{this.baseUrl}/{version}/{endpoint}");
+            if (!string.IsNullOrEmpty(endpointPath))
+            {
+                endpointPath = $"/{endpointPath.TrimStart('/')}";
+            }
+
+            using var client = this.factory.Create($"{this.baseUrl}");
 
             var query = HttpUtility.ParseQueryString(string.Empty);
 
-            if (version != null)
-            {
-                query.Add("version", version);
-            }
+             
 
             query.Add("apikey", this.apikey);
 
@@ -195,7 +201,8 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                 var settings = this.factory.GetJsonSerializerOptions();
 
                 
-                var restResponse = await client.GetAsync($"{endpoint}?{query}");
+                var restResponse = await client.GetAsync($"{version}/{this.endpoint}{endpointPath}?{query}");
+                
                 var content = await restResponse.Content.ReadAsStringAsync();
                 var response = JsonSerializer.Deserialize<T>(content, settings);
                 var restResponseBase = response as BaseApiResponseModel;
@@ -218,10 +225,10 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
             }
             catch (Exception e)
             {
-                string requestUri =  "/" + endpoint;
+                string requestUri =  "/" + endpointPath;
                 query.Set("apikey", "********");
 
-                string message = $"TheGamesDB Api Error. Unable to send Data {query} to endpoint {requestUri}. ";
+                string message = $"TheGamesDB Api Error. Unable to send Data {query} to endpoint {this.baseUrl}/{version}/{this.endpoint}{endpointPath}. ";
                 message += "See Inner-Exception for details.";
 
                 throw new Exceptions.TheGamesDBApiException(message, e); 
