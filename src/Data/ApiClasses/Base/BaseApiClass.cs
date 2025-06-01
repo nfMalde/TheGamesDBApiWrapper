@@ -245,50 +245,53 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
             } 
         }
         
-        private void EnrichResponseViaServiceProvider(Type reflectType, object? data)
+        private readonly Dictionary<Type, PropertyInfo[]> _reflectionCache = new();
+
+        private void EnrichResponseViaServiceProvider(Type reflectType, object? data, int maxDepth = 10)
         {
-            if (data == null)
+            if (data == null || maxDepth <= 0)
             {
                 return;
             }
-            // Scan recursive for DIResolveAttribute and resolve it in current scope via service provide
-            // Include: Private, Protected, Public Properties
-        
-                reflectType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)                
-                .ToList()
-                .ForEach(prop =>
-                {
-                    if (prop.GetCustomAttribute<DIResolveAttribute>() != null)
-                    {
-                        var service = this.provider.GetService(prop.PropertyType);
-                        if (service != null)
-                        {
-                            prop.SetValue(data, service);
-                        }
-                    }                     
-                    else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
-                    {
-                        var itemType = prop.PropertyType.GetGenericArguments()[0];
-                        var collection = prop.GetValue(data) as System.Collections.IEnumerable;
-                        if (collection != null)
-                        {
-                            foreach (var item in collection)
-                            {
-                                EnrichResponseViaServiceProvider(itemType, item);
-                            }
-                        }
-                    }
 
-                    // If property is a class, we need to resolve it as well
-                    else if (prop.PropertyType.IsClass && prop.PropertyType.Namespace!.StartsWith("TheGamesDBApiWrapper.Models"))
+            // Cache reflection results
+            if (!_reflectionCache.TryGetValue(reflectType, out var properties))
+            {
+                properties = reflectType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+                _reflectionCache[reflectType] = properties;
+            }
+
+            foreach (var prop in properties)
+            {
+                if (prop.GetCustomAttribute<DIResolveAttribute>() != null)
+                {
+                    var service = this.provider.GetService(prop.PropertyType);
+                    if (service != null)
                     {
-                        var item = prop.GetValue(data);
-                        if (item != null)
+                        prop.SetValue(data, service);
+                    }
+                }
+                else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
+                {
+                    var itemType = prop.PropertyType.GetGenericArguments()[0];
+                    var collection = prop.GetValue(data) as System.Collections.IEnumerable;
+                    if (collection != null)
+                    {
+                        foreach (var item in collection)
                         {
-                            EnrichResponseViaServiceProvider(prop.PropertyType, item);
+                            EnrichResponseViaServiceProvider(itemType, item, maxDepth - 1);
                         }
                     }
-                });
+                }
+                else if (prop.PropertyType.IsClass && prop.PropertyType.Namespace!.StartsWith("TheGamesDBApiWrapper.Models"))
+                {
+                    var item = prop.GetValue(data);
+                    if (item != null)
+                    {
+                        EnrichResponseViaServiceProvider(prop.PropertyType, item, maxDepth - 1);
+                    }
+                }
+            }
         }
 
 
