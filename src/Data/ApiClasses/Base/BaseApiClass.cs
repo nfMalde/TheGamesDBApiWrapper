@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 using System.Web;
 using TheGamesDBApiWrapper.Annotations;
 using TheGamesDBApiWrapper.Domain;
+using TheGamesDBApiWrapper.Domain.Helper;
 using TheGamesDBApiWrapper.Domain.Track;
 using TheGamesDBApiWrapper.Models.Responses.Base;
 using TheGamesDBApiWrapper.Models.Track;
@@ -50,6 +52,8 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// </summary>
         private readonly IAllowanceTracker allowanceTracker;
 
+        private readonly IDIResolveHelper diResolveHelper;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseApiClass" /> class.
         /// </summary>
@@ -60,6 +64,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         public BaseApiClass(IServiceProvider provider, Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, string endpoint , IAllowanceTracker allowanceTracker)
         {
             this.provider = provider;
+            this.diResolveHelper = provider.GetRequiredService<IDIResolveHelper>();
             this.factory = factory;
             this.allowanceTracker = allowanceTracker;
             this.parseConfig(config, endpoint); 
@@ -211,7 +216,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                 var restResponseBase = response as BaseApiResponseModel;
 
                 // Scan recursive for DIResolveAttribute and resolve it in current scope via service provide
-                EnrichResponseViaServiceProvider(response?.GetType() ?? typeof(T), response);
+                diResolveHelper.EnrichViaDI(response);
 
                 if (restResponse.StatusCode == System.Net.HttpStatusCode.OK)
                 {
@@ -244,58 +249,5 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                 throw new Exceptions.TheGamesDBApiException(message, e); 
             } 
         }
-        
-        private readonly Dictionary<Type, PropertyInfo[]> _reflectionCache = new();
-
-        private void EnrichResponseViaServiceProvider(Type reflectType, object? data, int maxDepth = 10)
-        {
-            if (data == null || maxDepth <= 0)
-            {
-                return;
-            }
-
-            // Cache reflection results
-            if (!_reflectionCache.TryGetValue(reflectType, out var properties))
-            {
-                properties = reflectType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-                _reflectionCache[reflectType] = properties;
-            }
-
-            foreach (var prop in properties)
-            {
-                if (prop.GetCustomAttribute<DIResolveAttribute>() != null)
-                {
-                    var service = this.provider.GetService(prop.PropertyType);
-                    if (service != null)
-                    {
-                        prop.SetValue(data, service);
-                    }
-                }
-                else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
-                {
-                    var itemType = prop.PropertyType.GetGenericArguments()[0];
-                    var collection = prop.GetValue(data) as System.Collections.IEnumerable;
-                    if (collection != null)
-                    {
-                        foreach (var item in collection)
-                        {
-                            EnrichResponseViaServiceProvider(itemType, item, maxDepth - 1);
-                        }
-                    }
-                }
-                else if (prop.PropertyType.IsClass && prop.PropertyType.Namespace!.StartsWith("TheGamesDBApiWrapper.Models"))
-                {
-                    var item = prop.GetValue(data);
-                    if (item != null)
-                    {
-                        EnrichResponseViaServiceProvider(prop.PropertyType, item, maxDepth - 1);
-                    }
-                }
-            }
-        }
-
-
-
-
     }
 }

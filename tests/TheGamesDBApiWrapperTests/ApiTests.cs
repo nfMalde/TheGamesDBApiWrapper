@@ -8,8 +8,10 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using TheGamesDBApiWrapper.Data;
+using TheGamesDBApiWrapper.Data.Hellper;
 using TheGamesDBApiWrapper.Data.Track;
 using TheGamesDBApiWrapper.Domain;
+using TheGamesDBApiWrapper.Domain.Helper;
 using TheGamesDBApiWrapper.Domain.Track;
 using TheGamesDBApiWrapper.Models.Enums;
 using TheGamesDBApiWrapper.Models.Responses.Developers;
@@ -53,6 +55,7 @@ namespace TheGamesDBApiWrapperTests
         {
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
+            services.AddScoped<IDIResolveHelper, DIResolveHelper>();
             services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f =>
             new TheGamesDBApiWrapperRestClientFactory(f.GetRequiredService<IServiceProvider>()).WithMessageHandler(mockMessageHandler<TResponse>(jsonfile, url)));
             services.AddScoped(f => new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel()

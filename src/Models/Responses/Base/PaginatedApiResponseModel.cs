@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 using TheGamesDBApiWrapper.Annotations;
 using TheGamesDBApiWrapper.Domain;
+using TheGamesDBApiWrapper.Domain.Helper;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Base
 {
@@ -42,6 +43,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
             }
 
             ITheGamesDBApiWrapperRestClientFactory restClientFactory = this.Provider.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>();
+            var diResolveHelper = this.Provider.GetRequiredService<IDIResolveHelper>();
 
             using var client = restClientFactory.Create(string.Empty);
 
@@ -49,7 +51,9 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
 
             if (prevPageResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return await prevPageResponse.Content.ReadFromJsonAsync<TResponseModel>(restClientFactory.GetJsonSerializerOptions());
+                var res = await prevPageResponse.Content.ReadFromJsonAsync<TResponseModel>(restClientFactory.GetJsonSerializerOptions());
+                diResolveHelper.EnrichViaDI(res);
+                return res;
             }
 
             string result = await prevPageResponse?.Content?.ReadAsStringAsync()! ?? string.Empty;
@@ -70,13 +74,20 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
             }
 
             ITheGamesDBApiWrapperRestClientFactory restClientFactory = this.Provider.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>();
+            var diResolveHelper = this.Provider.GetRequiredService<IDIResolveHelper>();
+
             using var client = restClientFactory.Create(string.Empty);
 
             var nextPageResponse = await client.GetAsync(this.Pages.Next);
 
             if (nextPageResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                return await nextPageResponse.Content.ReadFromJsonAsync<TResponseModel>(restClientFactory.GetJsonSerializerOptions());
+                var res =  await nextPageResponse.Content.ReadFromJsonAsync<TResponseModel>(restClientFactory.GetJsonSerializerOptions());
+
+
+                diResolveHelper.EnrichViaDI(res);
+
+                return res;
             } 
              
 
@@ -85,7 +96,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
             throw new Exceptions.TheGamesDBApiException($"Error received response {nextPageResponse?.StatusCode} - {result ?? "<no content>"} fetching next Page by calling {this.Pages.Next}");
         }
 
-        [DIResolveAttribute]
+        [DIResolve]
         protected IServiceProvider Provider { get; set; } = null!;
     }
 }

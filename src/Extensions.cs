@@ -5,8 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheGamesDBApiWrapper.Data;
+using TheGamesDBApiWrapper.Data.Hellper;
 using TheGamesDBApiWrapper.Data.Track;
 using TheGamesDBApiWrapper.Domain;
+using TheGamesDBApiWrapper.Domain.Helper;
 using TheGamesDBApiWrapper.Domain.Track;
 using TheGamesDBApiWrapper.Models.Config;
 
@@ -21,6 +23,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddTheGamesDBApiWrapper(this IServiceCollection services)
         {
+            services.AddScoped<IDIResolveHelper, DIResolveHelper>();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
             services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
@@ -50,6 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddTheGamesDBApiWrapper(this IServiceCollection services, TheGamesDBApiConfigModel config)
         {
+            services.AddScoped<IDIResolveHelper, DIResolveHelper>();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
             services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
@@ -74,6 +78,7 @@ namespace Microsoft.Extensions.DependencyInjection
         /// <returns></returns>
         public static IServiceCollection AddTheGamesDBApiWrapper(this IServiceCollection services, string apiKey, double? version = null, string? baseUrl = null)
         {
+            services.AddScoped<IDIResolveHelper, DIResolveHelper>();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
             services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
