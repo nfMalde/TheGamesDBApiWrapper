@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Extensions.DependencyInjection;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 using System.Web;
 using TheGamesDBApiWrapper.Annotations;
 using TheGamesDBApiWrapper.Domain;
+using TheGamesDBApiWrapper.Domain.Helper;
 using TheGamesDBApiWrapper.Domain.Track;
 using TheGamesDBApiWrapper.Models.Responses.Base;
 using TheGamesDBApiWrapper.Models.Track;
@@ -39,6 +41,8 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// The version
         /// </summary>
         private string? version;
+        private readonly IServiceProvider provider;
+
         /// <summary>
         /// The factory
         /// </summary>
@@ -48,6 +52,8 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// </summary>
         private readonly IAllowanceTracker allowanceTracker;
 
+        private readonly IDIResolveHelper diResolveHelper;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="BaseApiClass" /> class.
         /// </summary>
@@ -55,8 +61,10 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// <param name="factory">The factory.</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="allowanceTracker">The allowance tracker.</param>
-        public BaseApiClass(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, string endpoint , IAllowanceTracker allowanceTracker)
+        public BaseApiClass(IServiceProvider provider, Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, string endpoint , IAllowanceTracker allowanceTracker)
         {
+            this.provider = provider;
+            this.diResolveHelper = provider.GetRequiredService<IDIResolveHelper>();
             this.factory = factory;
             this.allowanceTracker = allowanceTracker;
             this.parseConfig(config, endpoint); 
@@ -207,6 +215,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                 var response = JsonSerializer.Deserialize<T>(content, settings);
                 var restResponseBase = response as BaseApiResponseModel;
 
+                // Scan recursive for DIResolveAttribute and resolve it in current scope via service provide
+                diResolveHelper.EnrichViaDI(response);
+
                 if (restResponse.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     if (restResponseBase == null)
@@ -238,8 +249,5 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                 throw new Exceptions.TheGamesDBApiException(message, e); 
             } 
         }
-
-
-
     }
 }

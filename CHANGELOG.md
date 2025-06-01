@@ -1,4 +1,9 @@
 # Change Log
+## 3.0.1 
+- **Hot Fixes**:
+  - Fixed a NullReference Error when calling "NextPage()" or "PreviousPage()" on all Paginated Results.
+  - Removed obsolete "DiResolver"
+  
 ## 3.0.0
 - **Breaking Changes**:
   - Removed `RestClient` and `Newtonsoft.Json` dependencies.

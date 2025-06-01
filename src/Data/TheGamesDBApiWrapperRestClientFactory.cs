@@ -1,12 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using TheGamesDBApiWrapper.Converter;
 using TheGamesDBApiWrapper.Domain;
-using TheGamesDBApiWrapper.Models.Entities;
-using TheGamesDBApiWrapper.Resolver;
 
 namespace TheGamesDBApiWrapper.Data
 {
@@ -57,8 +53,8 @@ namespace TheGamesDBApiWrapper.Data
                 WriteIndented = true,
                 Converters =
                 {
-                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
-                    //new DictConverter<int, GameImageModel[]>()
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
+
                 }
             };
 
