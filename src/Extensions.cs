@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using TheGamesDBApiWrapper.Data;
-using TheGamesDBApiWrapper.Data.Hellper;
+using TheGamesDBApiWrapper.Data.Helper;
 using TheGamesDBApiWrapper.Data.Track;
 using TheGamesDBApiWrapper.Domain;
 using TheGamesDBApiWrapper.Domain.Helper;

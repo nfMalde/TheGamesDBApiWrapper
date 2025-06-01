@@ -1,14 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 using TheGamesDBApiWrapper.Annotations;
 using TheGamesDBApiWrapper.Domain.Helper;
 
-namespace TheGamesDBApiWrapper.Data.Hellper
+namespace TheGamesDBApiWrapper.Data.Helper
 {
     public class DIResolveHelper(IServiceProvider provider) : IDIResolveHelper
     {
