@@ -85,7 +85,7 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
             throw new Exceptions.TheGamesDBApiException($"Error received response {nextPageResponse?.StatusCode} - {result ?? "<no content>"} fetching next Page by calling {this.Pages.Next}");
         }
 
-        [DIResolve]
+        [DIResolveAttribute]
         protected IServiceProvider Provider { get; set; } = null!;
     }
 }

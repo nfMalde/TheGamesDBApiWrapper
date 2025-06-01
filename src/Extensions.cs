@@ -30,6 +30,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 config.GetSection("TheGamesDB").Bind(apiConfig);
 
                 return new TheGamesDBAPI(
+                    factory.GetRequiredService<IServiceProvider>(),
                     apiConfig, 
                     factory.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>(),
                     factory.GetRequiredService<IAllowanceTracker>()
@@ -53,7 +54,9 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
             { 
-                return new TheGamesDBAPI(config, 
+                return new TheGamesDBAPI(
+                    factory.GetRequiredService<IServiceProvider>(),
+                    config, 
                     factory.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>(),
                     factory.GetRequiredService<IAllowanceTracker>());
             });
@@ -88,7 +91,9 @@ namespace Microsoft.Extensions.DependencyInjection
                     c.Version = version.Value;
                 }
 
-                return new TheGamesDBAPI(c, 
+                return new TheGamesDBAPI(
+                    factory.GetRequiredService<IServiceProvider>(),
+                    c, 
                     factory.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>(),
                     factory.GetRequiredService<IAllowanceTracker>());
             });

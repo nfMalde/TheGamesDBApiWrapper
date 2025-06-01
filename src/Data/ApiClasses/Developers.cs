@@ -21,7 +21,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         /// <param name="config">The configuration.</param>
         /// <param name="factory">The factory.</param>
         /// <param name="allowanceTracker">The allowance tracker.</param>
-        public Developers(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, IAllowanceTracker allowanceTracker) : base(config, factory, "Developers", allowanceTracker)
+        public Developers(IServiceProvider provider, Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, IAllowanceTracker allowanceTracker) : base(provider, config, factory, "Developers", allowanceTracker)
         {
         }
 

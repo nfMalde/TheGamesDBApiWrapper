@@ -30,6 +30,7 @@ namespace TheGamesDBApiWrapper.Data
         /// <param name="factory">The factory.</param>
         /// <param name="allowanceTracker">The allowance tracker.</param>
         public TheGamesDBAPI(
+            IServiceProvider provider,
             TheGamesDBApiConfigModel config, 
             Domain.ITheGamesDBApiWrapperRestClientFactory factory, 
             IAllowanceTracker allowanceTracker)
@@ -37,11 +38,11 @@ namespace TheGamesDBApiWrapper.Data
             //Fix base url and trim
             config.BaseUrl = config.BaseUrl.TrimEnd('/');
             // Create API Classes
-            this.Games = new Games(config, factory, allowanceTracker);
-            this.Platform = new Platform(config, factory, allowanceTracker);
-            this.Genres = new Genres(config, factory, allowanceTracker);
-            this.Developers = new Developers(config, factory, allowanceTracker);
-            this.Publishers = new Publishers(config, factory, allowanceTracker);
+            this.Games = new Games(provider, config, factory, allowanceTracker);
+            this.Platform = new Platform(provider, config, factory, allowanceTracker);
+            this.Genres = new Genres(provider, config, factory, allowanceTracker);
+            this.Developers = new Developers(provider, config, factory, allowanceTracker);
+            this.Publishers = new Publishers(provider, config, factory, allowanceTracker);
             this.allowanceTracker = allowanceTracker;
         }
 

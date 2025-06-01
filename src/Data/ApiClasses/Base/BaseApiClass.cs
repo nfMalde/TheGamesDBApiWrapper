@@ -39,6 +39,8 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// The version
         /// </summary>
         private string? version;
+        private readonly IServiceProvider provider;
+
         /// <summary>
         /// The factory
         /// </summary>
@@ -55,8 +57,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
         /// <param name="factory">The factory.</param>
         /// <param name="endpoint">The endpoint.</param>
         /// <param name="allowanceTracker">The allowance tracker.</param>
-        public BaseApiClass(Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, string endpoint , IAllowanceTracker allowanceTracker)
+        public BaseApiClass(IServiceProvider provider, Models.Config.TheGamesDBApiConfigModel config, Domain.ITheGamesDBApiWrapperRestClientFactory factory, string endpoint , IAllowanceTracker allowanceTracker)
         {
+            this.provider = provider;
             this.factory = factory;
             this.allowanceTracker = allowanceTracker;
             this.parseConfig(config, endpoint); 
@@ -207,6 +210,9 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                 var response = JsonSerializer.Deserialize<T>(content, settings);
                 var restResponseBase = response as BaseApiResponseModel;
 
+                // Scan recursive for DIResolveAttribute and resolve it in current scope via service provide
+                EnrichResponseViaServiceProvider(response?.GetType() ?? typeof(T), response);
+
                 if (restResponse.StatusCode == System.Net.HttpStatusCode.OK)
                 {
                     if (restResponseBase == null)
@@ -238,6 +244,53 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                 throw new Exceptions.TheGamesDBApiException(message, e); 
             } 
         }
+        
+        private void EnrichResponseViaServiceProvider(Type reflectType, object? data)
+        {
+            if (data == null)
+            {
+                return;
+            }
+            // Scan recursive for DIResolveAttribute and resolve it in current scope via service provide
+            // Include: Private, Protected, Public Properties
+        
+                reflectType.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)                
+                .ToList()
+                .ForEach(prop =>
+                {
+                    if (prop.GetCustomAttribute<DIResolveAttribute>() != null)
+                    {
+                        var service = this.provider.GetService(prop.PropertyType);
+                        if (service != null)
+                        {
+                            prop.SetValue(data, service);
+                        }
+                    }                     
+                    else if (prop.PropertyType.IsGenericType && prop.PropertyType.GetGenericTypeDefinition() == typeof(List<>))
+                    {
+                        var itemType = prop.PropertyType.GetGenericArguments()[0];
+                        var collection = prop.GetValue(data) as System.Collections.IEnumerable;
+                        if (collection != null)
+                        {
+                            foreach (var item in collection)
+                            {
+                                EnrichResponseViaServiceProvider(itemType, item);
+                            }
+                        }
+                    }
+
+                    // If property is a class, we need to resolve it as well
+                    else if (prop.PropertyType.IsClass && prop.PropertyType.Namespace!.StartsWith("TheGamesDBApiWrapper.Models"))
+                    {
+                        var item = prop.GetValue(data);
+                        if (item != null)
+                        {
+                            EnrichResponseViaServiceProvider(prop.PropertyType, item);
+                        }
+                    }
+                });
+        }
+
 
 
 
