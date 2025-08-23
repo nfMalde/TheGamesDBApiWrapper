@@ -134,7 +134,8 @@ namespace TheGamesDBApiWrapperTests
 
             ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
 
-            var response = await api.Games.Updates(0);
+            var response = await api.Games.Updates(0); 
+
             response.ShouldNotBeNull();
             response.Code.ShouldBeGreaterThan(0);
             response.Data.ShouldNotBeNull();
@@ -144,6 +145,9 @@ namespace TheGamesDBApiWrapperTests
             response.Data.Updates.First().Timestamp.ShouldNotBeNull();
             response.Data.Updates.First().Type.ShouldNotBeNull();
             response.Data.Updates.First().Value.ShouldNotBeNull();
+            response.Data.Updates[2].Values!.NumberValue.ShouldBe(1);
+            response.Data.Updates[3].Values!.Values!.Length.ShouldBe(1);
+
         }
 
         [Fact]

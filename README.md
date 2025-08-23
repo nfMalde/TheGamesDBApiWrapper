@@ -4,13 +4,13 @@
 [![Pull Request Check](https://img.shields.io/github/actions/workflow/status/nfMalde/TheGamesDBApiWrapper/pr.yml)](https://github.com/nfMalde/TheGamesDBApiWrapper/actions/workflows/pr.yml)
 
 # TheGamesDBApiWrapper
-Wrapper Lib for handling requests to the [TheGamesDB API](https://thegamesdb.net/).
-For API-Docs look here: https://api.thegamesdb.net/#/
+Wrapper library for handling requests to the [TheGamesDB API](https://thegamesdb.net/).
+For API documentation, see: https://api.thegamesdb.net/#/
 
-**NOTE** Not a official release - so no warranty for usage.
+**NOTE** This is not an official release, so there is no warranty for usage.
 
 **External Libraries**
-This Library uses the following lib(s) fro archive its functionality:
+This library uses the following dependencies to achieve its functionality:
 * [.NET 9](https://github.com/microsoft/dotnet)
 * [Shouldly](https://github.com/shouldly)
 * [RichardSzalay.MockHttp](https://github.com/richardszalay/mockhttp)
@@ -22,12 +22,12 @@ This Library uses the following lib(s) fro archive its functionality:
 * The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
 
 ## Install
-Nuget:
+NuGet:
 ```
 Install-Package TheGamesDBApiWrapper 
 ```
 
-Dotnet Cli
+Dotnet CLI
 ```
 dotnet add package TheGamesDBApiWrapper
 ```
@@ -35,31 +35,31 @@ dotnet add package TheGamesDBApiWrapper
 
 ## Usage
 ### Add
-Add to Services:
+Add to services:
 
 ```C#
 //Startup.cs
 
 public IServiceProvider ConfigureServices(IServiceCollection services) {
     
-    // Variant 1: Load Settings from IConfiguration for API Wrapper (See Readme.md -> Configure for more details):
+  // Variant 1: Load settings from IConfiguration for the API Wrapper (see README.md -> Configure for more details):
     services.AddTheGamesDBApiWrapper();
-    // Variant 2: Provide a type of TheGamesDBApiConfigModel to configure the api lib.
+  // Variant 2: Provide a TheGamesDBApiConfigModel to configure the API library.
     services.AddTheGamesDBApiWrapper(new TheGamesDBApiConfigModel() {
-        BaseUrl = "....", // Change Base Url for API Requests e.g. for proxies (Defaults to: https://api.thegamesdb.net/)
-        Version = 1, //Indicate the Version to use of the API (Defaults to 1)
-        ApiKey = "abc",  // The API Key to use (either the one lifetime private key or the public key received by the API Team of "TheGamesDB" see "Requirements",
-        ForceVersion = false // Indicates if version is forces to use - see Configure Readme Section for more
+  BaseUrl = "....", // Change the base URL for API requests, e.g., for proxies (Defaults to: https://api.thegamesdb.net/)
+  Version = 1, // Indicate the version of the API to use (Defaults to 1)
+  ApiKey = "abc",  // The API key to use (either the lifetime private key or the public key received from the API Team of "TheGamesDB"; see "Requirements")
+  ForceVersion = false // Indicates if the version is forced - see Configure README section for more
     });
     
-    // Variant 3: Provide value by value
-     services.AddTheGamesDBApiWrapper("apikey",1, "https://api.thegamesdb.net/");
+  // Variant 3: Provide values directly
+  services.AddTheGamesDBApiWrapper("apikey", 1, "https://api.thegamesdb.net/");
   
 }
 ```
 ### Configure
-You can configure the API Lib by using the App Configuration.
-For Example in your appsettings.json: 
+You can configure the API library using the app configuration.
+For example, in your appsettings.json: 
 ```JSON
 {
   ...
@@ -75,17 +75,17 @@ For Example in your appsettings.json:
 ```
 Property | Description | Type | Default
 ------------ | ------------- | ------------- | -------------
-BaseUrl | The Base Url for all API Requests | String | https://api.thegamesdb.net/
-Version | The API Version to use | Double | 1
-ApiKey | The API Key to use for requests | String | NULL
-ForceVersion | By default, The API Lib will try to get the highest possible minor version of an api endpoint (1.1,1.2, 1.3 etc) So if you select version 1 and Version 1.3 is declared for this endpoint the Lib will use 1.3 for requests. If you force the version it will ignore minor versions and use the configured version instead - even if its not available for this endpoint. So use this with caution | Boolean | FALSE
+BaseUrl | The base URL for all API requests | String | https://api.thegamesdb.net/
+Version | The API version to use | Double | 1
+ApiKey | The API key to use for requests | String | NULL
+ForceVersion | By default, the API library will try to get the highest possible minor version of an API endpoint (1.1, 1.2, 1.3, etc.). If you select version 1 and version 1.3 is available for this endpoint, the library will use 1.3 for requests. If you force the version, it will ignore minor versions and use the configured version instead—even if it is not available for this endpoint. Use this with caution. | Boolean | FALSE
 
 
 
 
 ### Use
 
-To use it in code simple inject the API Class to your service or controller:
+To use it in code, simply inject the API class into your service or controller:
 
 ```C#
 public class MyServiceClass { 
@@ -96,27 +96,97 @@ public class MyServiceClass {
   }
 ```
 
-The Api Wrapper Lib is built in fluent pattern and based on the documentation of TheGamesDB api.
-So for loading all Platforms which is the api endpoint `/Platforms` you simple call:
+The API Wrapper library is built using the fluent pattern and is based on the documentation of TheGamesDB API.
+To load all platforms (which is the API endpoint `/Platforms`), simply call:
 
 ```C#
 var platforms = await this.api.Platform.All();
 ```
 
-All parameters of all methods in the specific api class is documented in the ["TheGamesDB" Api Docs](https://api.thegamesdb.net/#/)
+All parameters of all methods in the specific API class are documented in the ["TheGamesDB" API Docs](https://api.thegamesdb.net/#/).
 
 
+#### GameUpdates Handling
+TheGamesDB provides an API call called "games/updates" which allows you to get incremental changes and update them in your database.
+The value that needs to be updated can differ by type:
+- Array of string
+- Array of objects
+- Array of numbers
+- String (Single Value update)
+- Number (Single Value update)
+- Date
 
+To simplify output, TheGamesDBAPIWrapper already parses the values to each type:
+
+```c#
+ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+
+var response = await api.Games.Updates(0);// Last Edit ID - always save it for later updates (found in response)
+
+foreach (var update in response.Data.Updates)
+{
+  // The type of the update, e.g., the property or fields to be updated, for example: developers array
+    var type = update.Type;
+  // This is where the API wrapper parses all values found in the response
+    var value = update.Values;
+
+  // Do something with the last edit id, e.g., save it to the database for later updates
+    var lastEditId = update.EditID;
+
+    // There are 4 types of values possible
+
+    // 1. Single String Value
+    if (value?.Value is string stringValue)
+    {
+        // Handle single string value
+        continue;
+    }
+    // 2. Single Number Value
+    else if (value?.NumberValue is long numberValue)
+    {
+  // To ensure our number type has the correct size, we use long here
+        // Handle single number value
+        continue;
+    }
+    else if (value?.Values is object[] valuesArray)
+    {
+        // 3. Array of Values
+  // Handle array of values
+        foreach (var item in valuesArray)
+        {
+            // Process each item in the array
+        }
+        continue;
+    }
+    else if (value?.Objects is Dictionary<string, object>[] keyValuePairs)
+    {
+        // 4. Array of Key/Value Pairs
+  // Handle array of key/value pairs
+        foreach (var dict in keyValuePairs)
+        {
+            foreach (var kvp in dict)
+            {
+                var key = kvp.Key;
+                var val = kvp.Value;
+                // Process each key/value pair
+            }
+        }
+        continue;
+    }
+
+
+}
+```
 
 ### Keeping Track of your monthly allowance
-TheGamesDB API has set an monthly request limit called "monthly allowance".
-To keep track of it you have (Starting with version 1.1.x) 2 ways to do so:
-#### Method 1 The IAllowanceTracker Singelton
-The singelton can be injected at every place of your code.
-Once you call one of the API endpoints such as `/Platforms`
-The values of the singelton will be set and you cann access it (Be sure that its in the same context)
+TheGamesDB API has a monthly request limit called "monthly allowance".
+Starting with version 1.1.x, there are two ways to keep track of it:
+#### Method 1: The IAllowanceTracker Singleton
+The singleton can be injected anywhere in your code.
+Once you call one of the API endpoints, such as `/Platforms`,
+the values of the singleton will be set and you can access it (be sure that it's in the same context).
 
-Example: Monthly Allowance limit reached
+Example: Monthly allowance limit reached
 
 ```C#
 
@@ -131,17 +201,17 @@ public class MyService:IMyService {
 
   public async Task ImportPlatforms() {
 
-      var platforms = await this.api.Platforms.All();
-      //... do something with the response
+  var platforms = await this.api.Platforms.All();
+  // ...do something with the response
 
-      var currentAllowance = this.tracker.Current;
+  var currentAllowance = this.tracker.Current;
 
       if (currentAllowance != null) {
           int remainingRequests = currentAllowance.Remaining;
           DateTime resetDate = currentAllowance.ResetAt;
 
           // Do something with this info
-          // For example store it in db to use it as offset next time (See "Allowance Offset" in this readme)
+          // For example, store it in the database to use as an offset next time (see "Allowance Offset" in this README)
 
 
       }
@@ -150,9 +220,9 @@ public class MyService:IMyService {
 
 }
 ```
-#### Method 2 The AllowanceTrack Property
-The `AllowanceTrack` Property of `ITheGamesDBAPI` is a shortcut handle to access the Singelton´s  `Current` Property.
-Its the same as above only you dont  need to inject the singelton in your service.
+#### Method 2: The AllowanceTrack Property
+The `AllowanceTrack` property of `ITheGamesDBAPI` is a shortcut to access the singleton's `Current` property.
+It's the same as above, except you don't need to inject the singleton into your service.
 ```C#
 
 public class MyService:IMyService {
@@ -164,17 +234,17 @@ public class MyService:IMyService {
 
   public async Task ImportPlatforms() {
 
-      var platforms = await this.api.Platforms.All();
-      //... do something with the response
+  var platforms = await this.api.Platforms.All();
+  // ...do something with the response
 
-      var currentAllowance = this.api.AllowanceTrack; // Shortcut to IAllowanceTracker->Current
+  var currentAllowance = this.api.AllowanceTrack; // Shortcut to IAllowanceTracker->Current
 
       if (currentAllowance != null) {
           int remainingRequests = currentAllowance.Remaining;
           DateTime resetDate = currentAllowance.ResetAt;
 
           // Do something with this info
-          // For example store it in db to use it as offset next time (See "Allowance Offset" in this readme)
+          // For example, store it in the database to use as an offset next time (see "Allowance Offset" in this README)
 
       }
 
@@ -183,26 +253,26 @@ public class MyService:IMyService {
 }
 ```
 #### Allowance Offset
-When you store the allowance in DB or Cache you can load it before you call any api and set the IAllowanceTracker by yourself.
-This is helpfull, for keeping track of your allowance before sending the next api call.
+When you store the allowance in a database or cache, you can load it before you call any API and set the IAllowanceTracker yourself.
+This is helpful for keeping track of your allowance before sending the next API call.
 
 ```C#
-// Assuming our Entity have the following properties:
+// Assuming our entity has the following properties:
 // int Remaining, int ResetInSeconds
-var mydbentity = this.loadFromDB(); // Load the data from db
+var mydbentity = this.loadFromDB(); // Load the data from the database
 
 if (mydbentity != null) {
   // Tracker is our IAllowanceTracker
-   tracker.SetAllowance(mydbentity.Remaining, 0, mydbentity.ResetInSeconds);
+  tracker.SetAllowance(mydbentity.Remaining, 0, mydbentity.ResetInSeconds);
 }
 
 if (tracker.Current != null && tracker.Current.Remaining == 0) {
-    throw new Exception($"We reached TheGamesDBApi Limit and can use the api again at {tracker.Current.ResetAt}");
+  throw new Exception($"We reached TheGamesDBApi limit and can use the API again at {tracker.Current.ResetAt}");
 }
 
  var platforms = await this.api.Platforms.All();
 
- // do something with the response
+ // Do something with the response
 
 mydbentity.Remaining = tracker.Current.Remaining; 
 mydbentity.ResetInSeconds = tracker.Current.ResetAtSeconds;
@@ -211,38 +281,38 @@ this.saveDbEntity(mydbentity);
 
 ```
 
-In the example above we save the allowance contents to db to check on every run if we allready reached it.
-This way if you know the amount of api calls for your operation you can see if you have enough monthly allowance left to finish your operation or you want to wait for reaching the reset timer.
+In the example above, we save the allowance contents to the database to check on every run if we have already reached it.
+This way, if you know the number of API calls for your operation, you can see if you have enough monthly allowance left to finish your operation or if you want to wait until the reset timer is reached.
  
 
 
 ### Helpers
 #### Paginating
-All paginated responses have two helper methods called NextPage and PreviousPage. So you can swap between pages by calling this async methods.
-For Example:
+All paginated responses have two helper methods called NextPage and PreviousPage. You can switch between pages by calling these async methods.
+For example:
 ```C#
 var gamesresponse = await this.api.Games.ByGameName("Counter");
 
-// Info about current, next, prev page is stored in the sub oject "Pages"
+// Information about the current, next, and previous page is stored in the sub-object "Pages".
 
 // Check if we have a next page and switch to it
 
 if (gamesresponse.Pages?.Next != null) {
     var nextResponse = await gamesresponse.NextPage();
-    // Do something...
+  // Do something...
 }
 
-// Same for prev. page:
+// Same for previous page:
 if (gamesresponse.Pages?.Previous != null) {
     var prevResponse = await gamesresponse.PreviousPage();
-    // Do something...
+  // Do something...
 }
 ```
 
 ## Contribute / Donations
-If you got any Ideas to improve my projects feel free to send an pull request. 
+If you have any ideas to improve my projects, feel free to send a pull request. 
 
-If you like my work and want to support me (or want to buy me a coffee/beer) paypal donation are more than appreciated.
+If you like my work and want to support me (or want to buy me a coffee/beer), PayPal donations are more than appreciated.
 
 [![Paypal Donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
 

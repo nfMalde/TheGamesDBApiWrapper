@@ -11,9 +11,8 @@
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
 	  <PackageReleaseNotes>
 		  <![CDATA[
-- **Hot Fixes**:
-  - Fixed a NullReference Error when calling "NextPage()" or "PreviousPage()" on all Paginated Results.
-  - Removed obsolete "DiResolver"
+- **Fixes**:
+  - Fixed GameValueUpdate converter to handle numbers and number arrays correctly.
 ]]>
 	  </PackageReleaseNotes>
 

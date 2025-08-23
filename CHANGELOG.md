@@ -1,14 +1,17 @@
 # Change Log
+## 3.0.2
+- **Fixes**:
+  - Fixed GameValueUpdate converter to handle numbers and number arrays correctly.
 ## 3.0.1 
 - **Hot Fixes**:
-  - Fixed a NullReference Error when calling "NextPage()" or "PreviousPage()" on all Paginated Results.
-  - Removed obsolete "DiResolver"
+  - Fixed a NullReference error when calling "NextPage()" or "PreviousPage()" on all paginated results.
+  - Removed obsolete "DiResolver".
   
 ## 3.0.0
 - **Breaking Changes**:
   - Removed `RestClient` and `Newtonsoft.Json` dependencies.
   - Updated all API methods to use `HttpClient` and `System.Text.Json`.
-  - Moved to .NET 9
+  - Migrated to .NET 9.
 - **Migration to System.Text.Json**:
   - Replaced `Newtonsoft.Json` with `System.Text.Json` across all models and converters.
   - Added `TimestampToDateTimeConverter` for converting Unix timestamps to `DateTime`.
@@ -43,51 +46,51 @@
 - **Other Changes**:
   - Enhanced error handling and validation in API classes.
 ## 2.1.1
-* Fixed bug where encoding csv like parameter broke the request
-* Added support for multiple values in csv like parameter
-* Added enhanced error handling (e.g. when the API is down)
+* Fixed a bug where encoding CSV-like parameters broke the request.
+* Added support for multiple values in CSV-like parameters.
+* Added enhanced error handling (e.g., when the API is down).
 ## 2.1.0
-Upgraded to latest Restsharp and .net 8.
+Upgraded to the latest RestSharp and .NET 8.
 ## 2.0.0
 Fixes:
-* Fixed a bug where certain null values at GameModel result in breaking the code.
-* Fixed TheGamesDBApiWrapperRestClientFactory creation due to breaking code changes in RestSharp 110.20
+* Fixed a bug where certain null values in GameModel resulted in breaking the code.
+* Fixed TheGamesDBApiWrapperRestClientFactory creation due to breaking changes in RestSharp 110.20.
 Updates:
-* Migrated to latest RestSharp (110.20)
-* Migrated to .NET 6
+* Migrated to the latest RestSharp (110.20).
+* Migrated to .NET 6.
 
-Starting with this release older versions of th is package are no longer supported or mantained and will be marked as depricated in nuget.
+Starting with this release, older versions of this package are no longer supported or maintained and will be marked as deprecated in NuGet.
 ## 1.2.0
-* Migrated to latest RestSharp (107.1.2)
-* Migrated to .NET 5
+* Migrated to the latest RestSharp (107.1.2).
+* Migrated to .NET 5.
 
 ## 1.1.0
-* You can now track the allowance of TheGamesDBAPI by injecting the [IAllowanceTracker](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Domain/Track/IAllowanceTracker.cs) or using the `AllowanceTrack` Property of [ITheGamesDBAPI](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Domain/ITheGamesDBAPI.cs) See Readme or Docs for more info
+* You can now track the allowance of TheGamesDBAPI by injecting the [IAllowanceTracker](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Domain/Track/IAllowanceTracker.cs) or using the `AllowanceTrack` property of [ITheGamesDBAPI](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Domain/ITheGamesDBAPI.cs). See README or documentation for more info.
 
 ## 1.0.5
 ### Changed
-* Updated Dependencies and added automated readme.
+* Updated dependencies and added automated README.
 
 ## 1.0.4
 ### Changed
-* Fixed Game Update Call to allow all value types (objects, non object, string, int). The Game Update Response Model will have now an additional Property called "Values" of Type "GameUpdateValueModel" which has  3 Properties: Value, Values and Objects. One is set, the rest will be NULL. See: [GameUpdateValueModel](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Models/Responses/Games/GameUpdateValueModel.cs)
+* Fixed Game Update call to allow all value types (objects, non-object, string, int). The Game Update Response Model now has an additional property called "Values" of type "GameUpdateValueModel" which has three properties: Value, Values, and Objects. One is set, the rest will be NULL. See: [GameUpdateValueModel](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Models/Responses/Games/GameUpdateValueModel.cs)
 
 ## 1.0.3
 ### Changed
-* Fixed ID  Data Types in Responses
-* Fixed Response Classes for Paginated responses 
-* Fixed Game Images Call Image Types
-* Fixed Platform Images Call Image Types
-* Changed RestSharp Config to Ignore Null values by default
-* Fixes for some json properties
+* Fixed ID data types in responses.
+* Fixed response classes for paginated responses.
+* Fixed Game Images call image types.
+* Fixed Platform Images call image types.
+* Changed RestSharp config to ignore null values by default.
+* Fixes for some JSON properties.
 
 ## 1.0.2
 ### Changed
-* Fixed Package Info
+* Fixed package info.
 
 ## 1.0.1
 ### Changed
-* Fixed License Info
+* Fixed license info.
 
 ## 1.0.0
-* Initial Release
+* Initial release.

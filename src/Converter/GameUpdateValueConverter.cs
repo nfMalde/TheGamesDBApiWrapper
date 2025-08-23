@@ -45,6 +45,7 @@ namespace TheGamesDBApiWrapper.Converter
             else if (reader.TokenType == JsonTokenType.String)
             {
                 // Deserialize as a string
+                
                 var stringValue = reader.GetString();
 
                 if (stringValue == null)
@@ -54,8 +55,14 @@ namespace TheGamesDBApiWrapper.Converter
 
                 return new GameUpdateValueModel(stringValue);
             }
+            else if (reader.TokenType == JsonTokenType.Number)
+            {
+                var numberValue = reader.GetInt64();
+                return new GameUpdateValueModel(numberValue);
 
-            throw new JsonException("Unexpected JSON token type.");
+            }
+            
+                throw new JsonException("Unexpected JSON token type.");
         }
 
         public override void Write(Utf8JsonWriter writer, GameUpdateValueModel value, JsonSerializerOptions options)
