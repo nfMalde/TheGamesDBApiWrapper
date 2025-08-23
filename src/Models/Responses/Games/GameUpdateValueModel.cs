@@ -17,12 +17,18 @@ namespace TheGamesDBApiWrapper.Models.Responses.Games
             this.Values = values;
         }
 
+        public GameUpdateValueModel(long numberValue)
+        {
+            this.NumberValue = numberValue;
+        }
+
         public GameUpdateValueModel(Dictionary<string, object>[] keyValuePairs)
         {
             this.Objects = keyValuePairs;
         }
 
-         
+        public long? NumberValue { get; set; }
+
         public string? Value { get; set; }
 
         

@@ -17,6 +17,20 @@
         "timestamp": "2018-06-28 16:20:54",
         "type": "boxart",
         "value": "boxart/front/38113-1.jpg"
+      },
+      {
+        "edit_id": 2,
+        "game_id": 38113,
+        "timestamp": "2018-06-28 16:20:54",
+        "type": "developer",
+        "value":1
+      },
+      {
+        "edit_id": 2,
+        "game_id": 38113,
+        "timestamp": "2018-06-28 16:20:54",
+        "type": "publisher",
+        "value": [1]
       }
     ]
   },
