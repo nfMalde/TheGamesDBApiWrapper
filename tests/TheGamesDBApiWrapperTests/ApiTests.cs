@@ -213,6 +213,122 @@ namespace TheGamesDBApiWrapperTests
             api.AllowanceTrack.ShouldBeSameAs(tracker.Current);
         }
 
+        [Fact]
+        public async Task GameById_AllFields_ShouldMatchJson()
+        {
+            this.mockServices<GamesByGameIDResponse>("game-by-id", "*/v1/Games/ByGameID");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+            var response = await api.Games.ByGameID(new int[] { 1 }, GameFields.All);
+
+            response.ShouldNotBeNull();
+            response.Code.ShouldBe(200);
+            response.Data.ShouldNotBeNull();
+            response.Data.Games.ShouldNotBeNull();
+            response.Data.Games.Length.ShouldBeGreaterThan(0);
+
+            var g = response.Data.Games.First();
+            g.Id.ShouldBe(1);
+            g.GameTitle.ShouldBe("One");
+            g.ReleaseDate.ShouldBe(DateTime.Parse("2003-09-30"));
+            g.Platform.ShouldBe(1);
+            g.Players.ShouldBe(66);
+            g.Overview.ShouldBe("One OV");
+            g.LastUpdated.ShouldBe(DateTime.Parse("2021-02-20 14:01:31"));
+            g.Rating.ShouldBe("M - Mature 17+");
+            g.Coop.ShouldBe("Yes");
+            g.YouTube.ShouldBe("dR3Hm8scbEw");
+            g.OS.ShouldBe("98SE/ME/2000/XP");
+            g.Processor.ShouldBe("733mhz");
+            g.RAM.ShouldBe("128 MB");
+            g.HDD.ShouldBe("1.2GB");
+            g.Video.ShouldBe("32 MB / 3D T&L capable");
+            g.Sound.ShouldBeNull();
+            g.Developers.ShouldBe(new[] { 1389, 3423 });
+            g.Genres.ShouldBe(new[] { 1, 7, 15, 20, 22 });
+            // publishers are not present in mock json -> should be default (empty)
+            g.Publishers.ShouldNotBeNull();
+            g.Publishers.Length.ShouldBe(0);
+            // alternates is null in mock json
+            g.Alternates.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task GameByName_AllFields_ShouldMatchJson()
+        {
+            this.mockServices<GamesByNameResponse>("game-by-id", "*/v1/Games/ByGameName");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+            var response = await api.Games.ByGameName("any", 1, GameFields.All);
+
+            response.ShouldNotBeNull();
+            response.Code.ShouldBe(200);
+            response.Data.ShouldNotBeNull();
+            response.Data.Games.ShouldNotBeNull();
+            response.Data.Games.Length.ShouldBeGreaterThan(0);
+
+            var g = response.Data.Games.First();
+            g.Id.ShouldBe(1);
+            g.GameTitle.ShouldBe("One");
+            g.ReleaseDate.ShouldBe(DateTime.Parse("2003-09-30"));
+            g.Platform.ShouldBe(1);
+            g.Players.ShouldBe(66);
+            g.Overview.ShouldBe("One OV");
+            g.LastUpdated.ShouldBe(DateTime.Parse("2021-02-20 14:01:31"));
+            g.Rating.ShouldBe("M - Mature 17+");
+            g.Coop.ShouldBe("Yes");
+            g.YouTube.ShouldBe("dR3Hm8scbEw");
+            g.OS.ShouldBe("98SE/ME/2000/XP");
+            g.Processor.ShouldBe("733mhz");
+            g.RAM.ShouldBe("128 MB");
+            g.HDD.ShouldBe("1.2GB");
+            g.Video.ShouldBe("32 MB / 3D T&L capable");
+            g.Sound.ShouldBeNull();
+            g.Developers.ShouldBe(new[] { 1389, 3423 });
+            g.Genres.ShouldBe(new[] { 1, 7, 15, 20, 22 });
+            g.Publishers.ShouldNotBeNull();
+            g.Publishers.Length.ShouldBe(0);
+            g.Alternates.ShouldBeNull();
+        }
+
+        [Fact]
+        public async Task GameByPlatformId_AllFields_ShouldMatchJson()
+        {
+            this.mockServices<GameByPlatformIDResponse>("game-by-id", "*/v1/Games/ByPlatformID");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+            var response = await api.Games.ByPlatformID(1, GameFields.All);
+
+            response.ShouldNotBeNull();
+            response.Code.ShouldBe(200);
+            response.Data.ShouldNotBeNull();
+            response.Data.Games.ShouldNotBeNull();
+            response.Data.Games.Length.ShouldBeGreaterThan(0);
+
+            var g = response.Data.Games.First();
+            g.Id.ShouldBe(1);
+            g.GameTitle.ShouldBe("One");
+            g.ReleaseDate.ShouldBe(DateTime.Parse("2003-09-30"));
+            g.Platform.ShouldBe(1);
+            g.Players.ShouldBe(66);
+            g.Overview.ShouldBe("One OV");
+            g.LastUpdated.ShouldBe(DateTime.Parse("2021-02-20 14:01:31"));
+            g.Rating.ShouldBe("M - Mature 17+");
+            g.Coop.ShouldBe("Yes");
+            g.YouTube.ShouldBe("dR3Hm8scbEw");
+            g.OS.ShouldBe("98SE/ME/2000/XP");
+            g.Processor.ShouldBe("733mhz");
+            g.RAM.ShouldBe("128 MB");
+            g.HDD.ShouldBe("1.2GB");
+            g.Video.ShouldBe("32 MB / 3D T&L capable");
+            g.Sound.ShouldBeNull();
+            g.Developers.ShouldBe(new[] { 1389, 3423 });
+            g.Genres.ShouldBe(new[] { 1, 7, 15, 20, 22 });
+            g.Publishers.ShouldNotBeNull();
+            g.Publishers.Length.ShouldBe(0);
+            g.Alternates.ShouldBeNull();
+        }
+
         #endregion
     }
 }

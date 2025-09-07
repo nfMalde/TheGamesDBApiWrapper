@@ -1,4 +1,8 @@
 # Change Log
+
+## 3.0.3
+- **Fixes**:
+  - Fixed serialization issues with Field.All and Include.All enums. Now they correctly serialize to all values when used in requests.
 ## 3.0.2
 - **Fixes**:
   - Fixed GameValueUpdate converter to handle numbers and number arrays correctly.
