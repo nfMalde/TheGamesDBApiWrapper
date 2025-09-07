@@ -43,7 +43,23 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         public async Task<Models.Responses.Platforms.PlatformsResponseModel?> All(params Models.Enums.PlatformFields[] fields)
         {
             Models.Payloads.Platforms.PlatformsPayload payload = new Models.Payloads.Platforms.PlatformsPayload();
-            payload.Fields = fields != null && fields.Length > 0 ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
+
+            if (fields != null && fields.Length > 0)
+            {
+                if (fields.Contains(Models.Enums.PlatformFields.All))
+                {
+                    // All darf NICHT URL-encodiert werden
+                    payload.Fields = this.GetEnumValue(Models.Enums.PlatformFields.All);
+                }
+                else
+                {
+                    payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                }
+            }
+            else
+            {
+                payload.Fields = null;
+            }
              
             return await this.CallGet<Models.Responses.Platforms.PlatformsResponseModel>(payload: payload);
         }
@@ -81,8 +97,22 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
                 Id = ids            
             };
 
-            
-            payload.Fields = fields.Length > 0 ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
+            if (fields != null && fields.Length > 0)
+            {
+                if (fields.Contains(Models.Enums.PlatformFields.All))
+                {
+                    // All darf NICHT URL-encodiert werden
+                    payload.Fields = this.GetEnumValue(Models.Enums.PlatformFields.All);
+                }
+                else
+                {
+                    payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                }
+            }
+            else
+            {
+                payload.Fields = null;
+            }
 
             return await this.CallGet<Models.Responses.Platforms.PlatformsResponseModel>("ByPlatformID", payload);
         }
@@ -104,7 +134,22 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
                 Name = name
             };
 
-            payload.Fields = fields.Length > 0 ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
+            if (fields != null && fields.Length > 0)
+            {
+                if (fields.Contains(Models.Enums.PlatformFields.All))
+                {
+                    // All darf NICHT URL-encodiert werden
+                    payload.Fields = this.GetEnumValue(Models.Enums.PlatformFields.All);
+                }
+                else
+                {
+                    payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                }
+            }
+            else
+            {
+                payload.Fields = null;
+            }
             
 
             return await this.CallGet<Models.Responses.Platforms.PlatformsResponseModel>("ByPlatformName", payload);

@@ -132,10 +132,25 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
 
             if (includes != null)
             {
-                payload.Include = string.Join(',', includes.Select(x =>  HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                if (includes.Contains(Models.Enums.GameFieldIncludes.All))
+                {
+                    payload.Include = this.GetEnumValue(Models.Enums.GameFieldIncludes.All);
+                }
+                else
+                {
+                    payload.Include = string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                }
             }
 
-            payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+            if (fields != null && fields.Contains(Models.Enums.GameFields.All))
+            {
+                payload.Fields = this.GetEnumValue(Models.Enums.GameFields.All);
+            }
+            else
+            {
+                payload.Fields = fields != null ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
+            }
+
             payload.Page = page;
 
             return await this.CallGet<GamesByGameIDResponse>("ByGameID", payload);
@@ -696,8 +711,38 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
                 ID = string.Join(',', platformIDs.Select(x => HttpUtility.UrlEncode(x.ToString())))
             };
 
-            payload.Fields = fields != null ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
-            payload.Include = includes != null ? string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
+            if (fields != null && fields.Length > 0)
+            {
+                if (fields.Contains(Models.Enums.GameFields.All))
+                {
+                    payload.Fields = this.GetEnumValue(Models.Enums.GameFields.All);
+                }
+                else
+                {
+                    payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                }
+            }
+            else
+            {
+                payload.Fields = null;
+            }
+
+            if (includes != null && includes.Length > 0)
+            {
+                if (includes.Contains(Models.Enums.GameFieldIncludes.All))
+                {
+                    payload.Include = this.GetEnumValue(Models.Enums.GameFieldIncludes.All);
+                }
+                else
+                {
+                    payload.Include = string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                }
+            }
+            else
+            {
+                payload.Include = null;
+            }
+
             payload.Page = page <= 0 ? 1 : page;
 
             return await this.CallGet<GameByPlatformIDResponse>("ByPlatformID", payload);
@@ -719,9 +764,38 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
             payload.Name = name;
             payload.Page = page <= 0 ? 1 : page;
             payload.FilterPlatform = platformIds != null ? string.Join(',', platformIds.Select(x => HttpUtility.UrlEncode(x.ToString()))) : null;
-            payload.Include = includes != null ? string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
-            payload.Fields = fields != null ? string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x)))) : null;
 
+            if (includes != null && includes.Length > 0)
+            {
+                if (includes.Contains(Models.Enums.GameFieldIncludes.All))
+                {
+                    payload.Include = this.GetEnumValue(Models.Enums.GameFieldIncludes.All);
+                }
+                else
+                {
+                    payload.Include = string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                }
+            }
+            else
+            {
+                payload.Include = null;
+            }
+
+            if (fields != null && fields.Length > 0)
+            {
+                if (fields.Contains(Models.Enums.GameFields.All))
+                {
+                    payload.Fields = this.GetEnumValue(Models.Enums.GameFields.All);
+                }
+                else
+                {
+                    payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                }
+            }
+            else
+            {
+                payload.Fields = null;
+            }
 
             return await this.CallGet<GamesByNameResponse>("ByGameName", payload, version);
         }

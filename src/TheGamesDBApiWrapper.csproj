@@ -12,7 +12,7 @@
 	  <PackageReleaseNotes>
 		  <![CDATA[
 - **Fixes**:
-  - Fixed GameValueUpdate converter to handle numbers and number arrays correctly.
+  - Fixed serialization issues with Field.All and Include.All enums. Now they correctly serialize to all values when used in requests.
 ]]>
 	  </PackageReleaseNotes>
 
