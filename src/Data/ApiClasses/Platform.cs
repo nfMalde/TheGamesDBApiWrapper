@@ -111,7 +111,7 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
             {
                 if (fields.Contains(Models.Enums.PlatformFields.All))
                 {
-                    // All darf NICHT URL-encodiert werden
+                    // All should NOT be URL-encoded
                     payload.Fields = this.GetEnumValue(Models.Enums.PlatformFields.All);
                 }
                 else
