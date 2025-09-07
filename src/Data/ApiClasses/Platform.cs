@@ -44,24 +44,34 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
         {
             Models.Payloads.Platforms.PlatformsPayload payload = new Models.Payloads.Platforms.PlatformsPayload();
 
+            payload.Fields = GetFieldsParameter(fields);
+             
+            return await this.CallGet<Models.Responses.Platforms.PlatformsResponseModel>(payload: payload);
+        }
+
+        /// <summary>
+        /// Helper method to handle PlatformFields.All and field encoding logic.
+        /// </summary>
+        /// <param name="fields">Array of PlatformFields</param>
+        /// <returns>String for payload.Fields or null</returns>
+        private string? GetFieldsParameter(Models.Enums.PlatformFields[] fields)
+        {
             if (fields != null && fields.Length > 0)
             {
                 if (fields.Contains(Models.Enums.PlatformFields.All))
                 {
                     // All darf NICHT URL-encodiert werden
-                    payload.Fields = this.GetEnumValue(Models.Enums.PlatformFields.All);
+                    return this.GetEnumValue(Models.Enums.PlatformFields.All);
                 }
                 else
                 {
-                    payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+                    return string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
                 }
             }
             else
             {
-                payload.Fields = null;
+                return null;
             }
-             
-            return await this.CallGet<Models.Responses.Platforms.PlatformsResponseModel>(payload: payload);
         }
 
         /// <summary>
