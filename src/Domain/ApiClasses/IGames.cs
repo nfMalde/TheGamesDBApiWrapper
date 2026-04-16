@@ -372,5 +372,46 @@ namespace TheGamesDBApiWrapper.Domain.ApiClasses
         /// <param name="page">The page.</param>
         /// <returns></returns>
         Task<GameUpdateResponse?> Updates(int lastEditId, long time, int page = 1);
+
+        /// <summary>
+        /// Gets Game(s) by unique/external identifier (e.g. ROM serial).
+        /// </summary>
+        /// <param name="uid">The unique ID string.</param>
+        /// <param name="page">The page.</param>
+        /// <param name="fields">The fields to show in response.</param>
+        /// <returns></returns>
+        Task<GamesByGameIDResponse?> ByGameUniqueID(string uid, int page = 1, params GameFields[] fields);
+
+        /// <summary>
+        /// Gets Game(s) by unique/external identifier, filtered by platform.
+        /// </summary>
+        /// <param name="uid">The unique ID string.</param>
+        /// <param name="platformIds">The platform ids to filter by.</param>
+        /// <param name="page">The page.</param>
+        /// <param name="includes">The include extra fields.</param>
+        /// <param name="fields">The fields to show in response.</param>
+        /// <returns></returns>
+        Task<GamesByGameIDResponse?> ByGameUniqueID(string uid, int[]? platformIds, int page = 1, GameFieldIncludes[]? includes = null, params GameFields[] fields);
+
+        /// <summary>
+        /// Gets Game(s) by ROM hash.
+        /// </summary>
+        /// <param name="hash">The hash string.</param>
+        /// <param name="page">The page.</param>
+        /// <param name="fields">The fields to show in response.</param>
+        /// <returns></returns>
+        Task<GamesByGameIDResponse?> ByGameHash(string hash, int page = 1, params GameFields[] fields);
+
+        /// <summary>
+        /// Gets Game(s) by ROM hash, filtered by platform and/or hash type.
+        /// </summary>
+        /// <param name="hash">The hash string.</param>
+        /// <param name="platformIds">The platform ids to filter by.</param>
+        /// <param name="hashType">The hash type (e.g. "md5", "crc").</param>
+        /// <param name="page">The page.</param>
+        /// <param name="includes">The include extra fields.</param>
+        /// <param name="fields">The fields to show in response.</param>
+        /// <returns></returns>
+        Task<GamesByGameIDResponse?> ByGameHash(string hash, int[]? platformIds, string? hashType = null, int page = 1, GameFieldIncludes[]? includes = null, params GameFields[] fields);
     }
 }

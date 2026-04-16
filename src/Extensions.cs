@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using TheGamesDBApiWrapper.Data;
@@ -25,7 +27,18 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddScoped<IDIResolveHelper, DIResolveHelper>();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
-            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
+            services.AddHttpClient("TheGamesDB");
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>(factory =>
+            {
+                IConfiguration config = factory.GetRequiredService<IConfiguration>();
+                TheGamesDBApiConfigModel apiConfig = new TheGamesDBApiConfigModel();
+                config.GetSection("TheGamesDB").Bind(apiConfig);
+                
+                return new TheGamesDBApiWrapperRestClientFactory(
+                    factory.GetRequiredService<IServiceProvider>(),
+                    apiConfig,
+                    factory.GetRequiredService<IHttpClientFactory>());
+            });
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
             {
                 IConfiguration config = factory.GetRequiredService<IConfiguration>();
@@ -55,7 +68,14 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddScoped<IDIResolveHelper, DIResolveHelper>();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
-            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
+            services.AddHttpClient("TheGamesDB");
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>(factory =>
+            {
+                return new TheGamesDBApiWrapperRestClientFactory(
+                    factory.GetRequiredService<IServiceProvider>(),
+                    config,
+                    factory.GetRequiredService<IHttpClientFactory>());
+            });
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
             { 
                 return new TheGamesDBAPI(
@@ -80,7 +100,27 @@ namespace Microsoft.Extensions.DependencyInjection
         {
             services.AddScoped<IDIResolveHelper, DIResolveHelper>();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
-            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>();
+            services.AddHttpClient("TheGamesDB");
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory, TheGamesDBApiWrapperRestClientFactory>(factory =>
+            {
+                TheGamesDBApiConfigModel c = new TheGamesDBApiConfigModel();
+                c.ApiKey = apiKey;
+                
+                if (baseUrl != null)
+                {
+                    c.BaseUrl = baseUrl;
+                }
+
+                if (version != null)
+                {
+                    c.Version = version.Value;
+                }
+
+                return new TheGamesDBApiWrapperRestClientFactory(
+                    factory.GetRequiredService<IServiceProvider>(),
+                    c,
+                    factory.GetRequiredService<IHttpClientFactory>());
+            });
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>(factory =>
             {
                 TheGamesDBApiConfigModel c = new TheGamesDBApiConfigModel();

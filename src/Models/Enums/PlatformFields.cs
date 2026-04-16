@@ -18,84 +18,74 @@ namespace TheGamesDBApiWrapper.Models.Enums
         [EnumMember(Value="icon,console,controller,developer,manufacturer,media,cpu,memory,graphics,sound,maxcontrollers,display,overview,youtube")]
         All,
         /// <summary>
-        /// The players
+        /// The icon
         /// </summary>
-        [EnumMember(Value = "players")]
-        Players,
+        [EnumMember(Value = "icon")]
+        Icon,
         /// <summary>
-        /// The publishers
+        /// The console
         /// </summary>
-        [EnumMember(Value = "publishers")]
-        Publishers,
+        [EnumMember(Value = "console")]
+        Console,
         /// <summary>
-        /// The genres
+        /// The controller
         /// </summary>
-        [EnumMember(Value = "genres")]
-        Genres,
+        [EnumMember(Value = "controller")]
+        Controller,
         /// <summary>
-        /// The overview
+        /// The developer
         /// </summary>
-        [EnumMember(Value = "overview")]
-        Overview,
+        [EnumMember(Value = "developer")]
+        Developer,
         /// <summary>
-        /// The last updated
+        /// The manufacturer
         /// </summary>
-        [EnumMember(Value = "last_updated")]
-        LastUpdated,
+        [EnumMember(Value = "manufacturer")]
+        Manufacturer,
         /// <summary>
-        /// The rating
+        /// The media
         /// </summary>
-        [EnumMember(Value = "rating")]
-        Rating,
+        [EnumMember(Value = "media")]
+        Media,
         /// <summary>
-        /// The platform
+        /// The cpu
         /// </summary>
-        [EnumMember(Value = "platform")]
-        Platform,
+        [EnumMember(Value = "cpu")]
+        CPU,
         /// <summary>
-        /// The coop
+        /// The memory
         /// </summary>
-        [EnumMember(Value = "coop")]
-        Coop,
+        [EnumMember(Value = "memory")]
+        Memory,
         /// <summary>
-        /// The youtube
+        /// The graphics
         /// </summary>
-        [EnumMember(Value = "youtube")]
-        Youtube,
-        /// <summary>
-        /// The os
-        /// </summary>
-        [EnumMember(Value = "os")]
-        OS,
-        /// <summary>
-        /// The processor
-        /// </summary>
-        [EnumMember(Value = "processor")]
-        Processor,
-        /// <summary>
-        /// The ram
-        /// </summary>
-        [EnumMember(Value = "ram")]
-        RAM,
-        /// <summary>
-        /// The HDD
-        /// </summary>
-        [EnumMember(Value = "hdd")]
-        HDD,
-        /// <summary>
-        /// The video
-        /// </summary>
-        [EnumMember(Value = "video")]
-        Video,
+        [EnumMember(Value = "graphics")]
+        Graphics,
         /// <summary>
         /// The sound
         /// </summary>
         [EnumMember(Value = "sound")]
         Sound,
         /// <summary>
-        /// The alternates
+        /// The max controllers
         /// </summary>
-        [EnumMember(Value = "alternates")]
-        Alternates
+        [EnumMember(Value = "maxcontrollers")]
+        MaxControllers,
+        /// <summary>
+        /// The display
+        /// </summary>
+        [EnumMember(Value = "display")]
+        Display,
+        /// <summary>
+        /// The overview
+        /// </summary>
+        [EnumMember(Value = "overview")]
+        Overview,
+        /// <summary>
+        /// The youtube
+        /// </summary>
+        [EnumMember(Value = "youtube")]
+        YouTube
     }
 }

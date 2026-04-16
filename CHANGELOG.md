@@ -1,5 +1,26 @@
 # Change Log
 
+## 3.1.0
+- **New Endpoints**:
+  - Added **Regions** endpoint (`api.Regions.All()`, `api.Regions.ByRegionID()`).
+  - Added **Countries** endpoint (`api.Countries.All()`).
+  - Added **Utility** endpoint (`api.Utility.GetApiLimit()`) to check API key allowance without consuming quota.
+- **New Game Endpoints**:
+  - Added `Games/ByGameUniqueID` for searching games by unique/external identifier (e.g. ROM serial).
+  - Added `Games/ByGameHash` for searching games by ROM hash with optional hash type filter (e.g. `md5`, `crc`).
+- **Model Fixes**:
+  - Fixed `PlatformFields` enum — individual values were incorrectly copied from `GameFields`. Now correctly contains: `Icon`, `Console`, `Controller`, `Developer`, `Manufacturer`, `Media`, `CPU`, `Memory`, `Graphics`, `Sound`, `MaxControllers`, `Display`, `Overview`, `YouTube`.
+  - Added missing fields to `PlatformModel`: `Manufacturer`, `Media`, `CPU`, `Memory`, `Graphics`, `Sound`, `MaxControllers`, `Display`, `YouTube`.
+  - Added `RegionId` and `CountryId` properties to `GameModel`.
+  - Fixed `ImageBaseUrlMetaModel` property name typo: `Lage` → `Large`.
+- **Breaking Changes**:
+  - Removed incorrect `PlatformFields` enum members (`Players`, `Publishers`, `Genres`, `LastUpdated`, `Rating`, `Platform`, `Coop`, `OS`, `Processor`, `RAM`, `HDD`, `Video`, `Alternates`). These were game-specific fields that never applied to platforms.
+  - Renamed `ImageBaseUrlMetaModel.Lage` to `ImageBaseUrlMetaModel.Large`.
+- **Enhancements**:
+  - Registered `HttpClient` in dependency injection.
+  - Added `HttpTimeout` configuration property to `TheGamesDBApiConfigModel` for customizable HTTP request timeout (defaults to 180 seconds).
+  - Improved HTTP client lifecycle management through DI container.
+
 ## 3.0.3
 - **Fixes**:
   - Fixed serialization issues with Field.All and Include.All enums. Now they correctly serialize to all values when used in requests.

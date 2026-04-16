@@ -1,18 +1,34 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net9.0</TargetFramework>
+    <TargetFramework>net10.0</TargetFramework>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <Copyright>2025 Malte Peters</Copyright>
-    <Description>Wrapper Class in Fluent Style for TheGamesDBAPI</Description>
+    <Description>Fluent-style wrapper for TheGamesDB API with dependency injection support.</Description>
     <PackageProjectUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
 	  <PackageReleaseNotes>
 		  <![CDATA[
-- **Fixes**:
-  - Fixed serialization issues with Field.All and Include.All enums. Now they correctly serialize to all values when used in requests.
+- **New Endpoints**:
+  - Added Regions endpoint (All, ByRegionID).
+  - Added Countries endpoint (All).
+  - Added Utility endpoint (GetApiLimit) to check API key allowance without consuming quota.
+- **New Game Endpoints**:
+  - Added Games/ByGameUniqueID for searching by unique/external identifier (e.g. ROM serial).
+  - Added Games/ByGameHash for searching by ROM hash with optional hash type filter.
+- **Model Fixes**:
+  - Fixed PlatformFields enum values (were incorrectly copied from GameFields).
+  - Added missing PlatformModel fields: Manufacturer, Media, CPU, Memory, Graphics, Sound, MaxControllers, Display, YouTube.
+  - Added RegionId and CountryId to GameModel.
+  - Fixed ImageBaseUrlMetaModel property name typo: Lage → Large.
+- **Enhancements**:
+  - Registered HttpClient in dependency injection following .NET best practices with named client support.
+  - Added HttpTimeout configuration property (defaults to 180 seconds).
+  - Improved HTTP client lifecycle management through DI container.
+- **Breaking Changes**:
+  - Removed incorrect PlatformFields enum members. Renamed ImageBaseUrlMetaModel.Lage to Large.
 ]]>
 	  </PackageReleaseNotes>
 
@@ -25,6 +41,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="9.0.4" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.4" />
+    <PackageReference Include="Microsoft.Extensions.Http" Version="9.0.4" />
     <None Include="..\README.md" Pack="true" PackagePath="\" />
   </ItemGroup>
 

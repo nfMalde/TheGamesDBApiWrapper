@@ -11,7 +11,7 @@ For API documentation, see: https://api.thegamesdb.net/#/
 
 **External Libraries**
 This library uses the following dependencies to achieve its functionality:
-* [.NET 9](https://github.com/microsoft/dotnet)
+* [.NET 10](https://github.com/microsoft/dotnet)
 * [Shouldly](https://github.com/shouldly)
 * [RichardSzalay.MockHttp](https://github.com/richardszalay/mockhttp)
 * [Moq](https://github.com/devlooped/moq)
@@ -19,7 +19,7 @@ This library uses the following dependencies to achieve its functionality:
 * [xunit.runner.visualstudio](https://github.com/xunit/visualstudio.xunit)
 ## Requirements
 * .NET 9 or higher
-* The GamesDB API Access [(Request your keys here)](https://forums.thegamesdb.net/viewforum.php?f=10)
+* The GamesDB API Access [(Request your keys here)](https://thegamesdb.net/)
 
 ## Install
 NuGet:
@@ -67,7 +67,8 @@ For example, in your appsettings.json:
      "BaseUrl": "https://api.thegamesdb.net/",
      "Version": 1,
      "ApiKey": "abcdefg",
-     "ForceVersion": false
+     "ForceVersion": false,
+     "HttpTimeout": 180
   }
   
   ...
@@ -79,6 +80,7 @@ BaseUrl | The base URL for all API requests | String | https://api.thegamesdb.ne
 Version | The API version to use | Double | 1
 ApiKey | The API key to use for requests | String | NULL
 ForceVersion | By default, the API library will try to get the highest possible minor version of an API endpoint (1.1, 1.2, 1.3, etc.). If you select version 1 and version 1.3 is available for this endpoint, the library will use 1.3 for requests. If you force the version, it will ignore minor versions and use the configured version instead—even if it is not available for this endpoint. Use this with caution. | Boolean | FALSE
+HttpTimeout | The HTTP request timeout in seconds | Integer | 180
 
 
 
@@ -104,6 +106,48 @@ var platforms = await this.api.Platform.All();
 ```
 
 All parameters of all methods in the specific API class are documented in the ["TheGamesDB" API Docs](https://api.thegamesdb.net/#/).
+
+#### Regions & Countries
+You can fetch all regions and countries, or look up regions by ID:
+
+```C#
+// Get all regions
+var regions = await this.api.Regions.All();
+
+// Get region(s) by ID
+var region = await this.api.Regions.ByRegionID(1);
+var multipleRegions = await this.api.Regions.ByRegionID(new int[] { 1, 2, 3 });
+
+// Get all countries
+var countries = await this.api.Countries.All();
+```
+
+#### Search Games by Unique ID or ROM Hash
+You can search for games using their unique/external identifier (e.g. ROM serial) or by ROM hash:
+
+```C#
+// Search by unique ID
+var games = await this.api.Games.ByGameUniqueID("GM-007037-00");
+
+// Search by unique ID with platform filter
+var filtered = await this.api.Games.ByGameUniqueID("GM-007037-00", new int[] { 18 });
+
+// Search by ROM hash
+var byHash = await this.api.Games.ByGameHash("a29da82b");
+
+// Search by ROM hash with hash type filter
+var byCrc = await this.api.Games.ByGameHash("a29da82b", null, "crc");
+```
+
+#### Check API Limit
+You can check your API key allowance without consuming quota:
+
+```C#
+var limit = await this.api.Utility.GetApiLimit();
+int remaining = limit.RemainingMonthlyAllowance;
+int extra = limit.ExtraAllowance;
+int? refreshTimer = limit.AllowanceRefreshTimer; // null for unlimited keys
+```
 
 
 #### GameUpdates Handling

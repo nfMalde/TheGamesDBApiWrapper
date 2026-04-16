@@ -54,12 +54,12 @@ namespace TheGamesDBApiWrapper.Models.Entities
         [JsonPropertyName("medium")]
         public string? Medium { get; set; }
         /// <summary>
-        /// Gets or sets the lage.
+        /// Gets or sets the large.
         /// </summary>
         /// <value>
-        /// The lage.
+        /// The large.
         /// </value>
         [JsonPropertyName("large")]
-        public string? Lage { get; set; }
+        public string? Large { get; set; }
     }
 }

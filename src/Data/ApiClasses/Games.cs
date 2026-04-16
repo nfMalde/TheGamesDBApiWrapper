@@ -802,6 +802,116 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses
 
         #endregion
 
+        #region /ByGameUniqueID
+
+        /// <summary>
+        /// Gets Game(s) by unique/external identifier (e.g. ROM serial).
+        /// </summary>
+        /// <param name="uid">The unique ID string.</param>
+        /// <param name="page">The page.</param>
+        /// <param name="fields">The fields to show in response.</param>
+        /// <returns></returns>
+        public async Task<GamesByGameIDResponse?> ByGameUniqueID(string uid, int page = 1, params Models.Enums.GameFields[] fields)
+        {
+            return await this.ByGameUniqueID(uid, null, page, null, fields);
+        }
+
+        /// <summary>
+        /// Gets Game(s) by unique/external identifier, filtered by platform.
+        /// </summary>
+        /// <param name="uid">The unique ID string.</param>
+        /// <param name="platformIds">The platform ids to filter by.</param>
+        /// <param name="page">The page.</param>
+        /// <param name="includes">The include extra fields.</param>
+        /// <param name="fields">The fields to show in response.</param>
+        /// <returns></returns>
+        public async Task<GamesByGameIDResponse?> ByGameUniqueID(string uid, int[]? platformIds, int page = 1, Models.Enums.GameFieldIncludes[]? includes = null, params Models.Enums.GameFields[] fields)
+        {
+            ByGameUniqueIDPayload payload = new ByGameUniqueIDPayload()
+            {
+                Uid = uid
+            };
+
+            payload.FilterPlatform = platformIds != null ? string.Join(',', platformIds.Select(x => HttpUtility.UrlEncode(x.ToString()))) : null;
+            payload.Page = page <= 0 ? 1 : page;
+
+            if (includes != null && includes.Length > 0)
+            {
+                if (includes.Contains(Models.Enums.GameFieldIncludes.All))
+                    payload.Include = this.GetEnumValue(Models.Enums.GameFieldIncludes.All);
+                else
+                    payload.Include = string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+            }
+
+            if (fields != null && fields.Length > 0)
+            {
+                if (fields.Contains(Models.Enums.GameFields.All))
+                    payload.Fields = this.GetEnumValue(Models.Enums.GameFields.All);
+                else
+                    payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+            }
+
+            return await this.CallGet<GamesByGameIDResponse>("ByGameUniqueID", payload);
+        }
+
+        #endregion
+
+        #region /ByGameHash
+
+        /// <summary>
+        /// Gets Game(s) by ROM hash.
+        /// </summary>
+        /// <param name="hash">The hash string.</param>
+        /// <param name="page">The page.</param>
+        /// <param name="fields">The fields to show in response.</param>
+        /// <returns></returns>
+        public async Task<GamesByGameIDResponse?> ByGameHash(string hash, int page = 1, params Models.Enums.GameFields[] fields)
+        {
+            return await this.ByGameHash(hash, null, null, page, null, fields);
+        }
+
+        /// <summary>
+        /// Gets Game(s) by ROM hash, filtered by platform and/or hash type.
+        /// </summary>
+        /// <param name="hash">The hash string.</param>
+        /// <param name="platformIds">The platform ids to filter by.</param>
+        /// <param name="hashType">The hash type (e.g. "md5", "crc").</param>
+        /// <param name="page">The page.</param>
+        /// <param name="includes">The include extra fields.</param>
+        /// <param name="fields">The fields to show in response.</param>
+        /// <returns></returns>
+        public async Task<GamesByGameIDResponse?> ByGameHash(string hash, int[]? platformIds, string? hashType = null, int page = 1, Models.Enums.GameFieldIncludes[]? includes = null, params Models.Enums.GameFields[] fields)
+        {
+            ByGameHashPayload payload = new ByGameHashPayload()
+            {
+                Hash = hash
+            };
+
+            payload.FilterPlatform = platformIds != null ? string.Join(',', platformIds.Select(x => HttpUtility.UrlEncode(x.ToString()))) : null;
+            payload.FilterType = hashType;
+            payload.Page = page <= 0 ? 1 : page;
+
+            if (includes != null && includes.Length > 0)
+            {
+                if (includes.Contains(Models.Enums.GameFieldIncludes.All))
+                    payload.Include = this.GetEnumValue(Models.Enums.GameFieldIncludes.All);
+                else
+                    payload.Include = string.Join(',', includes.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+            }
+
+            if (fields != null && fields.Length > 0)
+            {
+                if (fields.Contains(Models.Enums.GameFields.All))
+                    payload.Fields = this.GetEnumValue(Models.Enums.GameFields.All);
+                else
+                    payload.Fields = string.Join(',', fields.Select(x => HttpUtility.UrlEncode(this.GetEnumValue(x))));
+            }
+
+            return await this.CallGet<GamesByGameIDResponse>("ByGameHash", payload);
+        }
+
+        #endregion
+
 
     }
 }

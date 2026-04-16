@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Threading.Tasks;
 using TheGamesDBApiWrapper.Data;
 using TheGamesDBApiWrapper.Data.Helper;
@@ -56,13 +57,29 @@ namespace TheGamesDBApiWrapperTests
             ServiceCollection services = new ServiceCollection();
             services.AddSingleton<IAllowanceTracker, AllowanceTracker>();
             services.AddScoped<IDIResolveHelper, DIResolveHelper>();
-            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f =>
-            new TheGamesDBApiWrapperRestClientFactory(f.GetRequiredService<IServiceProvider>()).WithMessageHandler(mockMessageHandler<TResponse>(jsonfile, url)));
-            services.AddScoped(f => new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel()
+            
+            var config = new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel()
             {
                 ApiKey = "testkey",
-                BaseUrl = "https://localhost/test/api/"
+                BaseUrl = "https://localhost/test/api/",
+                HttpTimeout = 180
+            };
+            
+            services.AddSingleton(config);
+            services.AddHttpClient("TheGamesDB");
+            
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f =>
+            {
+                var mockHandler = mockMessageHandler<TResponse>(jsonfile, url);
+                var httpClientFactory = f.GetRequiredService<IHttpClientFactory>();
+                var factory = new TheGamesDBApiWrapperRestClientFactory(
+                    f.GetRequiredService<IServiceProvider>(),
+                    config,
+                    httpClientFactory
+                ).WithMessageHandler(mockHandler);
+                return factory;
             });
+            
             services.AddScoped<ITheGamesDBAPI, TheGamesDBAPI>();
 
             this.ServiceProvider = services.BuildServiceProvider();
@@ -327,6 +344,138 @@ namespace TheGamesDBApiWrapperTests
             g.Publishers.ShouldNotBeNull();
             g.Publishers.Length.ShouldBe(0);
             g.Alternates.ShouldBeNull();
+        }
+
+        [Fact]
+        public void HttpTimeout_DefaultValue_ShouldBe180Seconds()
+        {
+            var config = new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel();
+            config.HttpTimeout.ShouldBe(180);
+        }
+
+        [Fact]
+        public void HttpTimeout_CanBeConfigured()
+        {
+            var config = new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel
+            {
+                HttpTimeout = 300
+            };
+            config.HttpTimeout.ShouldBe(300);
+        }
+
+        [Fact]
+        public void ConfigModel_AllPropertiesHaveDefaults()
+        {
+            var config = new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel();
+            
+            config.BaseUrl.ShouldBe("https://api.thegamesdb.net/");
+            config.Version.ShouldBe(1);
+            config.ForceVersion.ShouldBe(false);
+            config.HttpTimeout.ShouldBe(180);
+        }
+
+        [Fact]
+        public void RestClientFactory_HttpTimeout_ShouldBeAppliedToHttpClient()
+        {
+            ServiceCollection services = new ServiceCollection();
+            var config = new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel
+            {
+                HttpTimeout = 300
+            };
+            
+            services.AddSingleton(config);
+            services.AddHttpClient("TheGamesDB");
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f =>
+            {
+                return new TheGamesDBApiWrapperRestClientFactory(
+                    f.GetRequiredService<IServiceProvider>(),
+                    config,
+                    f.GetRequiredService<IHttpClientFactory>()
+                );
+            });
+
+            var serviceProvider = services.BuildServiceProvider();
+            var factory = serviceProvider.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>();
+            
+            var httpClient = factory.Create("https://example.com");
+            
+            httpClient.Timeout.ShouldBe(TimeSpan.FromSeconds(300));
+        }
+
+        [Fact]
+        public void RestClientFactory_WithMessageHandler_ShouldUseMockHandler()
+        {
+            ServiceCollection services = new ServiceCollection();
+            var config = new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel
+            {
+                HttpTimeout = 180
+            };
+            
+            var mockHandler = new MockHttpMessageHandler();
+            mockHandler.When("*").Respond("application/json", "{}");
+            
+            services.AddSingleton(config);
+            services.AddHttpClient("TheGamesDB");
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f =>
+            {
+                return new TheGamesDBApiWrapperRestClientFactory(
+                    f.GetRequiredService<IServiceProvider>(),
+                    config,
+                    f.GetRequiredService<IHttpClientFactory>()
+                ).WithMessageHandler(mockHandler);
+            });
+
+            var serviceProvider = services.BuildServiceProvider();
+            var factory = serviceProvider.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>();
+            
+            var httpClient = factory.Create("https://example.com");
+            
+            // Verify the timeout is still applied
+            httpClient.Timeout.ShouldBe(TimeSpan.FromSeconds(180));
+            httpClient.BaseAddress?.ToString().ShouldBe("https://example.com/");
+        }
+
+        [Fact]
+        public void DependencyInjection_AddTheGamesDBApiWrapper_ShouldRegisterAllServices()
+        {
+            var services = new ServiceCollection();
+            var config = new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel
+            {
+                ApiKey = "testkey"
+            };
+            
+            services.AddTheGamesDBApiWrapper(config);
+            
+            var serviceProvider = services.BuildServiceProvider();
+            
+            // Verify all services are registered
+            var api = serviceProvider.GetRequiredService<ITheGamesDBAPI>();
+            var factory = serviceProvider.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>();
+            var allowanceTracker = serviceProvider.GetRequiredService<IAllowanceTracker>();
+            var diResolveHelper = serviceProvider.GetRequiredService<IDIResolveHelper>();
+            var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+            
+            api.ShouldNotBeNull();
+            factory.ShouldNotBeNull();
+            allowanceTracker.ShouldNotBeNull();
+            diResolveHelper.ShouldNotBeNull();
+            httpClientFactory.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public void DependencyInjection_AddTheGamesDBApiWrapper_WithApiKey_ShouldRegisterAllServices()
+        {
+            var services = new ServiceCollection();
+            services.AddTheGamesDBApiWrapper("myapikey", 1, "https://test.com");
+            
+            var serviceProvider = services.BuildServiceProvider();
+            
+            // Verify all services are registered
+            var api = serviceProvider.GetRequiredService<ITheGamesDBAPI>();
+            var factory = serviceProvider.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>();
+            
+            api.ShouldNotBeNull();
+            factory.ShouldNotBeNull();
         }
 
         #endregion

@@ -3,17 +3,22 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TheGamesDBApiWrapper.Domain;
+using TheGamesDBApiWrapper.Models.Config;
 
 namespace TheGamesDBApiWrapper.Data
 {
     public class TheGamesDBApiWrapperRestClientFactory : ITheGamesDBApiWrapperRestClientFactory
     {
         private readonly IServiceProvider provider;
+        private readonly TheGamesDBApiConfigModel config;
+        private readonly IHttpClientFactory httpClientFactory;
         private HttpMessageHandler? messageHandler = null;
 
-        public TheGamesDBApiWrapperRestClientFactory(IServiceProvider provider)
+        public TheGamesDBApiWrapperRestClientFactory(IServiceProvider provider, TheGamesDBApiConfigModel config, IHttpClientFactory httpClientFactory)
         {
             this.provider = provider;
+            this.config = config;
+            this.httpClientFactory = httpClientFactory;
         }
 
         public TheGamesDBApiWrapperRestClientFactory WithMessageHandler(HttpMessageHandler handler)
@@ -30,7 +35,13 @@ namespace TheGamesDBApiWrapper.Data
         /// <returns>An HttpClient instance.</returns>
         public HttpClient Create(string baseUri)
         {
-            var httpClient = this.messageHandler != null ? new HttpClient(this.messageHandler) : new HttpClient();
+            // If a message handler is set (e.g., for testing), use it directly
+            var httpClient = this.messageHandler != null 
+                ? new HttpClient(this.messageHandler)
+                : this.httpClientFactory.CreateClient("TheGamesDB");
+
+            // Set timeout from config
+            httpClient.Timeout = TimeSpan.FromSeconds(this.config.HttpTimeout);
 
             if (!string.IsNullOrEmpty(baseUri))
             {
