@@ -43,6 +43,9 @@ namespace TheGamesDBApiWrapper.Data
             this.Genres = new Genres(provider, config, factory, allowanceTracker);
             this.Developers = new Developers(provider, config, factory, allowanceTracker);
             this.Publishers = new Publishers(provider, config, factory, allowanceTracker);
+            this.Regions = new ApiClasses.Regions(provider, config, factory, allowanceTracker);
+            this.Countries = new ApiClasses.Countries(provider, config, factory, allowanceTracker);
+            this.Utility = new ApiClasses.Utility(provider, config, factory, allowanceTracker);
             this.allowanceTracker = allowanceTracker;
         }
 
@@ -86,6 +89,30 @@ namespace TheGamesDBApiWrapper.Data
         /// The publishers api client.
         /// </value>
         public IPublishers Publishers { get; private set; }
+
+        /// <summary>
+        /// API Endpoint for /Regions
+        /// </summary>
+        /// <value>
+        /// The regions api client.
+        /// </value>
+        public IRegions Regions { get; private set; }
+
+        /// <summary>
+        /// API Endpoint for /Countries
+        /// </summary>
+        /// <value>
+        /// The countries api client.
+        /// </value>
+        public ICountries Countries { get; private set; }
+
+        /// <summary>
+        /// API Endpoint for /API (Utility)
+        /// </summary>
+        /// <value>
+        /// The utility api client.
+        /// </value>
+        public IUtility Utility { get; private set; }
 
         /// <summary>
         /// Gets the allowance track 

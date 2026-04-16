@@ -76,6 +76,54 @@ namespace TheGamesDBApiWrapper.Models.Entities
         public string? Developer { get; set; }
 
         /// <summary>
+        /// Gets or sets the manufacturer.
+        /// </summary>
+        [JsonPropertyName("manufacturer")]
+        public string? Manufacturer { get; set; }
+
+        /// <summary>
+        /// Gets or sets the media.
+        /// </summary>
+        [JsonPropertyName("media")]
+        public string? Media { get; set; }
+
+        /// <summary>
+        /// Gets or sets the cpu.
+        /// </summary>
+        [JsonPropertyName("cpu")]
+        public string? CPU { get; set; }
+
+        /// <summary>
+        /// Gets or sets the memory.
+        /// </summary>
+        [JsonPropertyName("memory")]
+        public string? Memory { get; set; }
+
+        /// <summary>
+        /// Gets or sets the graphics.
+        /// </summary>
+        [JsonPropertyName("graphics")]
+        public string? Graphics { get; set; }
+
+        /// <summary>
+        /// Gets or sets the sound.
+        /// </summary>
+        [JsonPropertyName("sound")]
+        public string? Sound { get; set; }
+
+        /// <summary>
+        /// Gets or sets the max controllers.
+        /// </summary>
+        [JsonPropertyName("maxcontrollers")]
+        public string? MaxControllers { get; set; }
+
+        /// <summary>
+        /// Gets or sets the display.
+        /// </summary>
+        [JsonPropertyName("display")]
+        public string? Display { get; set; }
+
+        /// <summary>
         /// Gets or sets the overview.
         /// </summary>
         /// <value>
@@ -83,5 +131,11 @@ namespace TheGamesDBApiWrapper.Models.Entities
         /// </value>
         [JsonPropertyName("overview")]
         public string? Overview { get; set; }
+
+        /// <summary>
+        /// Gets or sets the youtube.
+        /// </summary>
+        [JsonPropertyName("youtube")]
+        public string? YouTube { get; set; }
     }
 }

@@ -42,5 +42,13 @@ namespace TheGamesDBApiWrapper.Models.Config
         ///   <c>true</c> if [force version]; otherwise, <c>false</c>.
         /// </value>
         public bool ForceVersion { get; set; } = false;
+
+        /// <summary>
+        /// Gets or sets the HTTP timeout in seconds.
+        /// </summary>
+        /// <value>
+        /// The HTTP timeout in seconds. Default is 180 seconds.
+        /// </value>
+        public int HttpTimeout { get; set; } = 180;
     }
 }

@@ -43,6 +43,27 @@ namespace TheGamesDBApiWrapper.Domain
         /// The publishers api client.
         /// </value>
         IPublishers Publishers { get; }
+        /// <summary>
+        /// API Endpoint for /Regions
+        /// </summary>
+        /// <value>
+        /// The regions api client.
+        /// </value>
+        IRegions Regions { get; }
+        /// <summary>
+        /// API Endpoint for /Countries
+        /// </summary>
+        /// <value>
+        /// The countries api client.
+        /// </value>
+        ICountries Countries { get; }
+        /// <summary>
+        /// API Endpoint for /API (Utility)
+        /// </summary>
+        /// <value>
+        /// The utility api client.
+        /// </value>
+        IUtility Utility { get; }
 
         /// <summary>
         /// Gets the allowance track.

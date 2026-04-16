@@ -47,6 +47,16 @@ namespace TheGamesDBApiWrapper.Models.Entities
         [JsonPropertyName("platform")]
         public int? Platform { get; set; }
         /// <summary>
+        /// Gets or sets the region identifier.
+        /// </summary>
+        [JsonPropertyName("region_id")]
+        public int? RegionId { get; set; }
+        /// <summary>
+        /// Gets or sets the country identifier.
+        /// </summary>
+        [JsonPropertyName("country_id")]
+        public int? CountryId { get; set; }
+        /// <summary>
         /// Gets or sets the players.
         /// </summary>
         /// <value>

@@ -213,6 +213,12 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
                 
                 var content = await restResponse.Content.ReadAsStringAsync();
                 var response = JsonSerializer.Deserialize<T>(content, settings);
+
+                if (response == null)
+                {
+                    throw new Exception($"Error in rest call: Unable to deserialize response to {typeof(T).Name}. Raw response: \"{content}\"");
+                }
+
                 var restResponseBase = response as BaseApiResponseModel;
 
                 // Scan recursive for DIResolveAttribute and resolve it in current scope via service provide
@@ -220,11 +226,10 @@ namespace TheGamesDBApiWrapper.Data.ApiClasses.Base
 
                 if (restResponse.StatusCode == System.Net.HttpStatusCode.OK)
                 {
-                    if (restResponseBase == null)
+                    if (restResponseBase != null)
                     {
-                        throw new Exception("Error: Response deserialization failed. BaseApiResponseModel is null.");
+                        this.allowanceTracker.SetAllowance(restResponseBase.RemainingMonthlyAllowance, restResponseBase.ExtraAllowance, restResponseBase.AllowanceRefreshTimer);
                     }
-                    this.allowanceTracker.SetAllowance(restResponseBase.RemainingMonthlyAllowance, restResponseBase.ExtraAllowance, restResponseBase.AllowanceRefreshTimer);
                     return response;
                 } 
                 else if (restResponse.StatusCode == System.Net.HttpStatusCode.Forbidden && restResponseBase != null)
