@@ -9,14 +9,13 @@ namespace TheGamesDBApiWrapper.Data
 {
     public class TheGamesDBApiWrapperRestClientFactory : ITheGamesDBApiWrapperRestClientFactory
     {
-        private readonly IServiceProvider provider;
         private readonly TheGamesDBApiConfigModel config;
         private readonly IHttpClientFactory httpClientFactory;
         private HttpMessageHandler? messageHandler = null;
 
         public TheGamesDBApiWrapperRestClientFactory(IServiceProvider provider, TheGamesDBApiConfigModel config, IHttpClientFactory httpClientFactory)
         {
-            this.provider = provider;
+            _ = provider ?? throw new ArgumentNullException(nameof(provider));
             this.config = config;
             this.httpClientFactory = httpClientFactory;
         }
@@ -37,11 +36,19 @@ namespace TheGamesDBApiWrapper.Data
         {
             // If a message handler is set (e.g., for testing), use it directly
             var httpClient = this.messageHandler != null 
-                ? new HttpClient(this.messageHandler)
+                ? new HttpClient(this.messageHandler, disposeHandler: false)
                 : this.httpClientFactory.CreateClient("TheGamesDB");
 
             // Set timeout from config
-            httpClient.Timeout = TimeSpan.FromSeconds(this.config.HttpTimeout);
+            var timeoutSeconds = this.config.HttpTimeout;
+            var maxSeconds = (int)TimeSpan.FromMilliseconds(int.MaxValue).TotalSeconds;
+
+            if (timeoutSeconds <= 0 || timeoutSeconds > maxSeconds)
+            {
+                timeoutSeconds = 180;
+            }
+
+            httpClient.Timeout = TimeSpan.FromSeconds(timeoutSeconds);
 
             if (!string.IsNullOrEmpty(baseUri))
             {

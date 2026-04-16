@@ -18,7 +18,7 @@ This library uses the following dependencies to achieve its functionality:
 * [xunit](https://github.com/xunit/xunit)
 * [xunit.runner.visualstudio](https://github.com/xunit/visualstudio.xunit)
 ## Requirements
-* .NET 9 or higher
+* .NET 10 or higher
 * The GamesDB API Access [(Request your keys here)](https://thegamesdb.net/)
 
 ## Install
@@ -359,4 +359,3 @@ If you have any ideas to improve my projects, feel free to send a pull request.
 If you like my work and want to support me (or want to buy me a coffee/beer), PayPal donations are more than appreciated.
 
 [![Paypal Donate](https://img.shields.io/badge/donate-paypal-blue)](https://www.paypal.com/donate/?hosted_button_id=SVZHLRTQ6H4VL)
-

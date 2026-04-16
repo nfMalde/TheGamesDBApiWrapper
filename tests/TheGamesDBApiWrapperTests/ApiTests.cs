@@ -15,11 +15,14 @@ using TheGamesDBApiWrapper.Domain;
 using TheGamesDBApiWrapper.Domain.Helper;
 using TheGamesDBApiWrapper.Domain.Track;
 using TheGamesDBApiWrapper.Models.Enums;
+using TheGamesDBApiWrapper.Models.Responses.Countries;
 using TheGamesDBApiWrapper.Models.Responses.Developers;
 using TheGamesDBApiWrapper.Models.Responses.Games;
 using TheGamesDBApiWrapper.Models.Responses.Genres;
 using TheGamesDBApiWrapper.Models.Responses.Platforms;
 using TheGamesDBApiWrapper.Models.Responses.Publishers;
+using TheGamesDBApiWrapper.Models.Responses.Regions;
+using TheGamesDBApiWrapper.Models.Responses.Utility;
 using Xunit;
 
 namespace TheGamesDBApiWrapperTests
@@ -213,6 +216,100 @@ namespace TheGamesDBApiWrapperTests
             response.Data.ShouldNotBeNull();
             response.Data.Publishers.ShouldNotBeNull();
             response.Data.Publishers.First().Value.Name.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public async Task RegionsResponseShouldBeParsed()
+        {
+            this.mockServices<RegionsResponse>("regions", "*/v1/Regions");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+
+            var response = await api.Regions.All();
+
+            response.ShouldNotBeNull();
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Regions.ShouldNotBeNull();
+            response.Data.Regions.First().Value.Name.ShouldBe("North America");
+        }
+
+        [Fact]
+        public async Task RegionsByIdResponseShouldBeParsed()
+        {
+            this.mockServices<RegionsByIDResponse>("regions-by-id", "*/v1/Regions/GetRegions*");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+
+            var response = await api.Regions.ByRegionID(1);
+
+            response.ShouldNotBeNull();
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Regions.ShouldNotBeNull();
+            response.Data.Regions.First().Id.ShouldBe(1);
+            response.Data.Regions.First().Name.ShouldBe("North America");
+        }
+
+        [Fact]
+        public async Task CountriesResponseShouldBeParsed()
+        {
+            this.mockServices<CountriesResponse>("countries", "*/v1/Countries");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+
+            var response = await api.Countries.All();
+
+            response.ShouldNotBeNull();
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Countries.ShouldNotBeNull();
+            response.Data.Countries.First().Value.Name.ShouldBe("United States");
+        }
+
+        [Fact]
+        public async Task UtilityApiLimitResponseShouldBeParsed()
+        {
+            this.mockServices<ApiLimitResponse>("api-limit", "*/v1/API/Limit*");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+
+            var response = await api.Utility.GetApiLimit();
+
+            response.ShouldNotBeNull();
+            response.RemainingMonthlyAllowance.ShouldBe(2916);
+            response.ExtraAllowance.ShouldBe(0);
+            response.AllowanceRefreshTimer.ShouldBe(1635048886);
+        }
+
+        [Fact]
+        public async Task GameByUniqueIdResponseShouldBeParsed()
+        {
+            this.mockServices<GamesByGameIDResponse>("game-by-id", "*/v1/Games/ByGameUniqueID*");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+            var response = await api.Games.ByGameUniqueID("SLUS-12345");
+
+            response.ShouldNotBeNull();
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Games.ShouldNotBeNull();
+            response.Data.Games.First().GameTitle.ShouldNotBeNull();
+        }
+
+        [Fact]
+        public async Task GameByHashResponseShouldBeParsed()
+        {
+            this.mockServices<GamesByGameIDResponse>("game-by-id", "*/v1/Games/ByGameHash*");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+            var response = await api.Games.ByGameHash("ABCDEF0123456789");
+
+            response.ShouldNotBeNull();
+            response.Code.ShouldBeGreaterThan(0);
+            response.Data.ShouldNotBeNull();
+            response.Data.Games.ShouldNotBeNull();
+            response.Data.Games.First().GameTitle.ShouldNotBeNull();
         }
 
         [Fact]
@@ -433,6 +530,84 @@ namespace TheGamesDBApiWrapperTests
             // Verify the timeout is still applied
             httpClient.Timeout.ShouldBe(TimeSpan.FromSeconds(180));
             httpClient.BaseAddress?.ToString().ShouldBe("https://example.com/");
+        }
+
+        [Theory]
+        [InlineData(0)]
+        [InlineData(-1)]
+        [InlineData(3000000)]
+        public void RestClientFactory_HttpTimeout_InvalidValues_ShouldFallbackToDefault(int timeout)
+        {
+            ServiceCollection services = new ServiceCollection();
+            var config = new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel
+            {
+                HttpTimeout = timeout
+            };
+
+            services.AddSingleton(config);
+            services.AddHttpClient("TheGamesDB");
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f =>
+            {
+                return new TheGamesDBApiWrapperRestClientFactory(
+                    f.GetRequiredService<IServiceProvider>(),
+                    config,
+                    f.GetRequiredService<IHttpClientFactory>()
+                );
+            });
+
+            var serviceProvider = services.BuildServiceProvider();
+            var factory = serviceProvider.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>();
+
+            var httpClient = factory.Create("https://example.com");
+
+            httpClient.Timeout.ShouldBe(TimeSpan.FromSeconds(180));
+        }
+
+        [Fact]
+        public async Task RestClientFactory_WithMessageHandler_ShouldNotDisposeSharedHandler()
+        {
+            var services = new ServiceCollection();
+            var config = new TheGamesDBApiWrapper.Models.Config.TheGamesDBApiConfigModel
+            {
+                HttpTimeout = 180
+            };
+            var mockHandler = new MockHttpMessageHandler();
+            mockHandler.When("*").Respond("application/json", "{}");
+
+            services.AddSingleton(config);
+            services.AddHttpClient("TheGamesDB");
+            services.AddScoped<ITheGamesDBApiWrapperRestClientFactory>(f =>
+            {
+                return new TheGamesDBApiWrapperRestClientFactory(
+                    f.GetRequiredService<IServiceProvider>(),
+                    config,
+                    f.GetRequiredService<IHttpClientFactory>()
+                ).WithMessageHandler(mockHandler);
+            });
+
+            var provider = services.BuildServiceProvider();
+            var factory = provider.GetRequiredService<ITheGamesDBApiWrapperRestClientFactory>();
+
+            using (var firstClient = factory.Create("https://example.com"))
+            {
+                var firstResponse = await firstClient.GetAsync("/");
+                firstResponse.IsSuccessStatusCode.ShouldBeTrue();
+            }
+
+            using (var secondClient = factory.Create("https://example.com"))
+            {
+                var secondResponse = await secondClient.GetAsync("/");
+                secondResponse.IsSuccessStatusCode.ShouldBeTrue();
+            }
+        }
+
+        [Fact]
+        public async Task ApiCall_WhenDeserializeReturnsNull_ShouldThrowTheGamesDbApiException()
+        {
+            this.mockServices<PublishersResponse>("raw-null", "*/v1/Publishers");
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+
+            await Should.ThrowAsync<TheGamesDBApiWrapper.Exceptions.TheGamesDBApiException>(async () => await api.Publishers.All());
         }
 
         [Fact]

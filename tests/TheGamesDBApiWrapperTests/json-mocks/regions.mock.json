@@ -1,0 +1,19 @@
+{
+  "code": 200,
+  "status": "Success",
+  "data": {
+    "regions": {
+      "1": {
+        "id": 1,
+        "name": "North America"
+      },
+      "2": {
+        "id": 2,
+        "name": "Europe"
+      }
+    }
+  },
+  "remaining_monthly_allowance": 2916,
+  "extra_allowance": 0,
+  "allowance_refresh_timer": 1635048886
+}
