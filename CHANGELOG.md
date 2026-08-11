@@ -1,5 +1,13 @@
 # Change Log
 
+## 3.1.1
+- **Fixes**:
+  - `GameUpdateValueConverter` now reads a single JSON **object** for a game update `value`. TheGamesDB returns one for some edit types; the converter handled `String`, `Number` and arrays only and threw on anything else. That aborted the whole paginated `Games/Updates` walk, and since a caller's last-edit cursor only advances once the walk completes, every later run replayed the same pages and died on the same record — an import could never get past it.
+  - `GameUpdateValueConverter` also accepts **boolean** values.
+  - An unreadable value now throws with the **token type and byte offset** — the previous message was `"Unexpected JSON token type."`, which gave a production stack trace no way to identify the record responsible.
+- **Tests**:
+  - Added `GameUpdateValueConverterTests` covering string, number, array, object, boolean and null values, plus the content of the failure message.
+
 ## 3.1.0
 - **New Endpoints**:
   - Added **Regions** endpoint (`api.Regions.All()`, `api.Regions.ByRegionID()`).

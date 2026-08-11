@@ -3,7 +3,9 @@
   <PropertyGroup>
     <TargetFramework>net10.0</TargetFramework>
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
-    <Copyright>2025 Malte Peters</Copyright>
+    <Copyright>2026 Malte Peters</Copyright>
+    <Authors>Malte Peters</Authors>
+    <Company>Malte Peters</Company>
     <Description>Fluent-style wrapper for TheGamesDB API with dependency injection support.</Description>
     <PackageProjectUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</PackageProjectUrl>
     <RepositoryUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</RepositoryUrl>
@@ -11,24 +13,10 @@
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
 	  <PackageReleaseNotes>
 		  <![CDATA[
-- **New Endpoints**:
-  - Added Regions endpoint (All, ByRegionID).
-  - Added Countries endpoint (All).
-  - Added Utility endpoint (GetApiLimit) to check API key allowance without consuming quota.
-- **New Game Endpoints**:
-  - Added Games/ByGameUniqueID for searching by unique/external identifier (e.g. ROM serial).
-  - Added Games/ByGameHash for searching by ROM hash with optional hash type filter.
-- **Model Fixes**:
-  - Fixed PlatformFields enum values (were incorrectly copied from GameFields).
-  - Added missing PlatformModel fields: Manufacturer, Media, CPU, Memory, Graphics, Sound, MaxControllers, Display, YouTube.
-  - Added RegionId and CountryId to GameModel.
-  - Fixed ImageBaseUrlMetaModel property name typo: Lage → Large.
-- **Enhancements**:
-  - Registered HttpClient in dependency injection following .NET best practices with named client support.
-  - Added HttpTimeout configuration property (defaults to 180 seconds).
-  - Improved HTTP client lifecycle management through DI container.
-- **Breaking Changes**:
-  - Removed incorrect PlatformFields enum members. Renamed ImageBaseUrlMetaModel.Lage to Large.
+- **Fixes**:
+  - `GameUpdateValueConverter` now reads a single JSON object for a game update `value`. TheGamesDB returns one for some edit types, and the converter previously threw — which aborted the whole paginated `Games/Updates` walk. Because the caller's last-edit cursor only advances on a completed walk, every subsequent run replayed the same pages and failed on the same record, so an import could never get past it.
+  - `GameUpdateValueConverter` also accepts boolean values.
+  - The exception for a genuinely unreadable value now names the token type and byte offset instead of the bare "Unexpected JSON token type.", which carried no way to identify the offending record.
 ]]>
 	  </PackageReleaseNotes>
 
