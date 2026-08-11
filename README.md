@@ -158,7 +158,14 @@ The value that needs to be updated can differ by type:
 - Array of numbers
 - String (Single Value update)
 - Number (Single Value update)
+- Boolean (Single Value update)
+- A single object (some edit types send one object rather than an array)
 - Date
+
+> A value the parser cannot read throws a `JsonException` naming the token type and byte offset.
+> That matters more than it sounds: the exception aborts the whole paginated walk, and since the
+> last edit id only advances once a walk completes, a run that dies mid-way repeats the same pages
+> next time and fails on the same record. Report the message rather than working around it.
 
 To simplify output, TheGamesDBAPIWrapper already parses the values to each type:
 
@@ -202,9 +209,16 @@ foreach (var update in response.Data.Updates)
         }
         continue;
     }
+    // 4. Boolean — kept as its literal text so you see what the API actually sent
+    else if (value?.Value is "true" or "false")
+    {
+        var flag = value.Value == "true";
+        // Handle boolean value
+        continue;
+    }
     else if (value?.Objects is Dictionary<string, object>[] keyValuePairs)
     {
-        // 4. Array of Key/Value Pairs
+        // 5. Array of Key/Value Pairs — also how a SINGLE object arrives, as one element
   // Handle array of key/value pairs
         foreach (var dict in keyValuePairs)
         {
