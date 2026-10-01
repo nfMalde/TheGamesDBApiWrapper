@@ -1,21 +1,29 @@
-name: Pull Request Check
+name: CI
+
 on:
+  push:
+    branches:
+      - main
   pull_request:
-        branches:
-            - main    
+    branches:
+      - main
+
 jobs:
-    test:
-        runs-on: ubuntu-latest
-        steps:
-          - name: Checkout Sources
-            uses: actions/checkout@v6
-            with:
-              fetch-depth: 0
-          - name: Setup .NET 10
-            uses: actions/setup-dotnet@v5
-            with:
-              dotnet-version: 10.0.x
-          - name: "Build and Test"
-            run: |
-              dotnet build
-              dotnet test
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup .NET 10
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Build
+        run: dotnet build TheGamesDBApiWrapper.sln -c Release
+
+      - name: Test
+        run: dotnet test tests/TheGamesDBApiWrapperTests -c Release --no-build

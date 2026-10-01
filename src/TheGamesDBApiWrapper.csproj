@@ -11,18 +11,16 @@
     <RepositoryUrl>https://github.com/nfMalde/TheGamesDBApiWrapper</RepositoryUrl>
     <RepositoryType>GIT</RepositoryType>
     <PackageTags>TheGamesDB, API, GamesDB, The Games DB API</PackageTags>
-	  <PackageReleaseNotes>
-		  <![CDATA[
-- **Fixes**:
-  - `GameUpdateValueConverter` now reads a single JSON object for a game update `value`. TheGamesDB returns one for some edit types, and the converter previously threw — which aborted the whole paginated `Games/Updates` walk. Because the caller's last-edit cursor only advances on a completed walk, every subsequent run replayed the same pages and failed on the same record, so an import could never get past it.
-  - `GameUpdateValueConverter` also accepts boolean values.
-  - The exception for a genuinely unreadable value now names the token type and byte offset instead of the bare "Unexpected JSON token type.", which carried no way to identify the offending record.
-]]>
-	  </PackageReleaseNotes>
-
 	  <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
 	  <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <!-- Version and release notes come from the release workflow (.github/workflows/release.yml): it packs
+       with -p:Version and exports TGDB_RELEASE_NOTES, the CHANGELOG.md section of that version flattened to
+       plain text (NuGet's release-notes field does not render Markdown). Local builds ship no notes. -->
+  <PropertyGroup Condition="'$(TGDB_RELEASE_NOTES)' != ''">
+    <PackageReleaseNotes>$(TGDB_RELEASE_NOTES)</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
