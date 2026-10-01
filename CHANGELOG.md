@@ -4,6 +4,16 @@ Every release has a `## [X.Y.Z]` section here. The release workflow publishes ex
 Markdown in the GitHub Release and as plain text in the NuGet release notes — and refuses to release a
 version that has none.
 
+## [3.1.2]
+- **Fixes**:
+  - `Games.Images` no longer throws when none of the requested games has an image. TheGamesDB then sends `"images": []` — PHP encodes an empty map as an empty array — and deserializing that into `Dictionary<int, GameImageModel[]>` failed with "The JSON value could not be converted", turning a valid 200 response into a `TheGamesDBApiException`. A batch of ids without images therefore failed instead of returning nothing.
+  - The same applies to every other map in a response — platform images, includes, genres, developers, publishers, platforms, regions and countries: an empty array now reads as an empty dictionary. `DictConverterFactory` is registered in the serializer options and covers all of them.
+  - `DictConverter` reads and writes the object itself instead of handing it back to the serializer, and its errors name the token type and byte offset.
+- **CI**:
+  - Releases are started manually and gated by an approval; the version is computed from the last tag and the release notes come from this file. See `.github/workflows/release.yml`.
+- **Tests**:
+  - Added `DictConverterTests` and a `Games/Images` test against an empty `images` array.
+
 ## [3.1.1]
 - **Fixes**:
   - `GameUpdateValueConverter` now reads a single JSON **object** for a game update `value`. TheGamesDB returns one for some edit types; the converter handled `String`, `Number` and arrays only and threw on anything else. That aborted the whole paginated `Games/Updates` walk, and since a caller's last-edit cursor only advances once the walk completes, every later run replayed the same pages and died on the same record — an import could never get past it.

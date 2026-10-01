@@ -71,13 +71,11 @@ namespace TheGamesDBApiWrapper.Data
                 WriteIndented = true,
                 Converters =
                 {
-                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase)
-
+                    new JsonStringEnumConverter(JsonNamingPolicy.CamelCase),
+                    // TheGamesDB sends an empty map as [] instead of {}.
+                    new Converter.DictConverterFactory()
                 }
             };
-
-            // Add custom converters if needed
-            
 
             return options;
         }
