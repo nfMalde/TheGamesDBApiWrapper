@@ -1,0 +1,24 @@
+{
+  "code": 200,
+  "status": "Success",
+  "data": {
+    "count": 0,
+    "base_url": {
+      "original": "https://uri.u/images/original/",
+      "small": "https://uri.u/images/small/",
+      "thumb": "https://uri.u/images/thumb/",
+      "cropped_center_thumb": "https://uri.u/images/cropped_center_thumb/",
+      "medium": "https://uri.u/images/medium/",
+      "large": "https://uri.u/images/large/"
+    },
+    "images": []
+  },
+  "pages": {
+    "previous": null,
+    "current": "https://uri.u/v1/Games/Images?apikey=xxxxx&games_id=1%2C2%2C3&page=1",
+    "next": null
+  },
+  "remaining_monthly_allowance": 351,
+  "extra_allowance": 0,
+  "allowance_refresh_timer": 865597
+}

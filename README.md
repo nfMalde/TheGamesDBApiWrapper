@@ -236,6 +236,21 @@ foreach (var update in response.Data.Updates)
 }
 ```
 
+#### Empty Results
+TheGamesDB encodes an empty map as an empty array — `"images": []` rather than `"images": {}` when none
+of the requested games has an image, and the same for genres, developers, publishers, platforms, regions,
+countries and includes. The wrapper reads every such field as an **empty dictionary**, so check `Count`
+(or `Any()`) rather than expecting `null`:
+
+```c#
+var response = await api.Games.Images(gameIds, GameImageType.Boxart);
+
+if (response?.Data?.Images is { Count: > 0 } images)
+{
+    // images[gameId] holds the images of that game
+}
+```
+
 ### Keeping Track of your monthly allowance
 TheGamesDB API has a monthly request limit called "monthly allowance".
 Starting with version 1.1.x, there are two ways to keep track of it:

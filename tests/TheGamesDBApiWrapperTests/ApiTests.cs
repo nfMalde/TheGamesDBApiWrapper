@@ -147,6 +147,30 @@ namespace TheGamesDBApiWrapperTests
             response.Data.Images.First().Value.First().Type.ShouldBe(GameImageType.Fanart);
         }
 
+        /// <summary>
+        /// When none of the requested games has an image, the API sends <c>"images": []</c> — PHP
+        /// encodes an empty map as an empty array — instead of <c>{}</c>. That used to throw
+        /// "The JSON value could not be converted to Dictionary`2[Int32,GameImageModel[]]" for a
+        /// perfectly valid 200 response.
+        /// </summary>
+        [Fact]
+        public async Task GameImagesResponseWithoutImagesShouldBeParsed()
+        {
+            this.mockServices<GamesImagesResponse>("game-images-empty", "*/v1/Games/Images");
+
+            ITheGamesDBAPI api = this.ServiceProvider.GetRequiredService<ITheGamesDBAPI>();
+            var response = await api.Games.Images(new int[] { 1, 2, 3 }, GameImageType.Fanart, GameImageType.Boxart);
+
+            response.ShouldNotBeNull();
+            response.Code.ShouldBe(200);
+            response.Data.ShouldNotBeNull();
+            response.Data.Count.ShouldBe(0);
+            response.Data.BaseUrl.ShouldNotBeNull();
+            response.Data.Images.ShouldNotBeNull();
+            response.Data.Images.ShouldBeEmpty();
+            response.RemainingMonthlyAllowance.ShouldBe(351);
+        }
+
         [Fact]
         public async Task GameUpdateResponseShouldBeParsed()
         {

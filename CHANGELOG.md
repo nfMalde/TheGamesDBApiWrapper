@@ -1,6 +1,20 @@
 # Change Log
 
-## 3.1.1
+Every release has a `## [X.Y.Z]` section here. The release workflow publishes exactly that section — as
+Markdown in the GitHub Release and as plain text in the NuGet release notes — and refuses to release a
+version that has none.
+
+## [3.1.2]
+- **Fixes**:
+  - `Games.Images` no longer throws when none of the requested games has an image. TheGamesDB then sends `"images": []` — PHP encodes an empty map as an empty array — and deserializing that into `Dictionary<int, GameImageModel[]>` failed with "The JSON value could not be converted", turning a valid 200 response into a `TheGamesDBApiException`. A batch of ids without images therefore failed instead of returning nothing.
+  - The same applies to every other map in a response — platform images, includes, genres, developers, publishers, platforms, regions and countries: an empty array now reads as an empty dictionary. `DictConverterFactory` is registered in the serializer options and covers all of them.
+  - `DictConverter` reads and writes the object itself instead of handing it back to the serializer, and its errors name the token type and byte offset.
+- **CI**:
+  - Releases are started manually and gated by an approval; the version is computed from the last tag and the release notes come from this file. See `.github/workflows/release.yml`.
+- **Tests**:
+  - Added `DictConverterTests` and a `Games/Images` test against an empty `images` array.
+
+## [3.1.1]
 - **Fixes**:
   - `GameUpdateValueConverter` now reads a single JSON **object** for a game update `value`. TheGamesDB returns one for some edit types; the converter handled `String`, `Number` and arrays only and threw on anything else. That aborted the whole paginated `Games/Updates` walk, and since a caller's last-edit cursor only advances once the walk completes, every later run replayed the same pages and died on the same record — an import could never get past it.
   - `GameUpdateValueConverter` also accepts **boolean** values.
@@ -8,7 +22,7 @@
 - **Tests**:
   - Added `GameUpdateValueConverterTests` covering string, number, array, object, boolean and null values, plus the content of the failure message.
 
-## 3.1.0
+## [3.1.0]
 - **New Endpoints**:
   - Added **Regions** endpoint (`api.Regions.All()`, `api.Regions.ByRegionID()`).
   - Added **Countries** endpoint (`api.Countries.All()`).
@@ -29,18 +43,18 @@
   - Added `HttpTimeout` configuration property to `TheGamesDBApiConfigModel` for customizable HTTP request timeout (defaults to 180 seconds).
   - Improved HTTP client lifecycle management through DI container.
 
-## 3.0.3
+## [3.0.3]
 - **Fixes**:
   - Fixed serialization issues with Field.All and Include.All enums. Now they correctly serialize to all values when used in requests.
-## 3.0.2
+## [3.0.2]
 - **Fixes**:
   - Fixed GameValueUpdate converter to handle numbers and number arrays correctly.
-## 3.0.1 
+## [3.0.1]
 - **Hot Fixes**:
   - Fixed a NullReference error when calling "NextPage()" or "PreviousPage()" on all paginated results.
   - Removed obsolete "DiResolver".
   
-## 3.0.0
+## [3.0.0]
 - **Breaking Changes**:
   - Removed `RestClient` and `Newtonsoft.Json` dependencies.
   - Updated all API methods to use `HttpClient` and `System.Text.Json`.
@@ -78,13 +92,13 @@
 
 - **Other Changes**:
   - Enhanced error handling and validation in API classes.
-## 2.1.1
+## [2.1.1]
 * Fixed a bug where encoding CSV-like parameters broke the request.
 * Added support for multiple values in CSV-like parameters.
 * Added enhanced error handling (e.g., when the API is down).
-## 2.1.0
+## [2.1.0]
 Upgraded to the latest RestSharp and .NET 8.
-## 2.0.0
+## [2.0.0]
 Fixes:
 * Fixed a bug where certain null values in GameModel resulted in breaking the code.
 * Fixed TheGamesDBApiWrapperRestClientFactory creation due to breaking changes in RestSharp 110.20.
@@ -93,22 +107,22 @@ Updates:
 * Migrated to .NET 6.
 
 Starting with this release, older versions of this package are no longer supported or maintained and will be marked as deprecated in NuGet.
-## 1.2.0
+## [1.2.0]
 * Migrated to the latest RestSharp (107.1.2).
 * Migrated to .NET 5.
 
-## 1.1.0
+## [1.1.0]
 * You can now track the allowance of TheGamesDBAPI by injecting the [IAllowanceTracker](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Domain/Track/IAllowanceTracker.cs) or using the `AllowanceTrack` property of [ITheGamesDBAPI](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Domain/ITheGamesDBAPI.cs). See README or documentation for more info.
 
-## 1.0.5
+## [1.0.5]
 ### Changed
 * Updated dependencies and added automated README.
 
-## 1.0.4
+## [1.0.4]
 ### Changed
 * Fixed Game Update call to allow all value types (objects, non-object, string, int). The Game Update Response Model now has an additional property called "Values" of type "GameUpdateValueModel" which has three properties: Value, Values, and Objects. One is set, the rest will be NULL. See: [GameUpdateValueModel](https://github.com/nfMalde/TheGamesDBApiWrapper/blob/main/src/Models/Responses/Games/GameUpdateValueModel.cs)
 
-## 1.0.3
+## [1.0.3]
 ### Changed
 * Fixed ID data types in responses.
 * Fixed response classes for paginated responses.
@@ -117,13 +131,13 @@ Starting with this release, older versions of this package are no longer support
 * Changed RestSharp config to ignore null values by default.
 * Fixes for some JSON properties.
 
-## 1.0.2
+## [1.0.2]
 ### Changed
 * Fixed package info.
 
-## 1.0.1
+## [1.0.1]
 ### Changed
 * Fixed license info.
 
-## 1.0.0
+## [1.0.0]
 * Initial release.

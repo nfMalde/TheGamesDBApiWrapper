@@ -1,0 +1,218 @@
+name: Release Package
+
+# Releases are triggered manually by a maintainer from the Actions tab (workflow_dispatch), never by a
+# merge to main — so a contributor can neither mis-publish nor trigger a release. Pick how to bump; the
+# workflow reads the last release tag (vX.Y.Z) and computes the next version, so you don't have to look it
+# up. The exact version and the release notes are shown in the "prepare" summary, and the actual NuGet push
+# waits on the `release` environment's approval gate (configure required reviewers in
+# Settings > Environments > release) — a final confirmation before the irreversible publish.
+#
+# Every release must document its version: CHANGELOG.md needs a `## [X.Y.Z]` section, otherwise prepare
+# fails and nothing is published.
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: Version part to bump (ignored if 'version' is set)
+        type: choice
+        options: [patch, minor, major]
+        default: patch
+      version:
+        description: Explicit version, e.g. 3.2.0 (overrides bump)
+        required: false
+      prerelease:
+        description: Prerelease? (appends -preview.<run> to an auto-bumped version; for an explicit version include the suffix yourself)
+        type: boolean
+        default: false
+
+# Least-privilege default; the publish job widens this for the GitHub Release and the OIDC token.
+permissions:
+  contents: read
+
+# One release at a time.
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.plan.outputs.version }}
+      tag: ${{ steps.plan.outputs.tag }}
+      prerelease: ${{ steps.plan.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      - name: Compute version
+        id: plan
+        run: |
+          set -euo pipefail
+          git fetch --tags --force
+          EXPLICIT="${{ github.event.inputs.version }}"
+          if [[ -n "$EXPLICIT" ]]; then
+            # Explicit version is used verbatim (include any prerelease suffix yourself).
+            if [[ ! "$EXPLICIT" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+              echo "::error::Version '$EXPLICIT' is not a valid SemVer."; exit 1
+            fi
+            VERSION="$EXPLICIT"
+          else
+            # Highest existing FULL release (exclude prereleases, which contain '-').
+            LATEST="$(git tag -l 'v*' | sed 's#^v##' | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n1 || true)"
+            [[ -z "$LATEST" ]] && LATEST="0.0.0"
+            IFS=. read -r MA MI PA <<< "$LATEST"
+            case "${{ github.event.inputs.bump }}" in
+              major) MA=$((MA + 1)); MI=0; PA=0 ;;
+              minor) MI=$((MI + 1)); PA=0 ;;
+              patch) PA=$((PA + 1)) ;;
+            esac
+            VERSION="$MA.$MI.$PA"
+            if [[ "${{ github.event.inputs.prerelease }}" == "true" ]]; then
+              VERSION="${VERSION}-preview.${GITHUB_RUN_NUMBER}"
+            fi
+          fi
+
+          # A prerelease is any version carrying a SemVer prerelease suffix.
+          if [[ "$VERSION" == *-* ]]; then PRERELEASE=true; else PRERELEASE=false; fi
+
+          TAG="v${VERSION}"
+          if git rev-parse "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "::error::Tag $TAG already exists — pick a different version/bump."; exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          echo "prerelease=$PRERELEASE" >> "$GITHUB_OUTPUT"
+
+          {
+            echo "## Release plan"
+            echo "- **Version:** \`$VERSION\` (prerelease: $PRERELEASE)"
+            echo "- **Tag:** \`$TAG\`"
+            echo ""
+            echo "The NuGet push is gated on the \`release\` environment — approve it to publish."
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      # Show EXACTLY what will ship as release notes — both the Markdown (GitHub Release) and the flattened
+      # plain text (NuGet) — so you can eyeball them before approving the publish gate.
+      - name: Release-notes preview
+        env:
+          VERSION: ${{ steps.plan.outputs.version }}
+        run: |
+          set -euo pipefail
+          bash .github/scripts/release-notes.sh CHANGELOG.md "$VERSION" notes.md notes.txt
+
+          # A release MUST document its version. No section = hard fail here in prepare, so publish never runs.
+          if [[ ! -s notes.md ]]; then
+            {
+              echo ""
+              echo "## ❌ Release blocked — no changelog for \`$VERSION\`"
+              echo ""
+              echo "> There is no \`## [$VERSION]\` section in \`CHANGELOG.md\`."
+              echo "> Add it (or roll your \`## [Unreleased]\` entries into \`## [$VERSION] - <date>\`), commit, and re-run."
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::No '## [$VERSION]' section in CHANGELOG.md — every release must document its version."
+            exit 1
+          fi
+
+          {
+            echo ""
+            echo "## Release notes for \`$VERSION\`"
+            echo ""
+            echo "### Markdown — goes to the GitHub Release"
+            echo ""
+            cat notes.md
+            echo ""
+            echo "### Plain text — goes to the NuGet release-notes field"
+            echo ""
+            echo '```text'
+            cat notes.txt
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Build
+        run: dotnet build TheGamesDBApiWrapper.sln -c Release
+
+      - name: Test
+        run: dotnet test tests/TheGamesDBApiWrapperTests -c Release --no-build
+
+  publish:
+    needs: prepare
+    runs-on: ubuntu-latest
+    environment: release   # approval gate: configure required reviewers in Settings > Environments
+    permissions:
+      contents: write      # create the tag + GitHub Release
+      id-token: write      # mint the OIDC token that NuGet trusted publishing exchanges for a temp key
+    env:
+      VERSION: ${{ needs.prepare.outputs.version }}
+      TAG: ${{ needs.prepare.outputs.tag }}
+      PRERELEASE: ${{ needs.prepare.outputs.prerelease }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: 10.0.x
+
+      # Produce notes.md (Markdown → GitHub Release) and notes.txt (plain text → NuGet) for this version.
+      - name: Release notes
+        run: bash .github/scripts/release-notes.sh CHANGELOG.md "$VERSION" notes.md notes.txt
+
+      - name: Pack
+        run: |
+          set -euo pipefail
+          # Plain-text notes for this version only → the csproj reads TGDB_RELEASE_NOTES.
+          export TGDB_RELEASE_NOTES="$(cat notes.txt)"
+          dotnet pack src/TheGamesDBApiWrapper.csproj -c Release -p:Version="$VERSION" -o out
+
+      # Trusted Publishing (OIDC) — no stored API key. This step exchanges the job's short-lived GitHub
+      # OIDC token for a temporary NuGet API key, valid for a few minutes and scoped to this repo/workflow
+      # by the policy you create at nuget.org > Account > Trusted Publishing. Requires `id-token: write`
+      # (above) and the repo variable NUGET_USER set to your nuget.org username.
+      - name: NuGet login (trusted publishing)
+        id: nuget
+        uses: NuGet/login@v1
+        with:
+          user: ${{ vars.NUGET_USER }}
+
+      - name: Push to NuGet
+        env:
+          NUGET_API_KEY: ${{ steps.nuget.outputs.NUGET_API_KEY }}
+        run: |
+          set -euo pipefail
+          dotnet nuget push "out/*.nupkg" --api-key "$NUGET_API_KEY" \
+            --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      # ── Break-glass fallback: stored API key ─────────────────────────────────────────────────────
+      # If trusted publishing is ever unavailable, use the NUGET_KEY secret and replace the two steps
+      # above with the one below (you can also drop `id-token: write` from this job's permissions):
+      #
+      #   - name: Push to NuGet (API key fallback)
+      #     env:
+      #       NUGET_KEY: ${{ secrets.NUGET_KEY }}
+      #     run: |
+      #       set -euo pipefail
+      #       dotnet nuget push "out/*.nupkg" --api-key "$NUGET_KEY" \
+      #         --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+      - name: Tag and GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          ARGS=()
+          [[ "$PRERELEASE" == "true" ]] && ARGS+=(--prerelease)
+          # Markdown changelog section for this version → the Release body.
+          if [[ -s notes.md ]]; then ARGS+=(--notes-file notes.md); else ARGS+=(--generate-notes); fi
+          gh release create "$TAG" out/*.nupkg \
+            --target "$GITHUB_SHA" \
+            --title "Release $TAG" \
+            "${ARGS[@]}"
