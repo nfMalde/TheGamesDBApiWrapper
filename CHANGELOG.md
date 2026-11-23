@@ -1,5 +1,12 @@
 # Change Log
 
+## [3.1.3]
+- **Fixes**:
+  - `PaginatedApiResponseModel.NextPage()` and `PreviousPage()` now hand the page's allowance to the `IAllowanceTracker`. Only the first page of a walk was tracked (by the API class that fetched it); the pages fetched from the model were not, so a caller that walked a hundred pages of `Games/Updates` still saw the allowance of the first one — and reported "479 remaining" next to "the allowance ran out".
+  - A non-200 answer while paging is tracked too: a 429 carries `remaining_monthly_allowance` 0 and the `allowance_refresh_timer`, which is what the caller needs at that moment. The exception thrown is unchanged.
+- **Tests**:
+  - Added `PaginationAllowanceTests` covering the tracked allowance after a next page, after a 429 while paging, and an unreadable error body.
+
 ## [3.1.2]
 - **Fixes**:
   - `Games.Images` no longer throws when none of the requested games has an image. TheGamesDB then sends `"images": []` — PHP encodes an empty map as an empty array — and deserializing that into `Dictionary<int, GameImageModel[]>` failed with "The JSON value could not be converted", turning a valid 200 response into a `TheGamesDBApiException`. A batch of ids without images therefore failed instead of returning nothing.
