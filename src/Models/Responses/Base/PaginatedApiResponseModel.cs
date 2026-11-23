@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net.Http.Json;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using TheGamesDBApiWrapper.Annotations;
 using TheGamesDBApiWrapper.Domain;
 using TheGamesDBApiWrapper.Domain.Helper;
+using TheGamesDBApiWrapper.Domain.Track;
 
 namespace TheGamesDBApiWrapper.Models.Responses.Base
 {
@@ -53,10 +55,12 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
             {
                 var res = await prevPageResponse.Content.ReadFromJsonAsync<TResponseModel>(restClientFactory.GetJsonSerializerOptions());
                 diResolveHelper.EnrichViaDI(res);
+                this.TrackAllowance(res as BaseApiResponseModel);
                 return res;
             }
 
             string result = await prevPageResponse?.Content?.ReadAsStringAsync()! ?? string.Empty;
+            this.TrackAllowance(result, restClientFactory.GetJsonSerializerOptions());
 
             throw new Exceptions.TheGamesDBApiException($"Error received response {prevPageResponse?.StatusCode} - {result ?? "<no content>"} fetching next Page by calling {this.Pages.Previous}");
         }
@@ -82,18 +86,49 @@ namespace TheGamesDBApiWrapper.Models.Responses.Base
 
             if (nextPageResponse.StatusCode == System.Net.HttpStatusCode.OK)
             {
-                var res =  await nextPageResponse.Content.ReadFromJsonAsync<TResponseModel>(restClientFactory.GetJsonSerializerOptions());
-
+                var res = await nextPageResponse.Content.ReadFromJsonAsync<TResponseModel>(restClientFactory.GetJsonSerializerOptions());
 
                 diResolveHelper.EnrichViaDI(res);
+                this.TrackAllowance(res as BaseApiResponseModel);
 
                 return res;
-            } 
-             
+            }
 
-            string result = await nextPageResponse?.Content?.ReadAsStringAsync()!;
+            string result = await nextPageResponse?.Content?.ReadAsStringAsync()! ?? string.Empty;
+            this.TrackAllowance(result, restClientFactory.GetJsonSerializerOptions());
 
             throw new Exceptions.TheGamesDBApiException($"Error received response {nextPageResponse?.StatusCode} - {result ?? "<no content>"} fetching next Page by calling {this.Pages.Next}");
+        }
+
+        /// <summary>
+        /// Hands a page's allowance to the <see cref="IAllowanceTracker"/>. The first page of a walk
+        /// is tracked by the API class that fetched it; the pages fetched from here were not, so a
+        /// caller that walked a hundred pages still saw the allowance of the first one.
+        /// </summary>
+        private void TrackAllowance(BaseApiResponseModel? page)
+        {
+            if (page == null) return;
+
+            this.Provider?.GetService<IAllowanceTracker>()
+                ?.SetAllowance(page.RemainingMonthlyAllowance, page.ExtraAllowance, page.AllowanceRefreshTimer);
+        }
+
+        /// <summary>
+        /// The same for an error body. A 429 carries the allowance that ran out and the timer until
+        /// it refreshes, which is exactly what the caller needs to know at that moment.
+        /// </summary>
+        private void TrackAllowance(string? body, JsonSerializerOptions options)
+        {
+            if (string.IsNullOrWhiteSpace(body)) return;
+
+            try
+            {
+                this.TrackAllowance(JsonSerializer.Deserialize<ErrorResponseModel>(body, options));
+            }
+            catch (JsonException)
+            {
+                // Not JSON, or not theirs: nothing to track.
+            }
         }
 
         [DIResolve]
